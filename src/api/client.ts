@@ -19,7 +19,6 @@ import type {
   ObjectType,
   Project,
   ReplaceConfigurationRequest,
-  ReplaceRoomsRequest,
   RoomType,
   RulesResponse,
   UpdateProjectRequest,
@@ -113,8 +112,6 @@ export const api = {
     form.set('file', file)
     return request<Asset>('POST', `${project(id)}/floor-plan`, { form })
   },
-
-  replaceRooms: (id: string, body: ReplaceRoomsRequest) => request<Project>('PUT', `${project(id)}/rooms`, { json: body }),
 
   replaceConfiguration: (id: string, body: ReplaceConfigurationRequest) => request<Project>('PUT', `${project(id)}/configuration`, { json: body }),
 

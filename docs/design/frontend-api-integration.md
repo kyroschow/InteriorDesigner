@@ -17,9 +17,8 @@ Status: the UI talks to the backend in `server/` through `/api/v1`, following [t
 | Workspace load `/projects/:id/*` | `GET /projects/:id`, `GET /furniture`, `GET /rules`, and `GET /projects/:id/layouts/:layoutId` when `activeLayoutId` is set |
 | Header: rename, unit toggle | `PATCH /projects/:id` |
 | Header: uploaded plan link | `GET /projects/:id/assets/:assetId` (the asset's `downloadUrl`) |
-| Rooms: names, categories, wall positions | `PUT /projects/:id/rooms` |
-| Furnish: quantities, colors, max size | Client draft, saved with `PUT /projects/:id/configuration` on Next or Apply |
-| Room notes: save or clear | `PATCH /projects/:id/rooms/:roomId/note` |
+| Furnish: quantities | Client draft, saved with `PUT /projects/:id/configuration` on Next or Apply |
+| Room notes (colors, sizes, style): save or clear | `PATCH /projects/:id/rooms/:roomId/note` |
 | Brief & apply: prompt, optional budget | Same draft and `PUT` |
 | Apply | `PUT /configuration` if the draft is dirty, then `POST /projects/:id/generations` with `Idempotency-Key` |
 | Progress, including after a refresh | Poll `GET /projects/:id/generations/:id` for `latestGeneration.id`, then re-read the project |
@@ -36,12 +35,12 @@ Geometry is in meters with Y up. `src/lib/sceneCoordinates.ts` converts it once 
 
 ## Frontend-only behavior
 
-- **Door-facing compass.** Asked on upload (and editable on Rooms), kept per project in `localStorage`. It rotates the drawing under a fixed N/E/S/W compass and never changes stored geometry.
-- **Locked walls.** The Rooms screen locks any wall that has a door or doorway on it, because the server rejects moving fixed openings (`OPENING_INVALID`). In `four-room-v1` every interior wall has one, so only names and categories are editable.
-- **Alternatives.** Results lists other inventory products of the same type for the room, read-only. The planner owns product choice; to change it, adjust colors, size limits or budget and apply again.
+- **Fixed rooms.** The UI never calls `PUT /projects/:id/rooms`: rooms, walls and room names come from the `four-room-v1` demo layout.
+- **Colors and sizes live in room notes.** Requirements are saved with only `id`, `objectType`, `quantity` and `roomId`. `allowedColors` and `maxDimensionsM` are left out (both optional), so any values set earlier are cleared on the next save.
+- **Alternatives.** Results lists other inventory products of the same type for the room, read-only. The planner owns product choice; to change it, update the room notes or budget and apply again.
 
 ## Gaps worth closing in the API
 
-- **Layout has no `roomTransforms`.** The frontend pairs a layout's `scene` with the project's current transforms. That only works while rooms can't move.
+- **Layout has no `roomTransforms`.** The frontend pairs a layout's `scene` with the project's transforms, which is fine while the demo rooms are fixed.
 - **No CORS headers.** Browsers must go through a same-origin proxy.
 - **No project list endpoint.** "My Projects" is a per-browser list of ids.

@@ -8,8 +8,8 @@ import { RoomNotesEditor } from '@/components/RoomNotesEditor'
 import { useProjectContext } from '@/screens/ProjectLayout'
 
 /**
- * Furnish step: exact quantities per room (or anywhere), optional color/size
- * limits and per-room notes. Quantities live in the configuration draft until
+ * Furnish step: exact quantities per room (or anywhere) and per-room notes for
+ * colors, sizes and style. Quantities live in the configuration draft until
  * "Next" saves them; notes save on their own.
  */
 export function WorkspaceScreen() {

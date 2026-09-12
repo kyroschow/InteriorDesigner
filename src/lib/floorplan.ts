@@ -5,10 +5,6 @@
 import { type Rect, rectBottom, rectRight } from './geometry'
 
 export type RoomType = 'living' | 'kitchen' | 'bedroom' | 'bathroom' | 'hall'
-
-/** Compass directions / plan sides (N is up in an unrotated drawing). */
-export type CompassDirection = 'N' | 'E' | 'S' | 'W'
-
 export interface RoomSpec {
   id: string
   name: string
@@ -41,6 +37,10 @@ export interface PlanBox {
   fixed: boolean
   /** False for repeats of the same product in a room — repeated labels crowd each other. */
   showLabel: boolean
+  /** Product photo; null draws a placeholder icon (e.g. standard-size stand-ins). */
+  imageUrl?: string | null
+  /** Furniture type (e.g. `bed`), which picks the placeholder icon. */
+  kind?: string
 }
 
 export interface FloorPlan {
@@ -49,8 +49,6 @@ export interface FloorPlan {
   rooms: RoomSpec[]
   doors?: Door[]
   fixtures?: PlanBox[]
-  /** Side of the drawing the exterior front door is on, for compass rotation. */
-  entrySide?: CompassDirection
 }
 
 /** Existing CSS room-fill tokens, keyed by room type. */

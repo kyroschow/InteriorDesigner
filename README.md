@@ -44,15 +44,13 @@ npm run build       # production build
 
 1. **Units** (`/new`): imperial or metric, for display only.
 2. **Create** (`/setup`): name the project, start from scratch or upload a floor plan
-   (PNG/JPEG/WebP/PDF, 20 MB). Uploads also ask which way the front door faces, to orient the
-   compass on the plan.
-3. **Rooms** (`/projects/:id/rooms`): rename and recategorize the four rooms. Walls with a door on
-   them are fixed.
-4. **Furnish** (`/projects/:id`): exact quantities of the eleven furniture types per room (or
-   "anywhere"), optional colors and maximum sizes, and per-room notes for the planner.
-5. **Brief & apply** (`/projects/:id/rules`): style prompt, optional budget, the safety rules, and
+   (PNG/JPEG/WebP/PDF, 20 MB).
+3. **Furnish** (`/projects/:id`): exact quantities of the eleven furniture types per room (or
+   "anywhere"), and per-room notes for colors, sizes and style. The four rooms and their walls are
+   fixed by the demo layout.
+4. **Brief & apply** (`/projects/:id/rules`): style prompt, optional budget, the safety rules, and
    Apply for the whole home or one room. Progress is polled while the AI planner works.
-6. **Results** (`/projects/:id/export`): the saved layout with its safety check, the shopping list
+5. **Results** (`/projects/:id/export`): the saved layout with its safety check, the shopping list
    with real alternatives, and PNG/SVG/PDF export. **Preview** shows the whole home or one room.
 
 ## Layout
@@ -63,7 +61,7 @@ src/
   types/        API contracts (mirror server/ and docs/design/schemas)
   hooks/        project loading and generation polling
   lib/          geometry, units, scene → SVG coordinates, plan export
-  store/        zustand stores: onboarding draft, recent projects, per-project display prefs
+  store/        zustand stores: onboarding draft, recent projects
   components/   floor-plan SVG renderer, requirement rows, notes, findings, shared UI
   screens/      onboarding, the project workspace and its steps, preview
 server/         Node + TypeScript API, SQLite, safety rules engine, AI layout loop
@@ -76,7 +74,9 @@ docs/research/  measured visual tokens that inspired the visual style
 ## Notes and deviations
 
 - Vite + React + TypeScript, Tailwind v4, Zustand. Project data lives on the backend; the browser
-  keeps only the unit preference, the recent-projects list and the door-facing choice.
-- The door-facing compass rotates the drawing on this device only; the API has no field for it.
+  keeps only the unit preference and the recent-projects list.
+- Rooms, walls and room names come from the fixed demo layout; the UI doesn't edit them.
+- Furniture colors and sizes aren't form fields: describe them in the room notes, which the AI
+  planner reads as preferences.
 - Layout responses include the scene but not room positions, so the frontend pairs a layout with the
-  project's `roomTransforms`. That's safe while the demo shell's fixed doors keep rooms from moving.
+  project's `roomTransforms`. That's safe because the demo shell's rooms never move.

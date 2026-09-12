@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, Compass, FileUp, PencilRuler, Upload, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, FileUp, PencilRuler, Upload, X } from 'lucide-react'
 import clsx from 'clsx'
 import { api } from '@/api/client'
 import { Brand } from '@/components/Brand'
@@ -8,20 +8,17 @@ import { ErrorBanner } from '@/components/ErrorBanner'
 import { OptionCard } from '@/components/OptionCard'
 import { StagedLoadingOverlay } from '@/components/StagedLoadingOverlay'
 import { StepHeader } from '@/components/StepHeader'
-import { useOnboardingStore, type CompassDirection } from '@/store/onboardingStore'
-import { useProjectPrefsStore } from '@/store/projectPrefsStore'
+import { useOnboardingStore } from '@/store/onboardingStore'
 import { useRecentProjectsStore } from '@/store/recentProjectsStore'
 import { ACCEPTED_UPLOAD_TYPES, DEMO_LAYOUT_ID, MAX_UPLOAD_BYTES, type Project } from '@/types/interior'
 
 const STAGES = ['Creating your project…', 'Uploading your floor plan…']
-const DIRECTIONS: CompassDirection[] = ['N', 'E', 'S', 'W']
 
 /** Onboarding step 2: `POST /projects`, then multipart `POST /floor-plan` for uploads. */
 export function CreateScreen() {
   const navigate = useNavigate()
-  const { mode, setMode, uploadedFile, setUploadedFile, projectName, setProjectName, unitSystem, doorFacing, setDoorFacing, reset } = useOnboardingStore()
+  const { mode, setMode, uploadedFile, setUploadedFile, projectName, setProjectName, unitSystem, reset } = useOnboardingStore()
   const remember = useRecentProjectsStore((s) => s.remember)
-  const saveDoorFacing = useProjectPrefsStore((s) => s.setDoorFacing)
 
   const [isDragOver, setIsDragOver] = useState(false)
   const [fileError, setFileError] = useState<string | null>(null)
@@ -52,9 +49,8 @@ export function CreateScreen() {
   }
 
   function finish(project: Project) {
-    if (doorFacing) saveDoorFacing(project.id, doorFacing)
     reset()
-    navigate(`/projects/${project.id}/rooms`)
+    navigate(`/projects/${project.id}`)
   }
 
   async function create() {
@@ -80,7 +76,7 @@ export function CreateScreen() {
     }
   }
 
-  const canCreate = (mode === 'scratch' || (mode === 'upload' && uploadedFile != null && doorFacing != null)) && phase === 'idle'
+  const canCreate = (mode === 'scratch' || (mode === 'upload' && uploadedFile != null)) && phase === 'idle'
 
   return (
     <div className="animate-pane-in relative mx-auto flex min-h-full w-full max-w-2xl flex-col justify-center px-6 py-16">
@@ -101,7 +97,7 @@ export function CreateScreen() {
       </label>
 
       <div role="radiogroup" aria-label="Project starting point" className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <OptionCard selected={mode === 'scratch'} onClick={() => setMode('scratch')} icon={<PencilRuler size={20} />} title="Start from scratch" description="Begin with the demo layout — four rooms you can relabel." />
+        <OptionCard selected={mode === 'scratch'} onClick={() => setMode('scratch')} icon={<PencilRuler size={20} />} title="Start from scratch" description="Begin with the four-room demo layout." />
         <OptionCard
           selected={mode === 'upload'}
           onClick={() => setMode('upload')}
@@ -162,33 +158,6 @@ export function CreateScreen() {
               e.target.value = ''
             }}
           />
-        </div>
-      ) : null}
-
-      {mode === 'upload' && uploadedFile ? (
-        <div className="panel mt-4 rounded-card p-4">
-          <div className="mb-3 flex items-center gap-2">
-            <Compass size={16} className="text-ink-soft/60" />
-            <span className="text-sm font-medium text-ink">Which way does the front door face?</span>
-          </div>
-          <p className="mb-3 text-xs text-ink-soft/60">We can't see orientation from the file itself, so this sets up the compass on your plan.</p>
-          <div role="radiogroup" aria-label="Front door faces" className="grid grid-cols-4 gap-2">
-            {DIRECTIONS.map((direction) => (
-              <button
-                key={direction}
-                type="button"
-                role="radio"
-                aria-checked={doorFacing === direction}
-                onClick={() => setDoorFacing(direction)}
-                className={clsx(
-                  'rounded-control border-2 py-2.5 text-sm font-semibold transition-colors',
-                  doorFacing === direction ? 'border-accent bg-accent-pale text-accent-deep' : 'border-canvas-line text-ink-soft hover:border-accent/50',
-                )}
-              >
-                {direction}
-              </button>
-            ))}
-          </div>
         </div>
       ) : null}
 

@@ -9,16 +9,15 @@
  * multiples, so a canonical front (+Y at rot 0) maps to the plan's top edge.
  * Unit preference only changes labels, never this geometry.
  */
-import type { CompassDirection, Door, FloorPlan, PlanBox, RoomSpec, RoomType as PlanRoomType } from './floorplan'
+import type { Door, FloorPlan, PlanBox, RoomSpec, RoomType as PlanRoomType } from './floorplan'
 import type { Floor, PlacedObject, Point, RoomTransform, RoomType, WallSide } from '@/types/interior'
 
 const IN_PER_M = 1 / 0.0254
-const EDGE_TOLERANCE_IN = 0.5
 
 /**
  * A floor plus where each room sits on it. Layouts carry only the scene, so
  * callers pair a layout's scene with the project's transforms (the demo shell's
- * fixed openings keep rooms from moving).
+ * walls are fixed, so rooms never move).
  */
 export interface Scene {
   floor: Floor
@@ -31,8 +30,6 @@ export const PLAN_ROOM_TYPE: Record<RoomType, PlanRoomType> = {
   bedroom: 'bedroom',
   bathroom: 'bathroom',
 }
-
-const SIDE_TO_COMPASS: Record<WallSide, CompassDirection> = { bottom: 'S', top: 'N', left: 'W', right: 'E' }
 
 export function polygonSizeM(polygon: Point[]): { w: number; d: number } {
   const xs = polygon.map((p) => p.x)
@@ -58,17 +55,16 @@ export function floorRectToPlan(xM: number, yM: number, wM: number, dM: number, 
 
 const FRONT: Record<number, PlanBox['front']> = { 0: 'top', 90: 'right', 180: 'bottom', 270: 'left' }
 
-function objectBox(obj: PlacedObject, origin: Point, depthM: number, showLabel: boolean): PlanBox {
+function objectBox(obj: PlacedObject, origin: Point, depthM: number, showLabel: boolean, imageUrl: string | null): PlanBox {
   const ext = obj.pose.rot % 180 === 0 ? { w: obj.footprint.w, d: obj.footprint.d } : { w: obj.footprint.d, d: obj.footprint.w }
   const rect = floorRectToPlan(origin.x + obj.pose.x - ext.w / 2, origin.y + obj.pose.y - ext.d / 2, ext.w, ext.d, depthM)
-  return { id: obj.id, label: shortName(obj.name), ...rect, front: FRONT[obj.pose.rot] ?? 'top', fixed: false, showLabel }
+  return { id: obj.id, label: shortName(obj.name), ...rect, front: FRONT[obj.pose.rot] ?? 'top', fixed: false, showLabel, imageUrl, kind: obj.type }
 }
 
 export function sceneToPlan(scene: Scene, name: string): FloorPlan {
   const depth = scene.floor.depth_m
   const rooms: RoomSpec[] = []
   const doors = new Map<string, Door>()
-  let entrySide: CompassDirection | undefined
 
   for (const room of scene.floor.rooms) {
     const o = originOf(scene, room.id)
@@ -76,9 +72,8 @@ export function sceneToPlan(scene: Scene, name: string): FloorPlan {
     rooms.push({ id: room.id, name: room.label, type: PLAN_ROOM_TYPE[room.type], footprint: floorRectToPlan(o.x, o.y, w, d, depth) })
 
     for (const opening of room.openings) {
-      const side = opening.wall_id.replace('wall-', '') as WallSide
-      if (opening.kind === 'door' && opening.leads_to === 'exterior') entrySide ??= SIDE_TO_COMPASS[side]
       if (doors.has(opening.id)) continue
+      const side = opening.wall_id.replace('wall-', '') as WallSide
       // offset_m is the along-wall coordinate of the opening's lower end.
       const lo = opening.offset_m
       const hi = opening.offset_m + opening.width_m
@@ -102,11 +97,11 @@ export function sceneToPlan(scene: Scene, name: string): FloorPlan {
       })
     }
   }
-  return { id: 'scene', name, rooms, doors: [...doors.values()], entrySide }
+  return { id: 'scene', name, rooms, doors: [...doors.values()] }
 }
 
-/** Placed furniture per room, labelled once per distinct product. */
-export function sceneFurniture(scene: Scene): Record<string, PlanBox[]> {
+/** Placed furniture per room, labelled once per distinct product; `imageFor` looks up a product photo by catalog item id. */
+export function sceneFurniture(scene: Scene, imageFor: (itemId: string) => string | null = () => null): Record<string, PlanBox[]> {
   const depth = scene.floor.depth_m
   const out: Record<string, PlanBox[]> = {}
   for (const room of scene.floor.rooms) {
@@ -114,34 +109,8 @@ export function sceneFurniture(scene: Scene): Record<string, PlanBox[]> {
     out[room.id] = room.objects.map((obj) => {
       const first = !seen.has(obj.itemId)
       seen.add(obj.itemId)
-      return objectBox(obj, originOf(scene, room.id), depth, first)
+      return objectBox(obj, originOf(scene, room.id), depth, first, imageFor(obj.itemId))
     })
   }
   return out
-}
-
-export interface DraftRoomRect {
-  id: string
-  name: string
-  type: RoomType
-  x: number
-  y: number
-  w: number
-  d: number
-}
-
-/**
- * Unsaved room-edit preview: rooms from the draft, openings from the saved plan.
- * Openings that no longer sit on a drafted room edge are hidden (the server
- * rejects those edits rather than moving them).
- */
-export function draftPlan(saved: FloorPlan, rects: DraftRoomRect[], depthM: number): FloorPlan {
-  const rooms: RoomSpec[] = rects.map((r) => ({ id: r.id, name: r.name, type: PLAN_ROOM_TYPE[r.type], footprint: floorRectToPlan(r.x, r.y, r.w, r.d, depthM) }))
-  const onEdge = (door: Door) =>
-    rooms.some(({ footprint: f }) =>
-      door.orientation === 'v'
-        ? (Math.abs(f.x - door.x) < EDGE_TOLERANCE_IN || Math.abs(f.x + f.w - door.x) < EDGE_TOLERANCE_IN) && door.y >= f.y - EDGE_TOLERANCE_IN && door.y + door.length <= f.y + f.h + EDGE_TOLERANCE_IN
-        : (Math.abs(f.y - door.y) < EDGE_TOLERANCE_IN || Math.abs(f.y + f.h - door.y) < EDGE_TOLERANCE_IN) && door.x >= f.x - EDGE_TOLERANCE_IN && door.x + door.length <= f.x + f.w + EDGE_TOLERANCE_IN,
-    )
-  return { ...saved, rooms, doors: (saved.doors ?? []).filter(onEdge) }
 }

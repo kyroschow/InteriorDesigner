@@ -4,7 +4,6 @@ import { ProjectsScreen } from '@/screens/ProjectsScreen'
 import { UnitsScreen } from '@/screens/UnitsScreen'
 import { CreateScreen } from '@/screens/CreateScreen'
 import { ProjectLayout } from '@/screens/ProjectLayout'
-import { RoomsScreen } from '@/screens/RoomsScreen'
 import { WorkspaceScreen } from '@/screens/WorkspaceScreen'
 import { RulesScreen } from '@/screens/RulesScreen'
 import { ExportScreen } from '@/screens/ExportScreen'
@@ -20,7 +19,6 @@ export function App() {
       <Route path="/projects/:projectId/preview" element={<PreviewScreen />} />
       <Route path="/projects/:projectId" element={<ProjectLayout />}>
         <Route index element={<WorkspaceScreen />} />
-        <Route path="rooms" element={<RoomsScreen />} />
         <Route path="rules" element={<RulesScreen />} />
         <Route path="export" element={<ExportScreen />} />
       </Route>

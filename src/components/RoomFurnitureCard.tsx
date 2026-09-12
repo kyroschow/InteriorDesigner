@@ -56,16 +56,12 @@ export function RoomFurnitureCard({ room, status, children }: RoomFurnitureCardP
         <div className="divide-y divide-canvas-line">
           {types.map((type) => {
             const requirement = draft.requirements.find((r) => r.roomId === roomId && r.objectType === type.id)
-            const products = catalog.items.filter((i) => i.objectType === type.id && i.source === 'inventory' && (!room || i.roomTypes.includes(room.type)))
             return (
               <FurnitureRequirementRow
                 key={type.id}
                 type={type}
                 roomId={roomId}
                 requirement={requirement}
-                availableColors={[...new Set(products.flatMap((i) => i.colorFamilies))]}
-                standardSizeOnly={products.length === 0}
-                unitSystem={project.unitSystem}
                 errors={requirement ? configErrors.filter((e) => e.requirementId === requirement.id).map((e) => e.message ?? e.code) : []}
                 onChange={(next) => update(type.id, next)}
               />
