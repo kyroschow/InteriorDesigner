@@ -92,6 +92,10 @@ export const FloorPlanSvg = forwardRef<SVGSVGElement, FloorPlanSvgProps>(functio
           />
         ))}
 
+        {/* Outer envelope, drawn a touch thicker — before the door gaps below, so a
+            door on an exterior wall doesn't get painted back over by this stroke. */}
+        <rect x={0} y={0} width={bounds.w} height={bounds.h} fill="none" stroke={WALL_COLOR} strokeWidth={WALL_WIDTH + 1.5} />
+
         {/* Door gaps: paint over the wall line with the room color it opens into. */}
         {plan.doors?.map((door, i) => (
           <line
@@ -104,9 +108,6 @@ export const FloorPlanSvg = forwardRef<SVGSVGElement, FloorPlanSvgProps>(functio
             strokeWidth={WALL_WIDTH + 1}
           />
         ))}
-
-        {/* Outer envelope, drawn a touch thicker. */}
-        <rect x={0} y={0} width={bounds.w} height={bounds.h} fill="none" stroke={WALL_COLOR} strokeWidth={WALL_WIDTH + 1.5} />
 
         {furniture &&
           plan.rooms.flatMap((room) =>
