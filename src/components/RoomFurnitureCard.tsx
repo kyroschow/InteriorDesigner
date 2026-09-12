@@ -1,6 +1,7 @@
 import type { RoomSpec } from '@/lib/floorplan'
 import { FURNITURE_BY_ROOM_TYPE } from '@/data/furnitureCatalog'
-import { formatArea, sqInToSqFt } from '@/lib/units'
+import { formatAreaBySystem } from '@/lib/units'
+import { useOnboardingStore } from '@/store/onboardingStore'
 import { useFurnitureStore } from '@/store/furnitureStore'
 import { QuantityStepper } from '@/components/QuantityStepper'
 import { RoomChatBox } from '@/components/RoomChatBox'
@@ -12,6 +13,7 @@ interface RoomFurnitureCardProps {
 /** One room's furniture request: name/area header, then a stepper per available item. */
 export function RoomFurnitureCard({ room }: RoomFurnitureCardProps) {
   const items = FURNITURE_BY_ROOM_TYPE[room.type]
+  const unitSystem = useOnboardingStore((s) => s.unitSystem)
   const quantities = useFurnitureStore((s) => s.quantities)
   const setQuantity = useFurnitureStore((s) => s.setQuantity)
 
@@ -20,7 +22,7 @@ export function RoomFurnitureCard({ room }: RoomFurnitureCardProps) {
       <div className="mb-2 flex items-baseline justify-between gap-2">
         <h3 className="serif text-base text-ink">{room.name}</h3>
         <span className="tnum shrink-0 text-xs text-ink-soft/50">
-          {formatArea(sqInToSqFt(room.footprint.w * room.footprint.h))}
+          {formatAreaBySystem(room.footprint.w * room.footprint.h, unitSystem)}
         </span>
       </div>
       {items.length > 0 ? (

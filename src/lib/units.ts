@@ -6,11 +6,15 @@
  * the classic "wall is 0.0001in from the corner" bug. Integers in the smallest unit
  * we ever display make the geometry exact.
  *
- * Display is US customary (ft + in) because that is what Drafted shows:
- * "38 ft 0 in", "97 ft 10 in W x 32 ft 0 in D", "2,494 ft²".
+ * Display is US customary (ft + in) by default, matching what Drafted shows:
+ * "38 ft 0 in", "97 ft 10 in W x 32 ft 0 in D", "2,494 ft²". Metric display
+ * (onboarding's unit choice) converts at render time — inches stay the one
+ * stored unit either way.
  */
+import type { UnitSystem } from '@/store/onboardingStore'
 
 export const INCHES_PER_FOOT = 12
+const M_PER_INCH = 0.0254
 /** Editor grid: one grid square = 1 ft. Snap resolution is finer — see SNAP_IN. */
 export const GRID_IN = 12
 /** Snapping quantum, 1 inch. Drafted's dimension labels resolve to whole inches. */
@@ -46,6 +50,32 @@ export function sqFtToSqIn(sqFt: number): number {
 /** 2494 -> "2,494 ft²" */
 export function formatArea(sqFt: number): string {
   return `${Math.round(sqFt).toLocaleString('en-US')} ft²`
+}
+
+/** 240 -> "6.10 m" */
+export function formatMeters(inches: number): string {
+  const sign = inches < 0 ? '-' : ''
+  return `${sign}${(Math.abs(inches) * M_PER_INCH).toFixed(2)} m`
+}
+
+/** Square inches -> square meters. */
+export function sqInToSqM(sqIn: number): number {
+  return sqIn * M_PER_INCH * M_PER_INCH
+}
+
+/** 23.4 -> "23.4 m²" */
+export function formatAreaMetric(sqM: number): string {
+  return `${sqM.toLocaleString('en-US', { maximumFractionDigits: 1, minimumFractionDigits: 1 })} m²`
+}
+
+/** A length in inches, displayed per the project's chosen unit system. */
+export function formatLength(inches: number, system: UnitSystem): string {
+  return system === 'metric' ? formatMeters(inches) : formatFtIn(inches)
+}
+
+/** An area in square inches, displayed per the project's chosen unit system. */
+export function formatAreaBySystem(sqIn: number, system: UnitSystem): string {
+  return system === 'metric' ? formatAreaMetric(sqInToSqM(sqIn)) : formatArea(sqInToSqFt(sqIn))
 }
 
 /** 2494 -> "2,494" */

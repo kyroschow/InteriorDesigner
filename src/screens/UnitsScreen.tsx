@@ -35,11 +35,13 @@ export function UnitsScreen() {
   const setUnitSystem = useOnboardingStore((s) => s.setUnitSystem)
 
   return (
-    <div className="animate-pane-in mx-auto flex min-h-full w-full max-w-xl flex-col justify-center px-6 py-16">
+    <div className="animate-pane-in mx-auto flex min-h-full w-full max-w-2xl flex-col justify-center px-6 py-16">
       <div className="mb-14 flex flex-col items-center text-center">
         <Brand size="xl" />
-        <h2 className="serif mt-8 max-w-lg text-4xl text-ink-soft/80 sm:text-5xl">
-          Turn any floor plan into a fully furnished room.
+        <h2 className="serif mt-8 text-3xl text-ink-soft/80 sm:text-4xl">
+          Turn any floor plan
+          <br />
+          into a fully furnished room.
         </h2>
       </div>
 

@@ -29,7 +29,7 @@ export function Brand({ size = 'sm' }: BrandProps) {
       >
         <Compass size={ICON_SIZE[size]} />
       </div>
-      <span className={clsx('serif font-semibold text-ink', WORDMARK_SIZE[size])}>Plotter</span>
+      <span className={clsx('serif font-semibold text-ink', WORDMARK_SIZE[size])}>Zenlayout</span>
     </button>
   )
 }

@@ -1,8 +1,9 @@
 import { forwardRef } from 'react'
 import { floorPlanBounds, floorPlanWalls, ROOM_TYPE_COLOR, type FloorPlan } from '@/lib/floorplan'
 import { rectCenter } from '@/lib/geometry'
-import { formatArea, sqInToSqFt } from '@/lib/units'
+import { formatAreaBySystem } from '@/lib/units'
 import type { PlacedItem } from '@/lib/furniturePlacement'
+import { useOnboardingStore } from '@/store/onboardingStore'
 
 interface FloorPlanSvgProps {
   plan: FloorPlan
@@ -21,6 +22,7 @@ export const FloorPlanSvg = forwardRef<SVGSVGElement, FloorPlanSvgProps>(functio
   { plan, furniture },
   ref,
 ) {
+  const unitSystem = useOnboardingStore((s) => s.unitSystem)
   const bounds = floorPlanBounds(plan)
   const walls = floorPlanWalls(plan)
   const pad = 24
@@ -142,7 +144,7 @@ export const FloorPlanSvg = forwardRef<SVGSVGElement, FloorPlanSvgProps>(functio
                 fontSize={10}
                 fill="var(--color-ink-soft)"
               >
-                {formatArea(sqInToSqFt(room.footprint.w * room.footprint.h))}
+                {formatAreaBySystem(room.footprint.w * room.footprint.h, unitSystem)}
               </text>
             )}
           </g>
