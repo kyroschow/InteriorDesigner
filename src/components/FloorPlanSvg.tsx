@@ -86,35 +86,32 @@ export const FloorPlanSvg = forwardRef<SVGSVGElement, FloorPlanSvgProps>(functio
 
       {furniture &&
         plan.rooms.flatMap((room) =>
-          (furniture[room.id] ?? []).map((item) => {
-            const showLabel = item.w >= 34 && item.h >= 18
-            return (
-              <g key={`${room.id}-${item.id}`}>
-                <rect
-                  x={item.x}
-                  y={item.y}
-                  width={item.w}
-                  height={item.h}
-                  rx={3}
-                  fill="var(--color-card)"
-                  stroke={WALL_COLOR}
-                  strokeWidth={1.25}
-                />
-                {showLabel && (
-                  <text
-                    x={item.x + item.w / 2}
-                    y={item.y + item.h / 2}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    fontSize={9}
-                    fill="var(--color-ink-soft)"
-                  >
-                    {item.label}
-                  </text>
-                )}
-              </g>
-            )
-          }),
+          (furniture[room.id] ?? []).map((item) => (
+            <g key={`${room.id}-${item.id}`}>
+              <rect
+                x={item.x}
+                y={item.y}
+                width={item.w}
+                height={item.h}
+                rx={3}
+                fill="var(--color-card)"
+                stroke={WALL_COLOR}
+                strokeWidth={1.25}
+              />
+              {item.showLabel && (
+                <text
+                  x={item.labelX}
+                  y={item.labelY}
+                  textAnchor={item.labelAnchor}
+                  dominantBaseline={item.labelAnchor === 'middle' ? 'auto' : 'middle'}
+                  fontSize={8.5}
+                  fill="var(--color-ink-soft)"
+                >
+                  {item.label}
+                </text>
+              )}
+            </g>
+          )),
         )}
 
       {plan.rooms.map((room) => {

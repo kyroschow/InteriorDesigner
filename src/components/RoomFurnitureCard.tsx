@@ -3,6 +3,7 @@ import { FURNITURE_BY_ROOM_TYPE } from '@/data/furnitureCatalog'
 import { formatArea, sqInToSqFt } from '@/lib/units'
 import { useFurnitureStore } from '@/store/furnitureStore'
 import { QuantityStepper } from '@/components/QuantityStepper'
+import { RoomChatBox } from '@/components/RoomChatBox'
 
 interface RoomFurnitureCardProps {
   room: RoomSpec
@@ -37,6 +38,7 @@ export function RoomFurnitureCard({ room }: RoomFurnitureCardProps) {
       ) : (
         <p className="py-1 text-xs text-ink-soft/50">No furniture catalog for this room yet.</p>
       )}
+      <RoomChatBox roomId={room.id} />
     </div>
   )
 }
