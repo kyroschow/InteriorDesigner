@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom'
 import { UnitsScreen } from '@/screens/UnitsScreen'
 import { CreateScreen } from '@/screens/CreateScreen'
+import { ProjectLayout } from '@/screens/ProjectLayout'
 import { WorkspaceScreen } from '@/screens/WorkspaceScreen'
 import { RulesScreen } from '@/screens/RulesScreen'
 import { ExportScreen } from '@/screens/ExportScreen'
@@ -10,8 +11,10 @@ export function App() {
     <Routes>
       <Route path="/" element={<UnitsScreen />} />
       <Route path="/setup" element={<CreateScreen />} />
-      <Route path="/project" element={<WorkspaceScreen />} />
-      <Route path="/project/rules" element={<RulesScreen />} />
+      <Route path="/project" element={<ProjectLayout />}>
+        <Route index element={<WorkspaceScreen />} />
+        <Route path="rules" element={<RulesScreen />} />
+      </Route>
       <Route path="/project/export" element={<ExportScreen />} />
     </Routes>
   )
