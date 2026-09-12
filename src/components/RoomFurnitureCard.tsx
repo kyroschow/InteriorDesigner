@@ -5,18 +5,16 @@ import { RoomStatusBadge } from '@/components/RoomStatusBadge'
 import { polygonSizeM } from '@/lib/sceneCoordinates'
 import { formatAreaM2, formatLengthM } from '@/lib/units'
 import { useProjectContext } from '@/screens/ProjectLayout'
-import type { Requirement, Room, RoomStatus } from '@/types/interior'
-
-const typeMatches = (itemType: string, requested: string) => itemType === requested || itemType.startsWith(`${requested}.`)
+import type { ObjectType, Requirement, Room, RoomStatus } from '@/types/interior'
 
 interface RoomFurnitureCardProps {
-  /** null = requirements the generator may place in any suitable room. */
+  /** null = requirements the planner may place in any eligible room. */
   room: Room | null
   status?: RoomStatus
   children?: ReactNode
 }
 
-/** One room's furniture request: header, one line per eligible type, then unavailable types with reasons. */
+/** One room's furniture request: header, then one line per furniture type allowed there. */
 export function RoomFurnitureCard({ room, status, children }: RoomFurnitureCardProps) {
   const { project, catalog, draft, setDraft, configErrors, selectedRoomId, setSelectedRoomId } = useProjectContext()
   const cardRef = useRef<HTMLDivElement>(null)
@@ -28,17 +26,14 @@ export function RoomFurnitureCard({ room, status, children }: RoomFurnitureCardP
   }, [selected])
 
   const roomTypes = new Set(project.floor.rooms.map((r) => r.type))
-  const types = catalog.types.filter((t) => (room ? t.allowedRoomTypes.includes(room.type) : t.allowedRoomTypes.some((rt) => roomTypes.has(rt))))
-  const available = types.filter((t) => t.available)
-  const unavailable = types.filter((t) => !t.available)
+  const types = catalog.types.filter((t) => (room ? t.roomTypes.includes(room.type) : t.roomTypes.some((rt) => roomTypes.has(rt))))
 
-  const update = (objectType: string, next: Requirement | null) =>
+  const update = (objectType: ObjectType, next: Requirement | null) =>
     setDraft((d) => {
-      const others = d.requirements.filter((r) => !(r.roomId === roomId && r.objectType === objectType))
-      const existingIndex = d.requirements.findIndex((r) => r.roomId === roomId && r.objectType === objectType)
-      if (!next) return { ...d, requirements: others }
-      if (existingIndex === -1) return { ...d, requirements: [...d.requirements, next] }
-      return { ...d, requirements: d.requirements.map((r, i) => (i === existingIndex ? next : r)) }
+      const index = d.requirements.findIndex((r) => r.roomId === roomId && r.objectType === objectType)
+      if (!next) return { ...d, requirements: d.requirements.filter((_, i) => i !== index) }
+      if (index === -1) return { ...d, requirements: [...d.requirements, next] }
+      return { ...d, requirements: d.requirements.map((r, i) => (i === index ? next : r)) }
     })
 
   const size = room ? polygonSizeM(room.polygon) : null
@@ -51,49 +46,34 @@ export function RoomFurnitureCard({ room, status, children }: RoomFurnitureCardP
           <span className="tnum block text-[11px] text-ink-soft/50">
             {room && size
               ? `${formatLengthM(size.w, project.unitSystem)} × ${formatLengthM(size.d, project.unitSystem)} · ${formatAreaM2(room.area_m2, project.unitSystem)}`
-              : 'The generator picks a suitable room for these'}
+              : 'The planner picks an eligible room for these'}
           </span>
         </span>
         <RoomStatusBadge status={status} />
       </button>
 
-      {available.length > 0 ? (
+      {types.length > 0 ? (
         <div className="divide-y divide-canvas-line">
-          {available.map((type) => {
-            const requirement = draft.requirements.find((r) => r.roomId === roomId && r.objectType === type.objectType)
-            const availableColors = [
-              ...new Set(catalog.items.filter((i) => i.selectionStatus === 'eligible' && typeMatches(i.objectType, type.objectType)).flatMap((i) => i.colorFamilies)),
-            ]
+          {types.map((type) => {
+            const requirement = draft.requirements.find((r) => r.roomId === roomId && r.objectType === type.id)
+            const products = catalog.items.filter((i) => i.objectType === type.id && i.source === 'inventory' && (!room || i.roomTypes.includes(room.type)))
             return (
               <FurnitureRequirementRow
-                key={type.objectType}
+                key={type.id}
                 type={type}
                 roomId={roomId}
                 requirement={requirement}
-                colorFamilies={catalog.colorFamilies}
-                availableColors={availableColors}
+                availableColors={[...new Set(products.flatMap((i) => i.colorFamilies))]}
+                standardSizeOnly={products.length === 0}
                 unitSystem={project.unitSystem}
                 errors={requirement ? configErrors.filter((e) => e.requirementId === requirement.id).map((e) => e.message ?? e.code) : []}
-                onChange={(next) => update(type.objectType, next)}
+                onChange={(next) => update(type.id, next)}
               />
             )
           })}
         </div>
       ) : (
-        <p className="py-1 text-xs text-ink-soft/60">Nothing can be generated for this room type yet.</p>
-      )}
-
-      {unavailable.length > 0 && (
-        <details className="mt-2 text-[11px] text-ink-soft/60">
-          <summary className="cursor-pointer">Not available yet ({unavailable.length})</summary>
-          <ul className="mt-1 space-y-0.5 pl-3">
-            {unavailable.map((t) => (
-              <li key={t.objectType}>
-                <span className="font-medium text-ink-soft">{t.label}</span> — {t.reason}
-              </li>
-            ))}
-          </ul>
-        </details>
+        <p className="py-1 text-xs text-ink-soft/60">No furniture types are available for this room category.</p>
       )}
 
       {children}

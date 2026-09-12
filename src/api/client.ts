@@ -1,10 +1,10 @@
 /**
- * The only way screens talk to the backend. Paths, methods and bodies follow
- * docs/design; types live in src/types/interior.ts.
+ * The only way screens talk to the backend (server/). Paths, methods and bodies
+ * follow docs/design; types live in src/types/interior.ts.
  *
- * VITE_API_MODE=live sends real fetch requests to VITE_API_BASE_URL + /api/v1
- * (no fallback to mock data). Anything else uses the in-browser mock server,
- * which is lazy-loaded so it never ships in the live code path.
+ * Requests go to VITE_API_BASE_URL + /api/v1. Leave the base URL blank to go
+ * through the Vite dev proxy (API_PROXY_TARGET): the server sends no CORS
+ * headers, so the browser has to stay same-origin.
  */
 import type {
   ApiErrorBody,
@@ -16,6 +16,7 @@ import type {
   FurnitureResponse,
   Generation,
   Layout,
+  ObjectType,
   Project,
   ReplaceConfigurationRequest,
   ReplaceRoomsRequest,
@@ -40,16 +41,11 @@ export class ApiError extends Error {
 export const isConflict = (err: unknown): err is ApiError => err instanceof ApiError && err.status === 409
 export const isAbort = (err: unknown) => err instanceof DOMException && err.name === 'AbortError'
 
-export const API_MODE: 'mock' | 'live' = import.meta.env.VITE_API_MODE === 'live' ? 'live' : 'mock'
-const BASE_URL = `${(import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/+$/, '')}/api/v1`
+const API_ORIGIN = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/+$/, '')
+const BASE_URL = `${API_ORIGIN}/api/v1`
 
-type Transport = (input: string, init: RequestInit) => Promise<Response>
-let transport: Promise<Transport> | null = null
-
-function getTransport(): Promise<Transport> {
-  transport ??= API_MODE === 'live' ? Promise.resolve((input, init) => fetch(input, init)) : import('./mock/server').then((m) => m.mockFetch)
-  return transport
-}
+/** Absolute href for server-issued paths such as `Asset.downloadUrl`. */
+export const apiHref = (path: string) => (path.startsWith('/') ? `${API_ORIGIN}${path}` : path)
 
 interface RequestOptions {
   json?: unknown
@@ -68,13 +64,12 @@ async function request<T>(method: string, path: string, options: RequestOptions 
     body = JSON.stringify(options.json)
   }
 
-  const send = await getTransport()
   let response: Response
   try {
-    response = await send(`${BASE_URL}${path}`, { method, headers, body, signal: options.signal })
+    response = await fetch(`${BASE_URL}${path}`, { method, headers, body, signal: options.signal })
   } catch (err) {
     if (isAbort(err)) throw err
-    throw new ApiError(0, 'NETWORK_ERROR', 'Could not reach the server. Check your connection and try again.')
+    throw new ApiError(0, 'NETWORK_ERROR', 'Could not reach the server. Check that the backend is running and try again.')
   }
 
   const text = await response.text()
@@ -83,7 +78,7 @@ async function request<T>(method: string, path: string, options: RequestOptions 
     try {
       data = JSON.parse(text)
     } catch {
-      throw new ApiError(response.status, 'BAD_RESPONSE', 'The server sent a response that could not be read.')
+      throw new ApiError(response.status, 'BAD_RESPONSE', `The server sent a response that could not be read (HTTP ${response.status}).`)
     }
   }
   if (!response.ok) {
@@ -97,7 +92,7 @@ const project = (id: string) => `/projects/${encodeURIComponent(id)}`
 
 export interface FurnitureQuery {
   roomType?: RoomType
-  objectType?: string
+  objectType?: ObjectType
   color?: string
   maxPriceMinor?: number
   maxWidthM?: number
@@ -140,5 +135,5 @@ export const api = {
     return request<FurnitureResponse>('GET', `/furniture${qs ? `?${qs}` : ''}`, { signal })
   },
 
-  getRules: (roomType?: RoomType, signal?: AbortSignal) => request<RulesResponse>('GET', `/rules${roomType ? `?roomType=${roomType}` : ''}`, { signal }),
+  getRules: (signal?: AbortSignal) => request<RulesResponse>('GET', '/rules', { signal }),
 }

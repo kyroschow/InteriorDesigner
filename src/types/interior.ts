@@ -1,27 +1,32 @@
 /**
- * API contracts for `/api/v1`.
+ * API contracts for `/api/v1`, per docs/design/simplified-scope.md.
  *
- * Request types mirror docs/design/schemas/request-bodies.schema.json exactly
- * (objects there reject unknown properties, so never add fields to them).
- * Response types follow docs/design/interior-workspace-draft.md; the scene
- * records are the subset of the rule library's canonical Floor/Room/Object
- * (interior-rule-library/00-foundation/SPEC-CONTRACT.md) the MVP uses.
+ * Request types mirror docs/design/schemas/request-bodies.schema.json (objects
+ * there reject unknown properties, so never add fields to them). Response types
+ * mirror what server/ returns (projects/service.ts `present`, db/store.ts
+ * records, rules/engine.ts report).
  *
  * Geometry is meters, 3 decimals, room-local, Y up. `rot` is degrees clockwise
- * from the canonical front (+Y). Pose origin is the footprint center.
+ * from the front facing +Y. Pose origin is the footprint center.
  */
 
 export type UnitSystem = 'metric' | 'imperial'
 export type ProjectMode = 'upload' | 'scratch'
-export type RoomType = 'living_room' | 'bedroom_primary' | 'kitchen' | 'bathroom_full'
 
-export const ROOM_TYPES: RoomType[] = ['living_room', 'bedroom_primary', 'kitchen', 'bathroom_full']
+export const ROOM_TYPES = ['living_room', 'bedroom', 'kitchen', 'bathroom'] as const
+export type RoomType = (typeof ROOM_TYPES)[number]
 export const ROOM_TYPE_LABELS: Record<RoomType, string> = {
   living_room: 'Living room',
-  bedroom_primary: 'Bedroom',
+  bedroom: 'Bedroom',
   kitchen: 'Kitchen',
-  bathroom_full: 'Bathroom',
+  bathroom: 'Bathroom',
 }
+
+export const OBJECT_TYPES = ['bed', 'dresser', 'nightstand', 'tv_stand', 'sofa', 'dining_table', 'dining_chair', 'kitchen_counter', 'sink', 'shower', 'toilet'] as const
+export type ObjectType = (typeof OBJECT_TYPES)[number]
+
+/** Catalog color families, in the server's order. */
+export const COLOR_FAMILIES = ['white', 'black', 'gray', 'beige', 'brown', 'natural', 'blue', 'green'] as const
 
 export const DEMO_LAYOUT_ID = 'four-room-v1'
 export const MAX_UPLOAD_BYTES = 20 * 1024 * 1024
@@ -37,6 +42,15 @@ export interface Dimensions {
   w: number
   d: number
   h: number
+}
+
+export type Rotation = 0 | 90 | 180 | 270
+
+export interface Pose {
+  x: number
+  y: number
+  z: number
+  rot: Rotation
 }
 
 // ---------------------------------------------------------------- requests
@@ -79,12 +93,12 @@ export interface Budget {
 
 export interface Requirement {
   id: string
-  objectType: string
+  objectType: ObjectType
   quantity: number
-  /** null lets generation choose a suitable room; it never changes the quantity. */
+  /** null lets the planner choose an eligible room; it never changes the quantity. */
   roomId: string | null
-  /** Catalog color-family ids. Empty means any color. */
-  allowedColors: string[]
+  /** Color families; empty or absent means any color. */
+  allowedColors?: string[]
   maxDimensionsM?: Dimensions
 }
 
@@ -95,10 +109,8 @@ export interface RoomInstruction {
 
 export interface Configuration {
   prompt: string
-  budget: Budget
+  budget?: Budget | null
   requirements: Requirement[]
-  selectedRuleIds: string[]
-  enabledBeliefSystems: string[]
   roomInstructions: RoomInstruction[]
 }
 
@@ -122,50 +134,44 @@ export interface CreateGenerationRequest {
 
 // ------------------------------------------------------------------- scene
 
-export interface Pose {
-  x: number
-  y: number
-  z: number
-  rot: number
-}
+export type WallSide = 'bottom' | 'right' | 'top' | 'left'
 
 export interface Wall {
-  id: string
+  id: `wall-${WallSide}`
+  side: WallSide
   a: Point
   b: Point
-  thickness_m: number
+  length_m: number
   is_exterior: boolean
-  /** Compass bearings are never inferred from drawing orientation. */
-  bearing_deg: null
 }
 
 export interface Opening {
   id: string
   kind: 'door' | 'doorway' | 'window'
-  wall_id: string
-  /** Distance along the wall from `a` to the near edge of the opening. */
+  wall_id: Wall['id']
+  /** Along-wall coordinate of the opening's lower end: x on bottom/top walls, y on left/right. */
   offset_m: number
   width_m: number
   height_m: number
   sill_m: number
-  swing: 'in_left' | 'in_right' | 'out_left' | 'out_right' | 'none'
-  leads_to_room_id: string | null
-  is_egress: boolean
-  provenance: 'demo'
+  swing: 'into_room' | 'away' | 'none'
+  /** Room id, or `exterior`. */
+  leads_to: string
 }
 
-export interface SceneObject {
+export interface PlacedObject {
+  /** Requirement instance id, e.g. `req-bed#1`. */
   id: string
-  type: string
-  label: string
-  variant_id: string | null
+  requirementId: string
+  roomId: string
+  type: ObjectType
+  itemId: string
+  name: string
+  source: 'inventory' | 'default'
+  priceMinor: number | null
   pose: Pose
   footprint: Dimensions
-  materials: string[]
-  colors: Array<{ hex: string; coverage_pct: number }>
-  anchored: boolean
-  is_fixed: boolean
-  provenance: 'demo' | 'catalog'
+  is_fixed: false
 }
 
 export interface Room {
@@ -174,72 +180,58 @@ export interface Room {
   type: RoomType
   polygon: Point[]
   ceiling_height_m: number
-  ceiling_type: 'flat'
   area_m2: number
   walls: Wall[]
   openings: Opening[]
-  features: []
-  objects: SceneObject[]
+  objects: PlacedObject[]
 }
 
 export interface Floor {
   id: string
   level: number
   height_m: number
+  width_m: number
+  depth_m: number
   rooms: Room[]
   stairs: []
 }
 
 // --------------------------------------------------------------- responses
 
+export interface ApiErrorDetail {
+  path?: string
+  code: string
+  message?: string
+  roomId?: string
+  requirementId?: string
+  [key: string]: unknown
+}
+
+export interface ApiErrorBody {
+  error: { code: string; message: string; details?: ApiErrorDetail[] }
+}
+
 export interface Asset {
   id: string
   name: string
   mimeType: string
   sizeBytes: number
-  /** null when the backend kept metadata only (the mock never stores bytes). */
+  /** `/api/v1/projects/:id/assets/:assetId`; null when the backend kept metadata only (the mock). */
   downloadUrl: string | null
-  createdAt: string
-}
-
-export type ClauseStatus = 'supported' | 'ambiguous' | 'unsupported' | 'conflict'
-
-export interface NoteClause {
-  roomId: string
-  sourceText: string
-  span: { start: number; end: number }
-  kind: 'object_type_prohibition' | 'minimum_clearance' | 'allowed_color_families' | 'style_preference' | 'unrecognized'
-  targetObjectType?: string
-  side?: 'front' | 'back' | 'left' | 'right'
-  valueM?: number
-  colorFamilies?: string[]
-  preferenceTerms?: string[]
-  strength: 'hard' | 'soft'
-  status: ClauseStatus
-  message: string
-}
-
-export interface NoteInterpretation {
-  roomId: string
-  parserVersion: string
-  clauses: NoteClause[]
-}
-
-export interface Finding {
-  code: string
-  severity: 'error' | 'warning' | 'info'
-  message: string
-  path?: string
-  roomId?: string
-  requirementId?: string
-  ruleId?: string
-  suggestion?: string
 }
 
 export type RoomStatus = 'unconfigured' | 'configured' | 'generating' | 'furnished' | 'stale' | 'error'
+export type GenerationStatus = 'queued' | 'running' | 'succeeded' | 'failed' | 'stale'
+export type GenerationStage = 'selecting' | 'placing' | 'validating'
 
-export interface SavedConfiguration extends Configuration {
+export interface SavedConfiguration {
   revision: number
+  prompt: string
+  budget: Budget | null
+  requirements: Requirement[]
+  roomInstructions: RoomInstruction[]
+  /** Blocking errors (e.g. after a room was recategorized) and notices such as NO_CATALOG_MATCH. */
+  findings: ApiErrorDetail[]
 }
 
 export interface Project {
@@ -249,172 +241,156 @@ export interface Project {
   mode: ProjectMode
   revision: number
   layoutSource: 'demo'
+  layoutNotice: string
   demoLayoutId: typeof DEMO_LAYOUT_ID
-  floorPlanAssetId: string | null
   floorPlanAsset: Asset | null
-  /** Fixed outer shell the room partitions must tile. */
-  footprintM: { w: number; d: number }
+  /** Current rooms; objects are the active layout's placements. */
   floor: Floor
   roomTransforms: RoomTransform[]
   configuration: SavedConfiguration
-  noteInterpretations: NoteInterpretation[]
-  configurationFindings: Finding[]
   activeLayoutId: string | null
-  latestGenerationId: string | null
+  /** Set when saved rooms/configuration no longer match the active layout. */
+  stale: { since: string; reason: string } | null
   roomStatuses: Array<{ roomId: string; status: RoomStatus }>
+  latestGeneration: { id: string; status: GenerationStatus; stage: GenerationStage | null; scope: GenerationScope } | null
   createdAt: string
   updatedAt: string
 }
 
-export type GenerationStatus = 'queued' | 'running' | 'succeeded' | 'failed' | 'stale'
-export type GenerationStage = 'selecting' | 'placing' | 'validating'
-export type GenerationErrorCode = 'NO_CATALOG_MATCH' | 'BUDGET_EXCEEDED' | 'NO_VALID_LAYOUT_FOUND' | 'ENGINE_ERROR'
+export interface GenerationIssue {
+  code: string
+  message: string
+  roomId?: string
+  requirementId?: string
+  instanceIds?: string[]
+  ruleId?: string
+  suggestion?: string
+}
+
+export interface TurnSummary {
+  turn: number
+  tool: string
+  pass?: boolean
+  violations?: number
+  score?: number
+  note?: string
+  details?: string[]
+  latencyMs: number
+}
 
 export interface Generation {
   id: string
   projectId: string
   scope: GenerationScope
-  inputRevisions: { project: number; configuration: number }
-  catalogVersion: string
-  ruleVersion: string
   status: GenerationStatus
   stage: GenerationStage | null
+  progress: { turn: number; maxTurns: number; turns: TurnSummary[] }
+  inputRevision: number
+  inputConfigurationRevision: number
+  catalogVersion: string
   layoutId: string | null
-  error: { code: GenerationErrorCode; message: string } | null
-  issues: Finding[]
+  errorCode: string | null
+  issues: GenerationIssue[]
   createdAt: string
-  updatedAt: string
+  startedAt: string | null
+  finishedAt: string | null
 }
 
 export interface CreateGenerationResponse {
   generationId: string
-  status: 'queued'
+  status: GenerationStatus
   statusUrl: string
 }
 
-export interface RequirementAssignment {
-  requirementId: string
-  instanceId: string
-  catalogItemId: string
-  roomId: string
-  objectId: string
+export interface Violation {
+  ruleId: string
+  roomId: string | null
+  itemIds: string[]
+  message: string
+  hint: string
 }
 
-export interface LayoutLine {
-  catalogItemId: string
-  name: string
-  objectType: string
-  colorName: string | null
-  priceMinor: number
-  quantity: number
+export interface RoomMetrics {
   roomId: string
-  url: string
-  imageUrl: string | null
+  walkableAreaPct: number
+  minPathWidthM: number | null
+  doorsConnected: boolean
+}
+
+export interface EngineReport {
+  pass: boolean
+  violations: Violation[]
+  metrics: RoomMetrics[]
+  score: number
+  totalPriceMinor: number
+  unpricedItemIds: string[]
 }
 
 export interface Layout {
   id: string
   projectId: string
   generationId: string
-  scope: GenerationScope
-  inputRevisions: { project: number; configuration: number }
+  activated: boolean
+  inputRevision: number
+  inputConfigurationRevision: number
   catalogVersion: string
-  ruleVersion: string
-  footprintM: { w: number; d: number }
-  floor: Floor
-  roomTransforms: RoomTransform[]
-  requirementAssignments: RequirementAssignment[]
-  lines: LayoutLine[]
+  scope: GenerationScope
+  scene: Floor
+  placements: PlacedObject[]
   totalPriceMinor: number
   currency: 'USD'
-  findings: Finding[]
-  explanations: Array<{ roomId?: string; requirementId?: string; message: string }>
+  engineReport: EngineReport
+  rationale: string
+  planner: string
   createdAt: string
 }
 
-export type SelectionStatus = 'eligible' | 'needs_review' | 'unsupported'
-
 export interface CatalogItem {
-  catalogItemId: string
+  id: string
   name: string
-  objectType: string
-  allowedRoomTypes: RoomType[]
+  objectType: ObjectType
+  roomTypes: RoomType[]
+  /** `default`: a standard-size stand-in with no product, price or color. */
+  source: 'inventory' | 'default'
   priceMinor: number | null
   currency: 'USD'
-  /** Meters; null when the source record has no verified value. */
-  footprint: { w: number | null; d: number | null; h: number | null }
-  colorFamilies: string[]
+  footprint: Dimensions
   colorName: string | null
   colorHex: string | null
+  colorFamilies: string[]
   materials: string[]
   styleTags: string[]
   featureTags: string[]
-  installationMode: 'freestanding' | 'installed' | 'bundle'
-  components: Array<{ objectType: string; count: number }>
-  selectionStatus: SelectionStatus
-  reviewReasons: string[]
-  source: { file: string; url: string; imageUrls: string[] }
-  catalogVersion: string
+  category: string | null
+  url: string | null
+  imageUrl: string | null
 }
 
-/** Requirement picker entry. Proposed response extension: not in the draft's `{version, currency, items}`. */
 export interface FurnitureType {
-  objectType: string
+  id: ObjectType
   label: string
-  parent: string | null
-  allowedRoomTypes: RoomType[]
-  eligibleCount: number
-  /** Selectable in requirements only when at least one eligible variant exists. */
-  available: boolean
-  reason: string | null
+  roomTypes: RoomType[]
 }
 
 export interface FurnitureResponse {
   version: string
   currency: 'USD'
-  items: CatalogItem[]
   types: FurnitureType[]
-  colorFamilies: Array<{ id: string; label: string; hex: string }>
+  items: CatalogItem[]
 }
 
-export interface Rule {
+export interface SafetyRule {
   id: string
   title: string
-  system: string
-  group: string | null
-  version: number
-  status: string
-  scope: string | null
-  severity: 'blocking' | 'high' | 'medium' | 'low' | 'advisory'
-  confidence: string | null
-  beliefGated: boolean
-  /** Belief-system id this rule is gated on, e.g. `feng_shui`; null when not belief-gated. */
-  beliefSystem: string | null
-  appliesTo: { rooms: string[]; objects: string[] }
-  requiresRules: string[]
-  conflictsWith: string[]
-  params: Array<{ key: string; default: number | string | null; unit: string | null }>
-  source: { path: string; heading: string }
-  availability: 'supported' | 'unsupported' | 'missing_inputs'
-  reason: string | null
-  requiredInputs: string[]
+  description: string
+  params: Record<string, number>
+  severity: 'hard'
+  appliesTo: { roomTypes: RoomType[] }
+  availability: 'supported'
 }
 
 export interface RulesResponse {
   version: string
-  items: Rule[]
-  beliefSystems: Array<{ id: string; label: string }>
-}
-
-export interface ApiErrorDetail {
-  path?: string
-  code: string
-  message?: string
-  roomId?: string
-  requirementId?: string
-  ruleId?: string
-}
-
-export interface ApiErrorBody {
-  error: { code: string; message: string; details?: ApiErrorDetail[] }
+  defaults: Record<string, number>
+  items: SafetyRule[]
 }

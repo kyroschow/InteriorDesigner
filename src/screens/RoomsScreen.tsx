@@ -1,21 +1,24 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Lock } from 'lucide-react'
 import clsx from 'clsx'
 import { api } from '@/api/client'
 import { ErrorBanner } from '@/components/ErrorBanner'
 import { RoomStatusBadge } from '@/components/RoomStatusBadge'
+import type { CompassDirection } from '@/lib/floorplan'
 import { polygonSizeM, type DraftRoomRect } from '@/lib/sceneCoordinates'
 import { formatAreaM2, formatLengthM, inputToMeters, lengthInputUnit, metersToInput } from '@/lib/units'
 import { useProjectContext } from '@/screens/ProjectLayout'
-import { ROOM_TYPE_LABELS, ROOM_TYPES, type Point, type Project, type RoomType } from '@/types/interior'
+import { useProjectPrefsStore } from '@/store/projectPrefsStore'
+import { ROOM_TYPE_LABELS, ROOM_TYPES, type Point, type Project, type RoomType, type WallSide } from '@/types/interior'
 
 const MIN_ROOM_M = 1
 const round3 = (n: number) => Math.round(n * 1000) / 1000
 const EPS = 1e-6
+const DIRECTIONS: CompassDirection[] = ['N', 'E', 'S', 'W']
 
 interface Partitions {
-  /** Depth of the south row (Y up), i.e. where the east–west wall sits. */
+  /** Depth of the bottom row (Y up), i.e. where the horizontal wall sits. */
   splitY: number
   southX: number
   northX: number
@@ -35,7 +38,7 @@ function roomRects(project: Project): DraftRoomRect[] {
   })
 }
 
-/** The editable family: two rooms in the south row and two in the north row, each row split by one wall. */
+/** The editable family: two rooms in the bottom row and two in the top row, each row split by one wall. */
 function detectGrid(rects: DraftRoomRect[], footprint: { w: number; d: number }): Grid | null {
   if (rects.length !== 4) return null
   const south = rects.filter((r) => Math.abs(r.y) < EPS).sort((a, b) => a.x - b.x)
@@ -55,12 +58,14 @@ const rectPolygon = (w: number, d: number): Point[] => [
   { x: 0, y: d },
 ]
 
-/** Confirm room boundaries and categories (flow step 2). Saves with `PUT /rooms`. */
+/** Confirm room names, categories and (where no door sits on them) wall positions. Saves with `PUT /rooms`. */
 export function RoomsScreen() {
   const { project, applyProject, reload, write, setRoomsPreview, selectedRoomId, setSelectedRoomId } = useProjectContext()
   const navigate = useNavigate()
   const unit = project.unitSystem
-  const footprint = project.footprintM
+  const footprint = useMemo(() => ({ w: project.floor.width_m, d: project.floor.depth_m }), [project.floor.width_m, project.floor.depth_m])
+  const doorFacing = useProjectPrefsStore((s) => s.doorFacing[project.id] ?? null)
+  const setDoorFacing = useProjectPrefsStore((s) => s.setDoorFacing)
 
   const saved = useMemo(() => roomRects(project), [project])
   const grid = useMemo(() => detectGrid(saved, footprint), [saved, footprint])
@@ -71,27 +76,33 @@ export function RoomsScreen() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<unknown>(null)
 
+  // Fixed openings can't move, so a wall with a door or doorway on it is locked.
+  const lockReason = (roomId: string, side: WallSide, towards: string[]) => {
+    const opening = project.floor.rooms.find((r) => r.id === roomId)?.openings.find((o) => o.wall_id === `wall-${side}` && towards.includes(o.leads_to))
+    return opening ? `Fixed: ${opening.kind === 'doorway' ? 'a doorway' : 'a door'} sits on this wall.` : null
+  }
+  const locks = grid
+    ? {
+        splitY: lockReason(grid.south[0], 'top', grid.north) ?? lockReason(grid.south[1], 'top', grid.north),
+        southX: lockReason(grid.south[0], 'right', [grid.south[1]]),
+        northX: lockReason(grid.north[0], 'right', [grid.north[1]]),
+      }
+    : null
+
   const draftRects: DraftRoomRect[] = useMemo(() => {
-    if (!grid || !partitions) return saved.map((r) => ({ ...r, name: meta[r.id]?.label ?? r.name, type: meta[r.id]?.type ?? r.type }))
+    const named = (r: DraftRoomRect) => ({ ...r, name: meta[r.id]?.label ?? r.name, type: meta[r.id]?.type ?? r.type })
+    if (!grid || !partitions) return saved.map(named)
     const { splitY, southX, northX } = partitions
-    const place = (id: string, x: number, y: number, w: number, d: number): DraftRoomRect => ({
-      id,
-      name: meta[id]?.label ?? '',
-      type: meta[id]?.type ?? 'living_room',
-      x: round3(x),
-      y: round3(y),
-      w: round3(w),
-      d: round3(d),
-    })
+    const place = (r: DraftRoomRect, x: number, y: number, w: number, d: number) => named({ ...r, x: round3(x), y: round3(y), w: round3(w), d: round3(d) })
     return saved.map((r) => {
-      if (r.id === grid.south[0]) return place(r.id, 0, 0, southX, splitY)
-      if (r.id === grid.south[1]) return place(r.id, southX, 0, footprint.w - southX, splitY)
-      if (r.id === grid.north[0]) return place(r.id, 0, splitY, northX, footprint.d - splitY)
-      return place(r.id, northX, splitY, footprint.w - northX, footprint.d - splitY)
+      if (r.id === grid.south[0]) return place(r, 0, 0, southX, splitY)
+      if (r.id === grid.south[1]) return place(r, southX, 0, footprint.w - southX, splitY)
+      if (r.id === grid.north[0]) return place(r, 0, splitY, northX, footprint.d - splitY)
+      return place(r, northX, splitY, footprint.w - northX, footprint.d - splitY)
     })
   }, [grid, partitions, saved, meta, footprint])
 
-  const geometryDirty = draftRects.some((r, i) => ['x', 'y', 'w', 'd'].some((k) => Math.abs(r[k as 'x'] - saved[i][k as 'x']) > EPS))
+  const geometryDirty = draftRects.some((r, i) => (['x', 'y', 'w', 'd'] as const).some((k) => Math.abs(r[k] - saved[i][k]) > EPS))
   const metaDirty = saved.some((r) => meta[r.id]?.label !== r.name || meta[r.id]?.type !== r.type)
   const dirty = geometryDirty || metaDirty
 
@@ -104,8 +115,8 @@ export function RoomsScreen() {
   }, [project.revision]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    setRoomsPreview(geometryDirty || metaDirty ? draftRects : null)
-  }, [draftRects, geometryDirty, metaDirty, setRoomsPreview])
+    setRoomsPreview(dirty ? draftRects : null)
+  }, [draftRects, dirty, setRoomsPreview])
   useEffect(() => () => setRoomsPreview(null), [setRoomsPreview])
 
   const problems = [
@@ -143,12 +154,41 @@ export function RoomsScreen() {
       <div className="no-scrollbar flex-1 space-y-4 overflow-y-auto p-4">
         <div>
           <h2 className="serif text-lg text-ink">Rooms</h2>
-          <p className="text-xs text-ink-soft/60">
-            Name each room, pick its category and move the walls between them. The outer shell, doors, windows and fixtures stay where they are.
-          </p>
+          <p className="text-xs text-ink-soft/60">Name each room and pick its category. The outer shell, doors and windows are fixed.</p>
         </div>
 
-        {grid && partitions ? (
+        <div className="panel space-y-2 rounded-card p-4">
+          <h3 className="text-xs font-semibold tracking-[0.06em] text-ink-soft/50 uppercase">Front door faces</h3>
+          <div role="radiogroup" aria-label="Front door faces" className="grid grid-cols-5 gap-1.5">
+            {DIRECTIONS.map((direction) => (
+              <button
+                key={direction}
+                type="button"
+                role="radio"
+                aria-checked={doorFacing === direction}
+                onClick={() => setDoorFacing(project.id, direction)}
+                className={clsx(
+                  'rounded-control border-2 py-1.5 text-xs font-semibold',
+                  doorFacing === direction ? 'border-accent bg-accent-pale text-accent-deep' : 'border-canvas-line text-ink-soft hover:border-accent/50',
+                )}
+              >
+                {direction}
+              </button>
+            ))}
+            <button
+              type="button"
+              role="radio"
+              aria-checked={doorFacing === null}
+              onClick={() => setDoorFacing(project.id, null)}
+              className={clsx('rounded-control border-2 py-1.5 text-xs font-semibold', doorFacing === null ? 'border-accent bg-accent-pale text-accent-deep' : 'border-canvas-line text-ink-soft')}
+            >
+              ?
+            </button>
+          </div>
+          <p className="text-[11px] text-ink-soft/60">Rotates the drawing under a compass on this device only; it doesn't change the saved rooms.</p>
+        </div>
+
+        {grid && partitions && locks ? (
           <div className="panel space-y-3 rounded-card p-4">
             <h3 className="text-xs font-semibold tracking-[0.06em] text-ink-soft/50 uppercase">Walls</h3>
             <PartitionInput
@@ -157,6 +197,7 @@ export function RoomsScreen() {
               min={MIN_ROOM_M}
               max={footprint.d - MIN_ROOM_M}
               unit={unit}
+              locked={locks.splitY}
               onChange={(splitY) => setPartitions({ ...partitions, splitY })}
             />
             <PartitionInput
@@ -165,6 +206,7 @@ export function RoomsScreen() {
               min={MIN_ROOM_M}
               max={footprint.w - MIN_ROOM_M}
               unit={unit}
+              locked={locks.southX}
               onChange={(southX) => setPartitions({ ...partitions, southX })}
             />
             <PartitionInput
@@ -173,6 +215,7 @@ export function RoomsScreen() {
               min={MIN_ROOM_M}
               max={footprint.w - MIN_ROOM_M}
               unit={unit}
+              locked={locks.northX}
               onChange={(northX) => setPartitions({ ...partitions, northX })}
             />
           </div>
@@ -181,11 +224,7 @@ export function RoomsScreen() {
         )}
 
         {draftRects.map((r) => (
-          <div
-            key={r.id}
-            className={clsx('panel space-y-2 rounded-card p-4', selectedRoomId === r.id && 'ring-2 ring-accent')}
-            onFocus={() => setSelectedRoomId(r.id)}
-          >
+          <div key={r.id} className={clsx('panel space-y-2 rounded-card p-4', selectedRoomId === r.id && 'ring-2 ring-accent')} onFocus={() => setSelectedRoomId(r.id)}>
             <div className="flex items-center justify-between gap-2">
               <span className="tnum text-[11px] text-ink-soft/50">
                 {formatLengthM(r.w, unit)} × {formatLengthM(r.d, unit)} · {formatAreaM2(r.w * r.d, unit)}
@@ -261,22 +300,23 @@ interface PartitionInputProps {
   min: number
   max: number
   unit: Project['unitSystem']
+  locked: string | null
   onChange: (meters: number) => void
 }
 
 /** Numeric + slider control for one wall position — the keyboard-accessible alternative to dragging. */
-function PartitionInput({ label, meters, min, max, unit, onChange }: PartitionInputProps) {
+function PartitionInput({ label, meters, min, max, unit, locked, onChange }: PartitionInputProps) {
   const [text, setText] = useState(String(metersToInput(meters, unit)))
   useEffect(() => setText(String(metersToInput(meters, unit))), [meters, unit])
   const commit = () => {
     const value = Number(text)
     if (!Number.isFinite(value)) return setText(String(metersToInput(meters, unit)))
-    const m = Math.min(max, Math.max(min, inputToMeters(value, unit)))
-    onChange(m)
-    setText(String(metersToInput(m, unit)))
+    const next = Math.min(max, Math.max(min, inputToMeters(value, unit)))
+    onChange(next)
+    setText(String(metersToInput(next, unit)))
   }
   return (
-    <div>
+    <div className={clsx(locked && 'opacity-60')}>
       <div className="mb-1 flex items-center justify-between gap-2">
         <span className="text-[11px] text-ink-soft">{label}</span>
         <label className="flex shrink-0 items-center gap-1 text-[11px] text-ink-soft/60">
@@ -284,25 +324,33 @@ function PartitionInput({ label, meters, min, max, unit, onChange }: PartitionIn
             inputMode="decimal"
             value={text}
             aria-label={label}
+            disabled={Boolean(locked)}
             onChange={(e) => setText(e.target.value)}
             onBlur={commit}
             onKeyDown={(e) => e.key === 'Enter' && commit()}
-            className="tnum w-16 rounded-control border border-canvas-line bg-app px-1.5 py-0.5 text-right text-xs text-ink focus:border-accent focus:outline-none"
+            className="tnum w-16 rounded-control border border-canvas-line bg-app px-1.5 py-0.5 text-right text-xs text-ink focus:border-accent focus:outline-none disabled:cursor-not-allowed"
           />
           {lengthInputUnit(unit)}
         </label>
       </div>
-      <input
-        type="range"
-        aria-hidden
-        tabIndex={-1}
-        min={min}
-        max={max}
-        step={0.05}
-        value={meters}
-        onChange={(e) => onChange(round3(Number(e.target.value)))}
-        className="w-full accent-[var(--color-accent)]"
-      />
+      {locked ? (
+        <p className="inline-flex items-center gap-1 text-[10px] text-ink-soft/70">
+          <Lock size={10} />
+          {locked}
+        </p>
+      ) : (
+        <input
+          type="range"
+          aria-hidden
+          tabIndex={-1}
+          min={min}
+          max={max}
+          step={0.05}
+          value={meters}
+          onChange={(e) => onChange(round3(Number(e.target.value)))}
+          className="w-full accent-[var(--color-accent)]"
+        />
+      )}
     </div>
   )
 }

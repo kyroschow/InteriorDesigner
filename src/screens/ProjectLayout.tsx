@@ -1,20 +1,27 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useOutletContext, useParams } from 'react-router-dom'
-import { Eye, Home, Loader2 } from 'lucide-react'
+import { Eye, FileDown, Home, Loader2 } from 'lucide-react'
 import clsx from 'clsx'
-import { ApiError, api } from '@/api/client'
+import { ApiError, api, apiHref } from '@/api/client'
 import { Brand } from '@/components/Brand'
 import { ErrorBanner } from '@/components/ErrorBanner'
 import { FloorPlanSvg } from '@/components/FloorPlanSvg'
 import { useGenerationPolling } from '@/hooks/useGeneration'
 import { useProjectData } from '@/hooks/useProject'
-import { downloadSvgAsPng } from '@/lib/exportSvg'
+import { exportPlan, type ExportFormat } from '@/lib/exportSvg'
 import { draftPlan, sceneFurniture, sceneToPlan, type DraftRoomRect } from '@/lib/sceneCoordinates'
 import { formatLengthM } from '@/lib/units'
-import type { ApiErrorDetail, Configuration, FurnitureResponse, Generation, Layout, Project, RulesResponse, UnitSystem } from '@/types/interior'
+import { useProjectPrefsStore } from '@/store/projectPrefsStore'
+import type { ApiErrorDetail, Budget, FurnitureResponse, Generation, Layout, Project, Requirement, RulesResponse, UnitSystem } from '@/types/interior'
+
+export type { ExportFormat }
 
 /** Everything in the configuration except notes, which save separately via the note PATCH. */
-export type ConfigDraft = Omit<Configuration, 'roomInstructions'>
+export interface ConfigDraft {
+  prompt: string
+  budget: Budget | null
+  requirements: Requirement[]
+}
 
 export interface ProjectOutletContext {
   project: Project
@@ -42,23 +49,21 @@ export interface ProjectOutletContext {
   configErrors: ApiErrorDetail[]
   selectedRoomId: string | null
   setSelectedRoomId: (roomId: string | null) => void
-  /** Unsaved partition edits to preview on the canvas; null shows the saved rooms. */
+  /** Unsaved room edits to preview on the canvas; null shows the saved rooms. */
   setRoomsPreview: (rects: DraftRoomRect[] | null) => void
-  downloadPng: () => void
+  exportPlan: (format: ExportFormat) => void
 }
 
 export const useProjectContext = () => useOutletContext<ProjectOutletContext>()
 
-const draftOf = (project: Project): ConfigDraft => {
-  const { revision: _revision, roomInstructions: _notes, ...rest } = project.configuration
-  return structuredClone(rest)
-}
+const draftOf = (project: Project): ConfigDraft =>
+  structuredClone({ prompt: project.configuration.prompt, budget: project.configuration.budget, requirements: project.configuration.requirements })
 const sameDraft = (a: ConfigDraft, b: ConfigDraft) => JSON.stringify(a) === JSON.stringify(b)
 
 const STEPS = [
   { to: 'rooms', label: 'Rooms', end: false },
   { to: '', label: 'Furnish', end: true },
-  { to: 'rules', label: 'Rules & apply', end: false },
+  { to: 'rules', label: 'Brief & apply', end: false },
   { to: 'export', label: 'Results', end: false },
 ]
 
@@ -129,6 +134,7 @@ function ProjectWorkspace({ project, catalog, rules, activeLayout, applyProject,
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null)
   const [roomsPreview, setRoomsPreview] = useState<DraftRoomRect[] | null>(null)
   const [configErrors, setConfigErrors] = useState<ApiErrorDetail[]>([])
+  const doorFacing = useProjectPrefsStore((s) => s.doorFacing[project.id] ?? null)
 
   // Configuration draft. Adopts server changes unless the user has unsaved edits.
   const serverDraft = useMemo(() => draftOf(project), [project])
@@ -187,7 +193,7 @@ function ProjectWorkspace({ project, catalog, rules, activeLayout, applyProject,
     [write, applyLatest],
   )
 
-  const { generation, active: generationActive } = useGenerationPolling(project.id, project.latestGenerationId, (_settled, wasRunning) => {
+  const { generation, active: generationActive } = useGenerationPolling(project.id, project.latestGeneration?.id ?? null, (_settled, wasRunning) => {
     if (wasRunning) reload().catch(setHeaderError)
   })
 
@@ -206,10 +212,12 @@ function ProjectWorkspace({ project, catalog, rules, activeLayout, applyProject,
 
   const onResults = location.pathname.endsWith('/export')
   const savedPlan = useMemo(() => sceneToPlan(project, project.name), [project])
-  const layoutPlan = useMemo(() => (activeLayout ? sceneToPlan(activeLayout, project.name) : null), [activeLayout, project.name])
-  const furniture = useMemo(() => (activeLayout ? sceneFurniture(activeLayout) : undefined), [activeLayout])
+  // Layouts carry only the scene; the demo shell's fixed openings keep room positions from changing.
+  const layoutScene = useMemo(() => (activeLayout ? { floor: activeLayout.scene, roomTransforms: project.roomTransforms } : null), [activeLayout, project.roomTransforms])
+  const layoutPlan = useMemo(() => (layoutScene ? sceneToPlan(layoutScene, project.name) : null), [layoutScene, project.name])
+  const furniture = useMemo(() => (layoutScene ? sceneFurniture(layoutScene) : undefined), [layoutScene])
   const showLayout = onResults && layoutPlan !== null
-  const plan = showLayout ? (layoutPlan ?? savedPlan) : roomsPreview ? draftPlan(savedPlan, roomsPreview, project.footprintM.d) : savedPlan
+  const plan = showLayout ? (layoutPlan ?? savedPlan) : roomsPreview ? draftPlan(savedPlan, roomsPreview, project.floor.depth_m) : savedPlan
 
   const context: ProjectOutletContext = {
     project,
@@ -229,8 +237,8 @@ function ProjectWorkspace({ project, catalog, rules, activeLayout, applyProject,
     selectedRoomId,
     setSelectedRoomId,
     setRoomsPreview,
-    downloadPng: () => {
-      if (svgRef.current) downloadSvgAsPng(svgRef.current, `${project.name.replace(/[^\w-]+/g, '-').toLowerCase() || 'floor-plan'}.png`)
+    exportPlan: (format) => {
+      if (svgRef.current) exportPlan(svgRef.current, format, project.name.replace(/[^\w-]+/g, '-').toLowerCase() || 'floor-plan', `${project.name} — floor plan`)
     },
   }
 
@@ -242,18 +250,22 @@ function ProjectWorkspace({ project, catalog, rules, activeLayout, applyProject,
             <Brand size="sm" />
           </Link>
           <ProjectNameField name={project.name} onSave={(name) => patchProject({ name })} />
-          <span
-            title="Uploaded plans are not analyzed yet; this project uses the four-room demo layout."
-            className="hidden max-w-[18rem] min-w-0 truncate rounded-control bg-accent-pale px-2 py-1 text-[11px] font-medium text-accent-deep sm:inline-block"
-          >
-            Demo layout — uploaded plan not analyzed{project.floorPlanAsset ? ` · ${project.floorPlanAsset.name}` : ''}
+          <span title={project.layoutNotice} className="hidden max-w-[18rem] min-w-0 truncate rounded-control bg-accent-pale px-2 py-1 text-[11px] font-medium text-accent-deep sm:inline-block">
+            {project.layoutNotice}
           </span>
-          <span
-            title="Uploaded plans are not analyzed yet; this project uses the four-room demo layout."
-            className="shrink-0 rounded-control bg-accent-pale px-2 py-1 text-[11px] font-medium text-accent-deep sm:hidden"
-          >
+          <span title={project.layoutNotice} className="shrink-0 rounded-control bg-accent-pale px-2 py-1 text-[11px] font-medium text-accent-deep sm:hidden">
             Demo
           </span>
+          {project.floorPlanAsset?.downloadUrl && (
+            <a
+              href={apiHref(project.floorPlanAsset.downloadUrl)}
+              title={`Download ${project.floorPlanAsset.name}`}
+              className="hidden shrink-0 items-center gap-1 text-[11px] text-ink-soft/70 hover:text-accent-deep md:inline-flex"
+            >
+              <FileDown size={12} />
+              {project.floorPlanAsset.name}
+            </a>
+          )}
           {generationActive && (
             <span className="inline-flex shrink-0 items-center gap-1 text-xs text-ink-soft/70">
               <Loader2 size={12} className="animate-spin" />
@@ -276,10 +288,7 @@ function ProjectWorkspace({ project, catalog, rules, activeLayout, applyProject,
               </button>
             ))}
           </div>
-          <Link
-            to={`/projects/${project.id}/preview`}
-            className="inline-flex items-center gap-1.5 rounded-control px-3 py-2 text-sm font-semibold text-ink-soft hover:bg-canvas"
-          >
+          <Link to={`/projects/${project.id}/preview`} className="inline-flex items-center gap-1.5 rounded-control px-3 py-2 text-sm font-semibold text-ink-soft hover:bg-canvas">
             <Eye size={15} />
             Preview
           </Link>
@@ -324,13 +333,14 @@ function ProjectWorkspace({ project, catalog, rules, activeLayout, applyProject,
               unitSystem={project.unitSystem}
               furniture={showLayout ? furniture : undefined}
               selectedRoomId={selectedRoomId}
+              doorFacing={doorFacing}
               onSelectRoom={(id) => setSelectedRoomId((current) => (current === id ? null : id))}
             />
           </div>
           <p className="text-center text-[11px] text-ink-soft/50">
-            {formatLengthM(project.footprintM.w, project.unitSystem)} × {formatLengthM(project.footprintM.d, project.unitSystem)} shell · ceilings{' '}
+            {formatLengthM(project.floor.width_m, project.unitSystem)} × {formatLengthM(project.floor.depth_m, project.unitSystem)} floor · ceilings{' '}
             {formatLengthM(project.floor.height_m, project.unitSystem)} (fixed)
-            {showLayout ? ' · blue edge marks each piece’s front · dashed outlines are fixed fixtures' : roomsPreview ? ' · previewing unsaved room edits' : ''}
+            {showLayout ? ' · blue edge marks each piece’s front' : roomsPreview ? ' · previewing unsaved room edits' : ''}
           </p>
         </main>
       </div>

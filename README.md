@@ -1,103 +1,82 @@
-# Drafted — local clone
+# Zenlayout
 
-A local, offline reimplementation of **[drafted.ai](https://www.drafted.ai)**, the AI house-plan
-generator: build a room list, pick and sculpt a house footprint, then generate complete furnished
-floor plans with a 3D massing model.
+Furnishing a room is either expensive (hire a designer) or exhausting (measure everything
+yourself, browse a dozen furniture sites, guess what fits, build a shopping list by hand).
+Zenlayout closes that gap: give it a floor plan, say what furniture you want per room, and an AI
+planner lays it out under hard safety rules, with every item matched to a real, purchasable
+product and price, plus an exportable plan and shopping list.
 
-Reverse-engineered from 108 screenshots of a real session plus public research. See
-[`docs/research/`](docs/research/) for the full spec, the forensic screen-by-screen analysis, and
-the measured design tokens.
+See [`PLAN.md`](PLAN.md) for the project plan and
+[`docs/design/simplified-scope.md`](docs/design/simplified-scope.md) for the current scope, safety
+rules and AI loop.
 
-> **On the original:** drafted.ai is **not** open source — it is a closed-source commercial product
-> (its GitHub org `drafted-ai` exists but has zero public repositories). Nothing here is derived
-> from its source code; everything is reimplemented from observed behaviour. See
-> [`docs/research/web-opensource.md`](docs/research/web-opensource.md).
+> **Status:** early prototype. Floor-plan upload is real (the file is stored and downloadable),
+> but every project uses the same `four-room-v1` demo layout rather than parsing the upload.
 
 ## Running it
 
-Node 22 is required. If it isn't on your `PATH`:
-
-```bash
-export PATH="$HOME/.local/node/bin:$PATH"
-```
-
-Then:
+The frontend needs the backend in [`server/`](server/) (Node 24; see its README for the model
+setup).
 
 ```bash
 npm install
+npm run dev:server   # API on http://127.0.0.1:3001/api/v1
+npm run dev          # app on http://127.0.0.1:5273
 ```
+
+The Vite dev server proxies `/api` to `API_PROXY_TARGET` (default `http://127.0.0.1:3001`). To use a
+backend on another machine, put it in `.env.local` (git-ignored) and restart Vite:
+
+```dotenv
+API_PROXY_TARGET=http://10.50.14.226:3001
+```
+
+The backend sends no CORS headers, so keep `VITE_API_BASE_URL` blank and go through the proxy.
+See [`.env.example`](.env.example) and
+[`docs/design/frontend-api-integration.md`](docs/design/frontend-api-integration.md).
 
 ```bash
-npm run dev
+npm run typecheck   # tsc -b
+npm run build       # production build
 ```
 
-The app serves at <http://127.0.0.1:5273>. Everything runs in the browser — no server, no cloud, no
-API keys. State persists to `localStorage`.
+## Current flow
 
-```bash
-npm run build
-```
-
-The UI talks to `/api/v1` only through `src/api/client.ts`. By default that is an in-browser mock of
-the endpoints specified in [`docs/design/`](docs/design/), persisted in `localStorage`. To use a real
-backend, copy `.env.example` to `.env.local` and set `VITE_API_MODE=live` and `VITE_API_BASE_URL`.
-See [`docs/design/frontend-api-integration.md`](docs/design/frontend-api-integration.md).
-
-```bash
-npm run test:api     # contract tests for the mock API
-npm run rules:index  # rebuild the rule index after editing interior-rule-library/
-```
-
-## What it does
-
-The product is a three-step wizard, mirroring the original:
-
-1. **Create Room List** — pick room types from a grouped catalog, set counts and an S/M/L size for
-   each, watch the running total area and "Room List Capacity" fill up.
-2. **Place Rooms & Shape** — choose a house footprint from a preset library or sculpt one on the
-   grid canvas (drag vertices and edges, live dimension labels, snap, mirror, recenter, undo/redo),
-   pick a roof shape, and optionally hand-place individual rooms.
-3. **Results** — five design variants (A–E) generate independently; review the floor plan, inspect
-   the 3D model, choose exterior materials, then "Furnish & Render".
-
-Plus the surrounding app: a studio of projects, a project dashboard with a design library, and a
-per-design detail page with a room schedule, area breakdown and file export.
-
-## How the generation works
-
-No cloud model is involved — the plans are produced by a **deterministic geometric solver**:
-
-- The rectilinear footprint is decomposed into rectangles, then recursively subdivided by a
-  **slicing tree** whose cuts allocate area in proportion to each room's target size.
-- Rooms are assigned to leaves honouring **adjacency preferences** (kitchen beside dining, primary
-  bath and closet off the primary bedroom, garage on an exterior wall) and daylight requirements.
-- A **scoring function** (area error, aspect ratio, adjacency satisfaction, exterior access,
-  circulation) drives a short annealing pass with random restarts.
-- Doors, windows and a hallway spine are placed by rule, at real residential dimensions.
-
-Every step is seeded, so variant "C" of a given room list and footprint is always identical.
-`Math.random()` is banned in generation code.
+1. **Units** (`/new`): imperial or metric, for display only.
+2. **Create** (`/setup`): name the project, start from scratch or upload a floor plan
+   (PNG/JPEG/WebP/PDF, 20 MB). Uploads also ask which way the front door faces, to orient the
+   compass on the plan.
+3. **Rooms** (`/projects/:id/rooms`): rename and recategorize the four rooms. Walls with a door on
+   them are fixed.
+4. **Furnish** (`/projects/:id`): exact quantities of the eleven furniture types per room (or
+   "anywhere"), optional colors and maximum sizes, and per-room notes for the planner.
+5. **Brief & apply** (`/projects/:id/rules`): style prompt, optional budget, the safety rules, and
+   Apply for the whole home or one room. Progress is polled while the AI planner works.
+6. **Results** (`/projects/:id/export`): the saved layout with its safety check, the shopping list
+   with real alternatives, and PNG/SVG/PDF export. **Preview** shows the whole home or one room.
 
 ## Layout
 
 ```
 src/
-  lib/          units, geometry, seeded RNG, the plan generator, furnishing
-  data/         room catalog, shape presets, materials, tutorial script
-  state/        zustand store, persistence, selectors
-  components/   ui kit, plan renderer (SVG), 3D massing, editor, screens' parts
-  screens/      studio, project, the three wizard steps, draft detail
-docs/research/  the spec, build plan, forensic screenshot analysis, measured tokens
+  api/          typed client for /api/v1
+  types/        API contracts (mirror server/ and docs/design/schemas)
+  hooks/        project loading and generation polling
+  lib/          geometry, units, scene → SVG coordinates, plan export
+  store/        zustand stores: onboarding draft, recent projects, per-project display prefs
+  components/   floor-plan SVG renderer, requirement rows, notes, findings, shared UI
+  screens/      onboarding, the project workspace and its steps, preview
+server/         Node + TypeScript API, SQLite, safety rules engine, AI layout loop
+inventory/      real product data (name, price, images, dims) per furniture category
+interior-rule-library/  design-rule reference docs (not used by the backend)
+docs/design/    API contract, request schemas, simplified scope
+docs/research/  measured visual tokens that inspired the visual style
 ```
 
 ## Notes and deviations
 
-- **Vite + React** rather than the original's Next.js — the clone is browser-only, so a build step
-  and a static bundle are all it needs.
-- **SVG** for the floor plan rather than the original's Canvas2D (Konva), which gives crisp text at
-  any zoom and makes "Download Files" a real `.svg` export for free.
-- Fonts are **self-hosted** from npm; there is no Google Fonts request, so the app builds and runs
-  air-gapped.
-- The original's "Furnish & Render" calls a cloud image model. Here it runs a deterministic
-  furnishing pass and draws a furnished plan plus a shaded 3D view. The upgrade/subscription flow
-  is a non-functional demo and never collects payment details.
+- Vite + React + TypeScript, Tailwind v4, Zustand. Project data lives on the backend; the browser
+  keeps only the unit preference, the recent-projects list and the door-facing choice.
+- The door-facing compass rotates the drawing on this device only; the API has no field for it.
+- Layout responses include the scene but not room positions, so the frontend pairs a layout with the
+  project's `roomTransforms`. That's safe while the demo shell's fixed doors keep rooms from moving.

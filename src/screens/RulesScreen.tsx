@@ -1,19 +1,21 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Sparkles } from 'lucide-react'
+import { ArrowLeft, Loader2, ShieldCheck, Sparkles } from 'lucide-react'
 import { api } from '@/api/client'
 import { ErrorBanner } from '@/components/ErrorBanner'
 import { GenerationFindings } from '@/components/GenerationFindings'
-import { RuleMultiSelect } from '@/components/RuleMultiSelect'
-import { StagedLoadingOverlay } from '@/components/StagedLoadingOverlay'
 import { isTerminal } from '@/hooks/useGeneration'
 import { useProjectContext } from '@/screens/ProjectLayout'
-import { MAX_TEXT_LENGTH, type CreateGenerationRequest } from '@/types/interior'
+import { MAX_TEXT_LENGTH, type CreateGenerationRequest, type GenerationStage } from '@/types/interior'
 
-const STAGES = ['Queued…', 'Choosing products…', 'Placing furniture…', 'Checking the layout…']
-const STAGE_INDEX = { selecting: 1, placing: 2, validating: 3 }
+const STAGE_LABEL: Record<GenerationStage, string> = {
+  selecting: 'Choosing candidate products…',
+  placing: 'The AI planner is placing furniture…',
+  validating: 'Checking the layout…',
+}
+const DEFAULT_BUDGET_MINOR = 300000
 
-/** Design brief, rule selection and Apply: configuration PUT (if dirty), then generation POST and polling. */
+/** Design brief, safety rules and Apply: configuration PUT (if dirty), then generation POST and polling. */
 export function RulesScreen() {
   const { project, rules, draft, setDraft, saveDraft, generation, generationActive, applyProject, reload, write } = useProjectContext()
   const navigate = useNavigate()
@@ -23,15 +25,15 @@ export function RulesScreen() {
   const [startedId, setStartedId] = useState<string | null>(null)
   const attempt = useRef<{ payload: string; key: string; generationId: string | null } | null>(null)
 
-  const [budgetText, setBudgetText] = useState((draft.budget.amountMinor / 100).toFixed(0))
-  useEffect(() => setBudgetText((draft.budget.amountMinor / 100).toFixed(0)), [draft.budget.amountMinor])
+  const budgetDollars = (draft.budget?.amountMinor ?? DEFAULT_BUDGET_MINOR) / 100
+  const [budgetText, setBudgetText] = useState(String(budgetDollars))
+  useEffect(() => setBudgetText(String(budgetDollars)), [budgetDollars])
 
   useEffect(() => {
     if (startedId && generation?.id === startedId && generation.status === 'succeeded') navigate(`/projects/${project.id}/export`)
   }, [generation, startedId, navigate, project.id])
 
   const roomLabel = (id: string) => project.floor.rooms.find((r) => r.id === id)?.label ?? id
-  const toggle = (list: string[], id: string) => (list.includes(id) ? list.filter((x) => x !== id) : [...list, id])
 
   async function apply() {
     setSubmitting(true)
@@ -53,7 +55,7 @@ export function RulesScreen() {
         attempt.current = nextAttempt
         const created = await api.createGeneration(current.id, body, nextAttempt.key)
         nextAttempt.generationId = created.generationId
-        applyProject({ ...current, latestGenerationId: created.generationId })
+        applyProject({ ...current, latestGeneration: { id: created.generationId, status: created.status, stage: null, scope: body.scope } })
         return created
       })
       setStartedId(res.generationId)
@@ -65,9 +67,8 @@ export function RulesScreen() {
     }
   }
 
-  const lastAttempt = generation && generation.id === project.latestGenerationId && (generation.status === 'failed' || generation.status === 'stale') ? generation : null
-  const notes = project.configuration.roomInstructions.filter((i) => i.note.trim()).map((i) => ({ room: roomLabel(i.roomId), text: i.note }))
-  const ruleNotices = project.configurationFindings.filter((f) => f.code.startsWith('RULE_'))
+  const lastAttempt = generation && generation.id === project.latestGeneration?.id && (generation.status === 'failed' || generation.status === 'stale') ? generation : null
+  const lastTurn = generation?.progress.turns.at(-1)
 
   return (
     <>
@@ -75,7 +76,7 @@ export function RulesScreen() {
         <section className="space-y-3">
           <div>
             <h2 className="serif text-lg text-ink">Design brief</h2>
-            <p className="text-xs text-ink-soft/60">The prompt guides style; the budget is a hard cap on new furniture for the whole home.</p>
+            <p className="text-xs text-ink-soft/60">The prompt guides the planner's style choices. A budget, if set, is a hard cap on the whole home.</p>
           </div>
           <label className="block text-xs font-medium text-ink-soft">
             <span className="flex justify-between">
@@ -93,44 +94,85 @@ export function RulesScreen() {
               className="mt-1 w-full resize-y rounded-control border border-canvas-line bg-app px-2.5 py-1.5 text-sm font-normal text-ink placeholder:text-ink-soft/40 focus:border-accent focus:outline-none"
             />
           </label>
-          <label className="block text-xs font-medium text-ink-soft">
-            Budget (USD, before tax and shipping)
-            <span className="mt-1 flex items-center rounded-control border border-canvas-line bg-app px-2.5 focus-within:border-accent">
-              <span className="text-sm text-ink-soft/50">$</span>
+          <div className="space-y-1.5">
+            <label className="flex items-center gap-2 text-xs font-medium text-ink-soft">
               <input
-                inputMode="numeric"
-                value={budgetText}
-                onChange={(e) => setBudgetText(e.target.value)}
-                onBlur={() => {
-                  const dollars = Number(budgetText.replace(/[,\s]/g, ''))
-                  if (Number.isFinite(dollars) && dollars >= 0) setDraft((d) => ({ ...d, budget: { amountMinor: Math.round(dollars * 100), currency: 'USD' } }))
-                  else setBudgetText((draft.budget.amountMinor / 100).toFixed(0))
-                }}
-                className="tnum w-full bg-transparent px-1 py-1.5 text-sm text-ink focus:outline-none"
+                type="checkbox"
+                checked={draft.budget !== null}
+                onChange={(e) => setDraft((d) => ({ ...d, budget: e.target.checked ? { amountMinor: DEFAULT_BUDGET_MINOR, currency: 'USD' } : null }))}
               />
-            </span>
-          </label>
+              Set a budget (USD, before tax and shipping)
+            </label>
+            {draft.budget !== null && (
+              <span className="flex items-center rounded-control border border-canvas-line bg-app px-2.5 focus-within:border-accent">
+                <span className="text-sm text-ink-soft/50">$</span>
+                <input
+                  inputMode="numeric"
+                  aria-label="Budget in dollars"
+                  value={budgetText}
+                  onChange={(e) => setBudgetText(e.target.value)}
+                  onBlur={() => {
+                    const dollars = Number(budgetText.replace(/[,\s]/g, ''))
+                    if (Number.isFinite(dollars) && dollars >= 0) setDraft((d) => ({ ...d, budget: { amountMinor: Math.round(dollars * 100), currency: 'USD' } }))
+                    else setBudgetText(String(budgetDollars))
+                  }}
+                  className="tnum w-full bg-transparent px-1 py-1.5 text-sm text-ink focus:outline-none"
+                />
+              </span>
+            )}
+            <p className="text-[10px] text-ink-soft/50">Standard-size stand-ins have no price and don't count toward the budget.</p>
+          </div>
         </section>
 
         <section className="space-y-2">
-          <h2 className="serif text-lg text-ink">Design rules</h2>
-          <p className="text-xs text-ink-soft/60">Baseline geometry checks always run. Library rules apply only where an evaluator exists.</p>
-          <RuleMultiSelect
-            rules={rules.items}
-            beliefSystems={rules.beliefSystems}
-            roomTypes={project.floor.rooms.map((r) => r.type)}
-            selected={draft.selectedRuleIds}
-            enabledBeliefSystems={draft.enabledBeliefSystems}
-            notices={ruleNotices}
-            onToggleRule={(id) => setDraft((d) => ({ ...d, selectedRuleIds: toggle(d.selectedRuleIds, id) }))}
-            onToggleBelief={(id) => setDraft((d) => ({ ...d, enabledBeliefSystems: toggle(d.enabledBeliefSystems, id) }))}
-          />
+          <h2 className="serif flex items-center gap-1.5 text-lg text-ink">
+            <ShieldCheck size={16} className="text-emerald-700" />
+            Safety rules
+          </h2>
+          <p className="text-xs text-ink-soft/60">All {rules.items.length} rules are hard: a layout is saved only if every one passes.</p>
+          <ul className="divide-y divide-canvas-line rounded-control border border-canvas-line">
+            {rules.items.map((rule) => (
+              <li key={rule.id} className="px-2.5 py-2">
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className="text-xs font-medium text-ink">{rule.title}</span>
+                  <span className="shrink-0 text-[10px] text-ink-soft/40">{rule.id}</span>
+                </div>
+                <p className="text-[11px] text-ink-soft/70">
+                  {rule.description}
+                  {Object.keys(rule.params).length > 0 && <span className="text-ink-soft/50"> ({Object.entries(rule.params).map(([k, v]) => `${k} ${v}`).join(', ')})</span>}
+                </p>
+              </li>
+            ))}
+          </ul>
         </section>
+
+        {generationActive && (
+          <section aria-live="polite" className="space-y-1 rounded-control border border-accent/30 bg-accent-pale/60 p-3">
+            <p className="flex items-center gap-2 text-xs font-semibold text-accent-deep">
+              <Loader2 size={13} className="animate-spin" />
+              {generation?.status === 'queued' || !generation?.stage ? 'Queued…' : STAGE_LABEL[generation.stage]}
+            </p>
+            {generation && generation.progress.turn > 0 && (
+              <p className="text-[11px] text-ink-soft">
+                Planner turn {generation.progress.turn} of {generation.progress.maxTurns}
+                {lastTurn?.violations != null ? ` · last check: ${lastTurn.violations} rule violation${lastTurn.violations === 1 ? '' : 's'}` : ''}
+              </p>
+            )}
+            {lastTurn?.details && lastTurn.details.length > 0 && (
+              <ul className="list-disc pl-4 text-[10px] text-ink-soft/70">
+                {lastTurn.details.slice(0, 3).map((d, i) => (
+                  <li key={i}>{d}</li>
+                ))}
+              </ul>
+            )}
+            <p className="text-[10px] text-ink-soft/60">This can take a few minutes. You can keep working; results open when the layout is ready.</p>
+          </section>
+        )}
 
         {lastAttempt && (
           <section className="rounded-control border border-red-200 bg-red-50/50 p-3">
             <p className="mb-2 text-xs font-semibold text-red-900">
-              {lastAttempt.status === 'stale' ? 'The last generation went stale.' : (lastAttempt.error?.message ?? 'The last generation failed.')}
+              {lastAttempt.status === 'stale' ? 'The project changed while generating, so that result was not applied.' : `Generation failed${lastAttempt.errorCode ? ` (${lastAttempt.errorCode})` : ''}.`}
               {project.activeLayoutId ? ' Your previous layout is unchanged.' : ''}
             </p>
             <GenerationFindings findings={lastAttempt.issues} roomLabel={roomLabel} />
@@ -142,11 +184,7 @@ export function RulesScreen() {
         {applyError != null && <ErrorBanner error={applyError} onReload={() => reload().then(() => setApplyError(null))} onDismiss={() => setApplyError(null)} />}
         <label className="flex items-center justify-between gap-2 text-xs text-ink-soft">
           Generate for
-          <select
-            value={scope}
-            onChange={(e) => setScope(e.target.value)}
-            className="rounded-control border border-canvas-line bg-app px-2 py-1 text-xs text-ink focus:border-accent focus:outline-none"
-          >
+          <select value={scope} onChange={(e) => setScope(e.target.value)} className="rounded-control border border-canvas-line bg-app px-2 py-1 text-xs text-ink focus:border-accent focus:outline-none">
             <option value="home">Whole home</option>
             {project.floor.rooms.map((r) => (
               <option key={r.id} value={r.id}>
@@ -175,10 +213,6 @@ export function RulesScreen() {
           </button>
         </div>
       </div>
-
-      {generationActive && (
-        <StagedLoadingOverlay stages={STAGES} stageIndex={generation?.stage ? STAGE_INDEX[generation.stage] : 0} notes={notes} />
-      )}
     </>
   )
 }

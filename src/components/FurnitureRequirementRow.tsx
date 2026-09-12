@@ -3,29 +3,43 @@ import { ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
 import { QuantityStepper } from '@/components/QuantityStepper'
 import { inputToMeters, lengthInputUnit, metersToInput } from '@/lib/units'
-import type { FurnitureResponse, FurnitureType, Requirement, UnitSystem } from '@/types/interior'
+import { COLOR_FAMILIES, type FurnitureType, type Requirement, type UnitSystem } from '@/types/interior'
 
 /** UI cap per line; the API accepts up to 100. */
 const MAX_PER_LINE = 10
+
+const SWATCH: Record<string, string> = {
+  white: '#f5f5f4',
+  black: '#1f2937',
+  gray: '#8a8f98',
+  beige: '#d6c7a1',
+  brown: '#7c5a3a',
+  natural: '#c8a27a',
+  blue: '#3b6ea5',
+  green: '#5f8a6b',
+}
 
 interface FurnitureRequirementRowProps {
   type: FurnitureType
   roomId: string | null
   requirement: Requirement | undefined
-  colorFamilies: FurnitureResponse['colorFamilies']
-  /** Color families present among this type's eligible products. */
+  /** Color families present among this type's real products. */
   availableColors: string[]
+  /** Only a standard-size stand-in exists for this type (no product, price or color). */
+  standardSizeOnly: boolean
   unitSystem: UnitSystem
   errors: string[]
   onChange: (next: Requirement | null) => void
 }
 
 type DimKey = 'w' | 'd' | 'h'
+const DIMS: DimKey[] = ['w', 'd', 'h']
 const DIM_LABELS: Record<DimKey, string> = { w: 'W', d: 'D', h: 'H' }
 
-/** One furniture type: exact quantity, then optional hard filters (colors, max size). */
-export function FurnitureRequirementRow({ type, roomId, requirement, colorFamilies, availableColors, unitSystem, errors, onChange }: FurnitureRequirementRowProps) {
+/** One furniture type: exact quantity, then optional limits (colors, max size). */
+export function FurnitureRequirementRow({ type, roomId, requirement, availableColors, standardSizeOnly, unitSystem, errors, onChange }: FurnitureRequirementRowProps) {
   const quantity = requirement?.quantity ?? 0
+  const allowedColors = requirement?.allowedColors ?? []
   const [open, setOpen] = useState(false)
   const dimsFrom = (req?: Requirement): Record<DimKey, string> => {
     const m = req?.maxDimensionsM
@@ -40,36 +54,33 @@ export function FurnitureRequirementRow({ type, roomId, requirement, colorFamili
       setOpen(false)
       return
     }
-    const id = `req-${roomId ?? 'any'}-${type.objectType}`
-    onChange({ id, objectType: type.objectType, roomId, allowedColors: [], ...requirement, quantity: value })
+    // allowedColors: [] matches the server's normalization, so a saved draft isn't reported as dirty.
+    onChange({ id: `req-${roomId ?? 'any'}-${type.id}`, objectType: type.id, roomId, allowedColors: [], ...requirement, quantity: value })
   }
 
   const toggleColor = (color: string) => {
     if (!requirement) return
-    const allowedColors = requirement.allowedColors.includes(color) ? requirement.allowedColors.filter((c) => c !== color) : [...requirement.allowedColors, color]
-    onChange({ ...requirement, allowedColors })
+    onChange({ ...requirement, allowedColors: allowedColors.includes(color) ? allowedColors.filter((c) => c !== color) : [...allowedColors, color] })
   }
 
   const updateDim = (key: DimKey, value: string) => {
     const next = { ...dims, [key]: value }
     setDims(next)
     if (!requirement) return
-    const values = (['w', 'd', 'h'] as DimKey[]).map((k) => Number(next[k]))
-    const allEmpty = (['w', 'd', 'h'] as DimKey[]).every((k) => next[k].trim() === '')
-    const allValid = values.every((v) => Number.isFinite(v) && v > 0) && !(['w', 'd', 'h'] as DimKey[]).some((k) => next[k].trim() === '')
-    if (allEmpty) {
+    const values = DIMS.map((k) => Number(next[k]))
+    if (DIMS.every((k) => next[k].trim() === '')) {
       const { maxDimensionsM: _drop, ...rest } = requirement
       onChange(rest)
-    } else if (allValid) {
+    } else if (DIMS.every((k) => next[k].trim() !== '') && values.every((v) => Number.isFinite(v) && v > 0)) {
       const [w, d, h] = values.map((v) => inputToMeters(v, unitSystem))
       onChange({ ...requirement, maxDimensionsM: { w, d, h } })
     }
   }
-  const partialDims = (['w', 'd', 'h'] as DimKey[]).some((k) => dims[k].trim() !== '') && !requirement?.maxDimensionsM
+  const partialDims = DIMS.some((k) => dims[k].trim() !== '') && !requirement?.maxDimensionsM
 
   const summary = requirement
     ? [
-        requirement.allowedColors.length ? requirement.allowedColors.map((c) => colorFamilies.find((f) => f.id === c)?.label ?? c).join(', ') : 'Any color',
+        standardSizeOnly ? 'Standard size' : allowedColors.length ? allowedColors.join(', ') : 'Any color',
         requirement.maxDimensionsM ? `max ${dims.w}×${dims.d}×${dims.h} ${lengthInputUnit(unitSystem)}` : 'no size limit',
       ].join(' · ')
     : ''
@@ -79,48 +90,45 @@ export function FurnitureRequirementRow({ type, roomId, requirement, colorFamili
       <QuantityStepper label={type.label} value={quantity} max={MAX_PER_LINE} onChange={setQuantity} />
       {requirement && (
         <div className="pb-1.5 pl-1">
-          <button
-            type="button"
-            aria-expanded={open}
-            onClick={() => setOpen((v) => !v)}
-            className="inline-flex max-w-full items-center gap-1 text-[11px] text-ink-soft/60 hover:text-accent-deep"
-          >
+          <button type="button" aria-expanded={open} onClick={() => setOpen((v) => !v)} className="inline-flex max-w-full items-center gap-1 text-[11px] text-ink-soft/60 hover:text-accent-deep">
             <ChevronDown size={12} className={clsx('shrink-0 transition-transform', open && 'rotate-180')} />
             <span className="truncate">{summary}</span>
           </button>
           {open && (
             <div className="mt-1.5 space-y-2 rounded-control bg-canvas p-2">
-              <fieldset>
-                <legend className="mb-1 text-[10px] font-semibold tracking-[0.06em] text-ink-soft/50 uppercase">Allowed colors</legend>
-                <div className="flex flex-wrap gap-1">
-                  {colorFamilies
-                    .filter((f) => availableColors.includes(f.id) || requirement.allowedColors.includes(f.id))
-                    .map((family) => {
-                      const on = requirement.allowedColors.includes(family.id)
+              {standardSizeOnly ? (
+                <p className="text-[10px] text-ink-soft/60">No real product is in the catalog for this yet, so the planner uses a standard-size stand-in with no price or color.</p>
+              ) : (
+                <fieldset>
+                  <legend className="mb-1 text-[10px] font-semibold tracking-[0.06em] text-ink-soft/50 uppercase">Allowed colors</legend>
+                  <div className="flex flex-wrap gap-1">
+                    {COLOR_FAMILIES.filter((c) => availableColors.includes(c) || allowedColors.includes(c)).map((color) => {
+                      const on = allowedColors.includes(color)
                       return (
                         <button
-                          key={family.id}
+                          key={color}
                           type="button"
                           role="checkbox"
                           aria-checked={on}
-                          onClick={() => toggleColor(family.id)}
+                          onClick={() => toggleColor(color)}
                           className={clsx(
-                            'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px]',
+                            'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] capitalize',
                             on ? 'border-accent bg-accent-pale text-accent-deep' : 'border-canvas-line bg-app text-ink-soft',
                           )}
                         >
-                          <span className="h-2.5 w-2.5 rounded-full border border-black/10" style={{ background: family.hex }} />
-                          {family.label}
+                          <span className="h-2.5 w-2.5 rounded-full border border-black/10" style={{ background: SWATCH[color] }} />
+                          {color}
                         </button>
                       )
                     })}
-                </div>
-                <p className="mt-1 text-[10px] text-ink-soft/50">None selected means any color.</p>
-              </fieldset>
+                  </div>
+                  <p className="mt-1 text-[10px] text-ink-soft/50">None selected means any color.</p>
+                </fieldset>
+              )}
               <fieldset>
                 <legend className="mb-1 text-[10px] font-semibold tracking-[0.06em] text-ink-soft/50 uppercase">Maximum size ({lengthInputUnit(unitSystem)})</legend>
                 <div className="flex gap-1.5">
-                  {(['w', 'd', 'h'] as DimKey[]).map((key) => (
+                  {DIMS.map((key) => (
                     <label key={key} className="flex items-center gap-1 text-[11px] text-ink-soft">
                       {DIM_LABELS[key]}
                       <input

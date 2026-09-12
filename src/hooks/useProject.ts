@@ -10,7 +10,7 @@ export type ProjectLoad =
 
 /**
  * Server-owned project data for the workspace: the project (refresh/deep-link
- * safe), the catalog and rule registries, and the active layout whenever the
+ * safe), the catalog and safety rules, and the active layout whenever the
  * project points at one.
  */
 export function useProjectData(projectId: string) {
@@ -23,7 +23,7 @@ export function useProjectData(projectId: string) {
   useEffect(() => {
     const controller = new AbortController()
     setLoad({ status: 'loading' })
-    Promise.all([api.getProject(projectId, controller.signal), api.getFurniture({}, controller.signal), api.getRules(undefined, controller.signal)])
+    Promise.all([api.getProject(projectId, controller.signal), api.getFurniture({}, controller.signal), api.getRules(controller.signal)])
       .then(([project, catalog, rules]) => {
         setLoad({ status: 'ready', project, catalog, rules })
         remember(project)

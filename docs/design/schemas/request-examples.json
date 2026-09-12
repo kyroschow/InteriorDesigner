@@ -61,7 +61,7 @@
       {
         "id": "room-3",
         "label": "Bedroom",
-        "type": "bedroom_primary",
+        "type": "bedroom",
         "polygon": [
           {
             "x": 0,
@@ -84,7 +84,7 @@
       {
         "id": "room-4",
         "label": "Bathroom",
-        "type": "bathroom_full",
+        "type": "bathroom",
         "polygon": [
           {
             "x": 0,
@@ -147,7 +147,7 @@
       "requirements": [
         {
           "id": "req-bed",
-          "objectType": "sleep.bed.queen",
+          "objectType": "bed",
           "quantity": 1,
           "roomId": "room-3",
           "allowedColors": [],
@@ -156,10 +156,20 @@
             "d": 2.2,
             "h": 1.3
           }
+        },
+        {
+          "id": "req-nightstand",
+          "objectType": "nightstand",
+          "quantity": 2,
+          "roomId": "room-3"
+        },
+        {
+          "id": "req-toilet",
+          "objectType": "toilet",
+          "quantity": 1,
+          "roomId": null
         }
       ],
-      "selectedRuleIds": [],
-      "enabledBeliefSystems": [],
       "roomInstructions": [
         {
           "roomId": "room-1",

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { ArrowRight, FolderOpen, Plus } from 'lucide-react'
+import { FolderOpen, Plus } from 'lucide-react'
 import { Brand } from '@/components/Brand'
 
 /** The true entry point — hero + where to start, separate from the actual onboarding wizard. */
@@ -28,10 +28,6 @@ export function HomeScreen() {
             <div className="serif text-lg text-ink">New Project</div>
             <p className="mt-1 text-sm text-ink-soft/60">Start furnishing a floor plan from scratch or an upload.</p>
           </div>
-          <span className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-accent-deep">
-            Get started
-            <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
-          </span>
         </button>
 
         <button
@@ -46,10 +42,6 @@ export function HomeScreen() {
             <div className="serif text-lg text-ink">My Projects</div>
             <p className="mt-1 text-sm text-ink-soft/60">Pick up where you left off.</p>
           </div>
-          <span className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-ink-soft">
-            View projects
-            <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
-          </span>
         </button>
       </div>
     </div>

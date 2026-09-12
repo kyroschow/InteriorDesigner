@@ -1,5 +1,7 @@
 # Interior workspace: backend API and frontend component draft
 
+> **Superseded in part** by [simplified scope](simplified-scope.md): the rule library, belief systems, fictional catalog and room types below are replaced by four room types, eleven furniture types and a code safety rules engine. The endpoints, revisions and generation lifecycle still apply.
+
 Status: proposed implementation contract, based on the current source. No endpoints or components below are implemented by this document.
 
 See [request schemas, inventory selection and room notes](request-contracts-and-selection.md) for the expanded contract and machine-readable request schemas. That extension uses the existing `inventory/*.json` catalogs and supersedes the illustrative furniture fixtures below.

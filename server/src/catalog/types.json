@@ -1,0 +1,96 @@
+{
+  "version": 1,
+  "types": {
+    "bed": {
+      "label": "Bed",
+      "roomTypes": ["bedroom"],
+      "wallRule": "back_to_wall",
+      "access": [{ "sides": ["left", "right"], "rule": "any", "depthM": 0.6, "insetBackM": 0.6 }],
+      "inventory": [{ "file": "beds.json" }],
+      "defaults": [{ "name": "Queen bed (standard size)", "sizeM": { "w": 1.6, "d": 2.1, "h": 0.9 }, "roomTypes": ["bedroom"] }]
+    },
+    "dresser": {
+      "label": "Dresser",
+      "roomTypes": ["bedroom"],
+      "wallRule": "back_to_wall",
+      "access": [{ "sides": ["front"], "rule": "all", "depthM": 0.9 }],
+      "inventory": [{ "file": "dresser.json" }],
+      "defaults": [{ "name": "Dresser (standard size)", "sizeM": { "w": 1.2, "d": 0.5, "h": 0.8 }, "roomTypes": ["bedroom"] }]
+    },
+    "nightstand": {
+      "label": "Night stand",
+      "roomTypes": ["bedroom"],
+      "wallRule": "free",
+      "access": [],
+      "inventory": [{ "file": "nightstand.json" }],
+      "defaults": [{ "name": "Night stand (standard size)", "sizeM": { "w": 0.45, "d": 0.4, "h": 0.55 }, "roomTypes": ["bedroom"] }]
+    },
+    "tv_stand": {
+      "label": "TV stand",
+      "roomTypes": ["bedroom", "living_room"],
+      "wallRule": "back_to_wall",
+      "access": [{ "sides": ["front"], "rule": "all", "depthM": 0.6 }],
+      "inventory": [{ "file": "tvstand.json" }],
+      "defaults": [{ "name": "TV stand (standard size)", "sizeM": { "w": 1.5, "d": 0.4, "h": 0.55 }, "roomTypes": ["bedroom", "living_room"] }]
+    },
+    "sofa": {
+      "label": "Sofa",
+      "roomTypes": ["living_room"],
+      "wallRule": "free",
+      "access": [{ "sides": ["front"], "rule": "all", "depthM": 0.6 }],
+      "inventory": [{ "file": "sofa.json" }],
+      "defaults": [{ "name": "Sofa (standard size)", "sizeM": { "w": 2.0, "d": 0.9, "h": 0.8 }, "roomTypes": ["living_room"] }]
+    },
+    "dining_table": {
+      "label": "Dining table",
+      "roomTypes": ["living_room", "kitchen"],
+      "wallRule": "free",
+      "access": [],
+      "inventory": [],
+      "defaults": [{ "name": "Dining table (standard size)", "sizeM": { "w": 1.5, "d": 0.9, "h": 0.75 }, "roomTypes": ["living_room", "kitchen"] }]
+    },
+    "dining_chair": {
+      "label": "Dining chair",
+      "roomTypes": ["living_room", "kitchen"],
+      "wallRule": "free",
+      "access": [{ "sides": ["back"], "rule": "all", "depthM": 0.6 }],
+      "inventory": [],
+      "defaults": [{ "name": "Dining chair (standard size)", "sizeM": { "w": 0.45, "d": 0.5, "h": 0.9 }, "roomTypes": ["living_room", "kitchen"] }]
+    },
+    "kitchen_counter": {
+      "label": "Kitchen counter",
+      "roomTypes": ["kitchen"],
+      "wallRule": "back_to_wall",
+      "access": [{ "sides": ["front"], "rule": "all", "depthM": 1.0 }],
+      "inventory": [{ "file": "cabinets.json", "categoryPrefix": "base_cabinet" }],
+      "defaults": [{ "name": "Kitchen counter (standard size)", "sizeM": { "w": 1.8, "d": 0.6, "h": 0.9 }, "roomTypes": ["kitchen"] }]
+    },
+    "sink": {
+      "label": "Sink",
+      "roomTypes": ["kitchen", "bathroom"],
+      "wallRule": "back_to_wall",
+      "access": [{ "sides": ["front"], "rule": "all", "depthM": 0.7 }],
+      "inventory": [{ "file": "sinks.json", "roomTypes": ["bathroom"] }],
+      "defaults": [
+        { "name": "Kitchen sink unit (standard size)", "sizeM": { "w": 0.8, "d": 0.6, "h": 0.9 }, "roomTypes": ["kitchen"] },
+        { "name": "Bathroom sink (standard size)", "sizeM": { "w": 0.6, "d": 0.5, "h": 0.85 }, "roomTypes": ["bathroom"] }
+      ]
+    },
+    "shower": {
+      "label": "Shower",
+      "roomTypes": ["bathroom"],
+      "wallRule": "back_to_wall",
+      "access": [{ "sides": ["front"], "rule": "all", "depthM": 0.6 }],
+      "inventory": [],
+      "defaults": [{ "name": "Shower (standard size)", "sizeM": { "w": 0.9, "d": 0.9, "h": 2.0 }, "roomTypes": ["bathroom"] }]
+    },
+    "toilet": {
+      "label": "Toilet",
+      "roomTypes": ["bathroom"],
+      "wallRule": "back_to_wall",
+      "access": [{ "sides": ["front"], "rule": "all", "depthM": 0.6 }],
+      "inventory": [],
+      "defaults": [{ "name": "Toilet (standard size)", "sizeM": { "w": 0.4, "d": 0.7, "h": 0.8 }, "roomTypes": ["bathroom"] }]
+    }
+  }
+}
