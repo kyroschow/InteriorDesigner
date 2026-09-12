@@ -15,6 +15,10 @@ interface FurnitureState {
   /** Freeform per-room requests, e.g. "make it cozy" — captured for when an agent exists to read them. */
   notes: Record<string, RoomNote[]>
   addNote: (roomId: string, text: string) => void
+  /** Which product option is picked per room+item, as an index into getProductOptions() (0 = cheapest, the default). */
+  productChoices: Record<string, number>
+  getProductChoice: (roomId: string, itemId: string) => number
+  setProductChoice: (roomId: string, itemId: string, index: number) => void
 }
 
 /** Furniture quantities and freeform notes the client wants, per room. */
@@ -32,5 +36,11 @@ export const useFurnitureStore = create<FurnitureState>((set, get) => ({
         ...state.notes,
         [roomId]: [...(state.notes[roomId] ?? []), { id: crypto.randomUUID(), text }],
       },
+    })),
+  productChoices: {},
+  getProductChoice: (roomId, itemId) => get().productChoices[key(roomId, itemId)] ?? 0,
+  setProductChoice: (roomId, itemId, index) =>
+    set((state) => ({
+      productChoices: { ...state.productChoices, [key(roomId, itemId)]: index },
     })),
 }))

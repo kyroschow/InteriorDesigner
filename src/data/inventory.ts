@@ -35,11 +35,11 @@ const INVENTORY_BY_ITEM_ID: Partial<Record<string, InventoryProduct[]>> = {
   sink: sinksData as InventoryProduct[],
 }
 
-/** The cheapest real product for a catalog item id, or null if there's no inventory for it yet. */
-export function matchProduct(itemId: string): InventoryProduct | null {
+/** Every real product available for a catalog item id, cheapest first — empty if there's no inventory for it yet. */
+export function getProductOptions(itemId: string): InventoryProduct[] {
   const products = INVENTORY_BY_ITEM_ID[itemId]
-  if (!products || products.length === 0) return null
-  return products.reduce((cheapest, p) => (p.priceCents < cheapest.priceCents ? p : cheapest))
+  if (!products) return []
+  return [...products].sort((a, b) => a.priceCents - b.priceCents)
 }
 
 /** 14900 -> "$149.00" */

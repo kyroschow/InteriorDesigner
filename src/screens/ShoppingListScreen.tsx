@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, ExternalLink, ImageOff } from 'lucide-react'
+import { ArrowLeft, ChevronLeft, ChevronRight, ExternalLink, ImageOff } from 'lucide-react'
 import { birchTwoBed } from '@/data/floorplans/birchTwoBed'
 import { formatPriceCents } from '@/data/inventory'
 import { buildShoppingList } from '@/lib/shoppingList'
@@ -34,11 +34,14 @@ export function ShoppingListScreen() {
   const navigate = useNavigate()
   const getQuantity = useFurnitureStore((s) => s.getQuantity)
   const quantities = useFurnitureStore((s) => s.quantities)
+  const getProductChoice = useFurnitureStore((s) => s.getProductChoice)
+  const setProductChoice = useFurnitureStore((s) => s.setProductChoice)
+  const productChoices = useFurnitureStore((s) => s.productChoices)
 
   const groups = useMemo(
-    () => buildShoppingList(birchTwoBed.rooms, getQuantity),
+    () => buildShoppingList(birchTwoBed.rooms, getQuantity, getProductChoice),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [quantities],
+    [quantities, productChoices],
   )
   const grandTotalCents = groups.reduce((sum, g) => sum + g.subtotalCents, 0)
   const matchedCount = groups.reduce((sum, g) => sum + g.lines.filter((l) => l.product).length, 0)
@@ -62,24 +65,55 @@ export function ShoppingListScreen() {
             </div>
             <div className="panel space-y-1 rounded-card p-2">
               {group.lines.map((line) => (
-                <div key={line.itemId} className="flex items-center gap-2 rounded-control p-1.5">
-                  <Thumb url={line.product?.imageUrls[0]} alt={line.product?.name ?? line.itemLabel} />
-                  <div className="min-w-0 flex-1">
-                    <div className="truncate text-xs font-medium text-ink">{line.product?.name ?? line.itemLabel}</div>
-                    <div className="tnum text-[11px] text-ink-soft/50">
-                      ×{line.quantity} · {line.product ? formatPriceCents(line.product.priceCents * line.quantity) : 'no match'}
+                <div key={line.itemId} className="rounded-control p-1.5">
+                  <div className="flex items-center gap-2">
+                    <Thumb url={line.product?.imageUrls[0]} alt={line.product?.name ?? line.itemLabel} />
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-xs font-medium text-ink">{line.product?.name ?? line.itemLabel}</div>
+                      <div className="tnum text-[11px] text-ink-soft/50">
+                        ×{line.quantity} · {line.product ? formatPriceCents(line.product.priceCents * line.quantity) : 'no match'}
+                      </div>
                     </div>
+                    {line.product && (
+                      <a
+                        href={line.product.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={`View ${line.product.name} on IKEA`}
+                        className="shrink-0 rounded-control p-1.5 text-ink-soft/40 hover:bg-canvas hover:text-accent"
+                      >
+                        <ExternalLink size={13} />
+                      </a>
+                    )}
                   </div>
-                  {line.product && (
-                    <a
-                      href={line.product.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={`View ${line.product.name} on IKEA`}
-                      className="shrink-0 rounded-control p-1.5 text-ink-soft/40 hover:bg-canvas hover:text-accent"
-                    >
-                      <ExternalLink size={13} />
-                    </a>
+                  {line.optionCount > 1 && (
+                    <div className="mt-1 flex items-center justify-center gap-2 pl-12 text-ink-soft/50">
+                      <button
+                        type="button"
+                        aria-label={`Previous option for ${line.itemLabel}`}
+                        onClick={() =>
+                          setProductChoice(
+                            line.roomId,
+                            line.itemId,
+                            (line.optionIndex - 1 + line.optionCount) % line.optionCount,
+                          )
+                        }
+                        className="rounded-control p-0.5 hover:bg-canvas hover:text-accent"
+                      >
+                        <ChevronLeft size={13} />
+                      </button>
+                      <span className="tnum text-[10px]">
+                        Option {line.optionIndex + 1} of {line.optionCount}
+                      </span>
+                      <button
+                        type="button"
+                        aria-label={`Next option for ${line.itemLabel}`}
+                        onClick={() => setProductChoice(line.roomId, line.itemId, (line.optionIndex + 1) % line.optionCount)}
+                        className="rounded-control p-0.5 hover:bg-canvas hover:text-accent"
+                      >
+                        <ChevronRight size={13} />
+                      </button>
+                    </div>
                   )}
                 </div>
               ))}

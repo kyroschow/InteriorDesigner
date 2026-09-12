@@ -5,6 +5,7 @@ import clsx from 'clsx'
 import { StagedLoadingOverlay } from '@/components/StagedLoadingOverlay'
 import { RULE_PACKS } from '@/data/ruleLibrary'
 import { useStagedLoading } from '@/lib/useStagedLoading'
+import { useFurnitureStore } from '@/store/furnitureStore'
 
 const STAGES = ['Reading your rooms…', 'Thinking about placement…', 'Applying design rules…', 'Finishing touches…']
 
@@ -13,6 +14,8 @@ export function RulesScreen() {
   const navigate = useNavigate()
   const [selected, setSelected] = useState<string[]>([])
   const { isRunning: isGenerating, stageIndex, start } = useStagedLoading(STAGES)
+  const notesByRoom = useFurnitureStore((s) => s.notes)
+  const allNotes = Object.values(notesByRoom).flat().map((n) => n.text)
 
   function toggle(id: string) {
     setSelected((prev) => (prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]))
@@ -83,7 +86,7 @@ export function RulesScreen() {
         </button>
       </div>
 
-      {isGenerating && <StagedLoadingOverlay stages={STAGES} stageIndex={stageIndex} />}
+      {isGenerating && <StagedLoadingOverlay stages={STAGES} stageIndex={stageIndex} notes={allNotes} />}
     </>
   )
 }
