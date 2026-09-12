@@ -6,8 +6,6 @@ import { Brand } from '@/components/Brand'
 import { StepHeader } from '@/components/StepHeader'
 import { OptionCard } from '@/components/OptionCard'
 import { StagedLoadingOverlay } from '@/components/StagedLoadingOverlay'
-import { FloorPlanSvg } from '@/components/FloorPlanSvg'
-import { birchTwoBed } from '@/data/floorplans/birchTwoBed'
 import { useOnboardingStore, type CompassDirection } from '@/store/onboardingStore'
 import { useStagedLoading } from '@/lib/useStagedLoading'
 
@@ -54,8 +52,7 @@ export function CreateScreen() {
   const canCreate = mode === 'scratch' || (mode === 'upload' && uploadedFile != null && doorFacing != null)
 
   return (
-    <div className="animate-pane-in relative mx-auto flex min-h-full w-full max-w-5xl flex-col justify-center gap-10 px-6 py-16 lg:flex-row lg:items-center">
-      <div className="w-full lg:max-w-lg">
+    <div className="animate-pane-in relative mx-auto flex min-h-full w-full max-w-2xl flex-col justify-center px-6 py-16">
       <div className="mb-8">
         <Brand size="sm" />
       </div>
@@ -203,17 +200,6 @@ export function CreateScreen() {
           Create Project
           <ArrowRight size={16} />
         </button>
-      </div>
-      </div>
-
-      <div className="hidden w-full flex-1 lg:block">
-        <div className="mb-2 text-xs font-semibold tracking-[0.08em] text-ink-soft/50 uppercase">Preview</div>
-        <div className="panel rounded-panel p-6">
-          <FloorPlanSvg plan={birchTwoBed} />
-        </div>
-        <p className="mt-2 text-xs text-ink-soft/50">
-          Every project starts from this demo plan for now — {birchTwoBed.name}.
-        </p>
       </div>
 
       {isCreating && <StagedLoadingOverlay stages={stages} stageIndex={stageIndex} />}
