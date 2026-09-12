@@ -1,0 +1,195 @@
+{
+  "CreateProjectRequest": {
+    "name": "My apartment",
+    "unitSystem": "metric",
+    "mode": "upload",
+    "demoLayoutId": "four-room-v1"
+  },
+  "UpdateProjectRequest": {
+    "expectedRevision": 1,
+    "name": "Home"
+  },
+  "ReplaceRoomsRequest": {
+    "expectedRevision": 2,
+    "rooms": [
+      {
+        "id": "room-1",
+        "label": "Living room",
+        "type": "living_room",
+        "polygon": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 6,
+            "y": 0
+          },
+          {
+            "x": 6,
+            "y": 4
+          },
+          {
+            "x": 0,
+            "y": 4
+          }
+        ]
+      },
+      {
+        "id": "room-2",
+        "label": "Kitchen",
+        "type": "kitchen",
+        "polygon": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 4,
+            "y": 0
+          },
+          {
+            "x": 4,
+            "y": 4
+          },
+          {
+            "x": 0,
+            "y": 4
+          }
+        ]
+      },
+      {
+        "id": "room-3",
+        "label": "Bedroom",
+        "type": "bedroom_primary",
+        "polygon": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 6,
+            "y": 0
+          },
+          {
+            "x": 6,
+            "y": 4
+          },
+          {
+            "x": 0,
+            "y": 4
+          }
+        ]
+      },
+      {
+        "id": "room-4",
+        "label": "Bathroom",
+        "type": "bathroom_full",
+        "polygon": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 4,
+            "y": 0
+          },
+          {
+            "x": 4,
+            "y": 4
+          },
+          {
+            "x": 0,
+            "y": 4
+          }
+        ]
+      }
+    ],
+    "roomTransforms": [
+      {
+        "roomId": "room-1",
+        "origin": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "roomId": "room-2",
+        "origin": {
+          "x": 6,
+          "y": 0
+        }
+      },
+      {
+        "roomId": "room-3",
+        "origin": {
+          "x": 0,
+          "y": 4
+        }
+      },
+      {
+        "roomId": "room-4",
+        "origin": {
+          "x": 6,
+          "y": 4
+        }
+      }
+    ]
+  },
+  "ReplaceConfigurationRequest": {
+    "expectedRevision": 3,
+    "configuration": {
+      "prompt": "A calm home",
+      "budget": {
+        "amountMinor": 300000,
+        "currency": "USD"
+      },
+      "requirements": [
+        {
+          "id": "req-bed",
+          "objectType": "sleep.bed.queen",
+          "quantity": 1,
+          "roomId": "room-3",
+          "allowedColors": [],
+          "maxDimensionsM": {
+            "w": 1.8,
+            "d": 2.2,
+            "h": 1.3
+          }
+        }
+      ],
+      "selectedRuleIds": [],
+      "enabledBeliefSystems": [],
+      "roomInstructions": [
+        {
+          "roomId": "room-1",
+          "note": ""
+        },
+        {
+          "roomId": "room-2",
+          "note": ""
+        },
+        {
+          "roomId": "room-3",
+          "note": "Keep at least 0.8 m clear in front of the bed."
+        },
+        {
+          "roomId": "room-4",
+          "note": ""
+        }
+      ]
+    }
+  },
+  "UpdateRoomNoteRequest": {
+    "expectedRevision": 4,
+    "note": "Prefer light wood. Do not place a TV in this room."
+  },
+  "CreateGenerationRequest": {
+    "expectedRevision": 5,
+    "configurationRevision": 2,
+    "scope": {
+      "kind": "room",
+      "roomId": "room-3"
+    }
+  }
+}

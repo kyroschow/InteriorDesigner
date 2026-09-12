@@ -1,0 +1,456 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Interior workspace request bodies (draft)",
+  "$comment": "Select the endpoint definition using its JSON Pointer. Root rejects instances to prevent accidental validation against an unconstrained schema. Multipart file format is enforced by the HTTP handler.",
+  "not": {},
+  "$defs": {
+    "Point": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "additionalProperties": false
+    },
+    "Dimensions": {
+      "type": "object",
+      "properties": {
+        "w": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "d": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "h": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "w",
+        "d",
+        "h"
+      ],
+      "additionalProperties": false
+    },
+    "RoomType": {
+      "enum": [
+        "living_room",
+        "bedroom_primary",
+        "kitchen",
+        "bathroom_full"
+      ]
+    },
+    "CreateProjectRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "unitSystem": {
+          "enum": [
+            "metric",
+            "imperial"
+          ]
+        },
+        "mode": {
+          "enum": [
+            "upload",
+            "scratch"
+          ]
+        },
+        "demoLayoutId": {
+          "const": "four-room-v1"
+        }
+      },
+      "required": [
+        "name",
+        "unitSystem",
+        "mode",
+        "demoLayoutId"
+      ],
+      "additionalProperties": false
+    },
+    "UpdateProjectRequest": {
+      "type": "object",
+      "properties": {
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "unitSystem": {
+          "enum": [
+            "metric",
+            "imperial"
+          ]
+        }
+      },
+      "required": [
+        "expectedRevision"
+      ],
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "name"
+          ]
+        },
+        {
+          "required": [
+            "unitSystem"
+          ]
+        }
+      ]
+    },
+    "UploadFloorPlanRequest": {
+      "type": "object",
+      "properties": {
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "file": {
+          "type": "string",
+          "format": "binary",
+          "description": "Multipart binary file, not JSON/base64; maximum 20 MiB. expectedRevision is a decimal multipart text field parsed as an integer before validation."
+        }
+      },
+      "required": [
+        "expectedRevision",
+        "file"
+      ],
+      "additionalProperties": false
+    },
+    "RoomEdit": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "type": {
+          "$ref": "#/$defs/RoomType"
+        },
+        "polygon": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Point"
+          },
+          "minItems": 4,
+          "maxItems": 4
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "type",
+        "polygon"
+      ],
+      "additionalProperties": false
+    },
+    "RoomTransform": {
+      "type": "object",
+      "properties": {
+        "roomId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "origin": {
+          "$ref": "#/$defs/Point"
+        }
+      },
+      "required": [
+        "roomId",
+        "origin"
+      ],
+      "additionalProperties": false
+    },
+    "ReplaceRoomsRequest": {
+      "type": "object",
+      "properties": {
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "rooms": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RoomEdit"
+          },
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "roomTransforms": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RoomTransform"
+          },
+          "minItems": 4,
+          "maxItems": 4
+        }
+      },
+      "required": [
+        "expectedRevision",
+        "rooms",
+        "roomTransforms"
+      ],
+      "additionalProperties": false
+    },
+    "Budget": {
+      "type": "object",
+      "properties": {
+        "amountMinor": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "currency": {
+          "const": "USD"
+        }
+      },
+      "required": [
+        "amountMinor",
+        "currency"
+      ],
+      "additionalProperties": false
+    },
+    "Requirement": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "objectType": {
+          "type": "string",
+          "pattern": "^[a-z_]+(?:\\.[a-z_]+)+$"
+        },
+        "quantity": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "roomId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "allowedColors": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "uniqueItems": true
+        },
+        "maxDimensionsM": {
+          "$ref": "#/$defs/Dimensions"
+        }
+      },
+      "required": [
+        "id",
+        "objectType",
+        "quantity",
+        "roomId",
+        "allowedColors"
+      ],
+      "additionalProperties": false
+    },
+    "RoomInstruction": {
+      "type": "object",
+      "properties": {
+        "roomId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "note": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      },
+      "required": [
+        "roomId",
+        "note"
+      ],
+      "additionalProperties": false
+    },
+    "Configuration": {
+      "type": "object",
+      "properties": {
+        "prompt": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "budget": {
+          "$ref": "#/$defs/Budget"
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Requirement"
+          },
+          "maxItems": 100
+        },
+        "selectedRuleIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "uniqueItems": true
+        },
+        "enabledBeliefSystems": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "uniqueItems": true
+        },
+        "roomInstructions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RoomInstruction"
+          },
+          "minItems": 4,
+          "maxItems": 4
+        }
+      },
+      "required": [
+        "prompt",
+        "budget",
+        "requirements",
+        "selectedRuleIds",
+        "enabledBeliefSystems",
+        "roomInstructions"
+      ],
+      "additionalProperties": false
+    },
+    "ReplaceConfigurationRequest": {
+      "type": "object",
+      "properties": {
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "configuration": {
+          "$ref": "#/$defs/Configuration"
+        }
+      },
+      "required": [
+        "expectedRevision",
+        "configuration"
+      ],
+      "additionalProperties": false
+    },
+    "UpdateRoomNoteRequest": {
+      "type": "object",
+      "properties": {
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "note": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      },
+      "required": [
+        "expectedRevision",
+        "note"
+      ],
+      "additionalProperties": false
+    },
+    "GenerationScope": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "home"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "room"
+            },
+            "roomId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          },
+          "required": [
+            "kind",
+            "roomId"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "CreateGenerationRequest": {
+      "type": "object",
+      "properties": {
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "configurationRevision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "scope": {
+          "$ref": "#/$defs/GenerationScope"
+        }
+      },
+      "required": [
+        "expectedRevision",
+        "configurationRevision",
+        "scope"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
