@@ -4,9 +4,14 @@ import { ArrowLeft, ArrowRight, FileUp, PencilRuler, Upload, X } from 'lucide-re
 import clsx from 'clsx'
 import { StepHeader } from '@/components/StepHeader'
 import { OptionCard } from '@/components/OptionCard'
+import { StagedLoadingOverlay } from '@/components/StagedLoadingOverlay'
 import { useOnboardingStore } from '@/store/onboardingStore'
+import { useStagedLoading } from '@/lib/useStagedLoading'
 
 const ACCEPTED_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'application/pdf']
+
+const UPLOAD_STAGES = ['Reading your file…', 'Detecting rooms…', 'Building your floor plan…']
+const SCRATCH_STAGES = ['Setting up your canvas…', 'Building your floor plan…']
 
 /** Onboarding step 2: start from a blank canvas, or upload an existing floor plan. */
 export function CreateScreen() {
@@ -18,6 +23,8 @@ export function CreateScreen() {
 
   const [isDragOver, setIsDragOver] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const stages = mode === 'upload' ? UPLOAD_STAGES : SCRATCH_STAGES
+  const { isRunning: isCreating, stageIndex, start } = useStagedLoading(stages)
 
   // The object URL is only ever created here, so it's this screen's job to
   // release it — both on replacement and on unmount.
@@ -40,7 +47,7 @@ export function CreateScreen() {
   const canCreate = mode === 'scratch' || (mode === 'upload' && uploadedFile != null)
 
   return (
-    <div className="mx-auto flex min-h-full w-full max-w-2xl flex-col justify-center px-6 py-16">
+    <div className="relative mx-auto flex min-h-full w-full max-w-2xl flex-col justify-center px-6 py-16">
       <StepHeader
         step={2}
         total={2}
@@ -143,11 +150,11 @@ export function CreateScreen() {
         </button>
         <button
           type="button"
-          disabled={!canCreate}
-          onClick={() => navigate('/project')}
+          disabled={!canCreate || isCreating}
+          onClick={() => start(() => navigate('/project'))}
           className={clsx(
             'inline-flex items-center justify-center gap-2 rounded-control px-6 py-3 text-sm font-semibold transition-transform',
-            canCreate
+            canCreate && !isCreating
               ? 'bg-ink text-app hover:-translate-y-0.5'
               : 'cursor-not-allowed bg-canvas text-ink-soft/50',
           )}
@@ -156,6 +163,8 @@ export function CreateScreen() {
           <ArrowRight size={16} />
         </button>
       </div>
+
+      {isCreating && <StagedLoadingOverlay stages={stages} stageIndex={stageIndex} />}
     </div>
   )
 }

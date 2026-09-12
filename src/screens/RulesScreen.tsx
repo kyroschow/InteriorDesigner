@@ -1,33 +1,28 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, Check, Sparkles } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
 import clsx from 'clsx'
 import { Brand } from '@/components/Brand'
 import { FloorPlanSvg } from '@/components/FloorPlanSvg'
+import { StagedLoadingOverlay } from '@/components/StagedLoadingOverlay'
 import { birchTwoBed } from '@/data/floorplans/birchTwoBed'
 import { RULE_PACKS } from '@/data/ruleLibrary'
+import { useStagedLoading } from '@/lib/useStagedLoading'
 
 const STAGES = ['Reading your rooms…', 'Thinking about placement…', 'Applying design rules…', 'Finishing touches…']
-const STAGE_MS = 500
 
 /** Step 2: which design guidance to follow, then hand off to generation. */
 export function RulesScreen() {
   const navigate = useNavigate()
   const [selected, setSelected] = useState<string[]>([])
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [stageIndex, setStageIndex] = useState(0)
+  const { isRunning: isGenerating, stageIndex, start } = useStagedLoading(STAGES)
 
   function toggle(id: string) {
     setSelected((prev) => (prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]))
   }
 
   function handleGenerate() {
-    setIsGenerating(true)
-    setStageIndex(0)
-    STAGES.forEach((_, i) => {
-      if (i > 0) setTimeout(() => setStageIndex(i), STAGE_MS * i)
-    })
-    setTimeout(() => navigate('/project/export'), STAGE_MS * STAGES.length)
+    start(() => navigate('/project/export'))
   }
 
   return (
@@ -104,15 +99,7 @@ export function RulesScreen() {
             <FloorPlanSvg plan={birchTwoBed} />
           </div>
 
-          {isGenerating && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-app/85 backdrop-blur-sm">
-              <div className="relative flex h-14 w-14 items-center justify-center">
-                <div className="absolute inset-0 animate-spin rounded-full border-2 border-accent-pale border-t-accent" />
-                <Sparkles size={20} className="text-accent" />
-              </div>
-              <p className="text-sm font-medium text-ink-soft">{STAGES[stageIndex]}</p>
-            </div>
-          )}
+          {isGenerating && <StagedLoadingOverlay stages={STAGES} stageIndex={stageIndex} />}
         </main>
       </div>
     </div>
