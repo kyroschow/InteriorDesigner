@@ -1,0 +1,338 @@
+[
+  {
+    "name": "KALLAX",
+    "category": "tv_unit",
+    "url": "https://www.ikea.com/us/en/p/kallax-tv-unit-white-stained-oak-effect-50574883/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/kallax-tv-unit-white-stained-oak-effect__1238899_pe918670_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kallax-tv-unit-white-stained-oak-effect__1248784_pe923212_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kallax-tv-unit-white-stained-oak-effect__1274279_pe930230_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kallax-tv-unit-white-stained-oak-effect__1106847_pe868821_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kallax-tv-unit-white-stained-oak-effect__1212006_pe910456_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kallax-tv-unit-white-stained-oak-effect__1442054_pe986651_s5.jpg"
+    ],
+    "priceCents": 7999,
+    "dimsMm": {
+      "w": 1467,
+      "d": 391,
+      "h": 597
+    },
+    "colorHex": "#F5F5F5",
+    "colorName": "white stained oak effect",
+    "materials": [
+      "wood",
+      "plastic"
+    ],
+    "styleTags": [
+      "modern",
+      "casual",
+      "scandinavian",
+      "traditional"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "STOCKHOLM 2025",
+    "category": "tv_unit_with_sliding_doors",
+    "url": "https://www.ikea.com/us/en/p/stockholm-2025-tv-unit-with-sliding-doors-oak-veneer-90586638/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/stockholm-2025-tv-unit-with-sliding-doors-oak-veneer__1397700_pe967721_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/stockholm-2025-tv-unit-with-sliding-doors-oak-veneer__1425266_ph203047_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/stockholm-2025-tv-unit-with-sliding-doors-oak-veneer__1425091_ph203256_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/stockholm-2025-tv-unit-with-sliding-doors-oak-veneer__1425268_ph203049_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/stockholm-2025-tv-unit-with-sliding-doors-oak-veneer__1425269_ph203048_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/stockholm-2025-tv-unit-with-sliding-doors-oak-veneer__1399158_pe968260_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/stockholm-2025-tv-unit-with-sliding-doors-oak-veneer__1440974_pe986141_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/stockholm-2025-tv-unit-with-sliding-doors-oak-veneer__1435961_pe984001_p.jpg"
+    ],
+    "priceCents": 49999,
+    "dimsMm": {
+      "w": 1788,
+      "d": 419,
+      "h": 562
+    },
+    "colorHex": "#C4A574",
+    "colorName": "oak veneer",
+    "materials": [
+      "wood"
+    ],
+    "styleTags": [
+      "modern",
+      "contemporary",
+      "scandinavian"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "BESTÅ",
+    "category": "tv_bench_with_doors",
+    "url": "https://www.ikea.com/us/en/p/besta-tv-bench-with-doors-black-brown-bjoerkoeviken-oak-veneer-s59622907/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/besta-tv-bench-with-doors-black-brown-bjoerkoeviken-oak-veneer__1531459_pe1015644_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/besta-tv-bench-with-doors-black-brown-bjoerkoeviken-oak-veneer__1547838_pe1020733_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/besta-tv-bench-with-doors-black-brown-bjoerkoeviken-oak-veneer__1547843_pe1020738_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/besta-tv-bench-with-doors-black-brown-bjoerkoeviken-oak-veneer__1547890_pe1020785_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/besta-tv-bench-with-doors-black-brown-bjoerkoeviken-oak-veneer__1547798_pe1020711_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/besta-tv-bench-with-doors-black-brown-bjoerkoeviken-oak-veneer__0843438_pe535720_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/besta-tv-bench-with-doors-black-brown-bjoerkoeviken-oak-veneer__0720089_pe732401_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/besta-tv-bench-with-doors-black-brown-bjoerkoeviken-oak-veneer__1026887_pe834619_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/besta-tv-bench-with-doors-black-brown-bjoerkoeviken-oak-veneer__1482864_pe1001193_s5.jpg"
+    ],
+    "priceCents": 39000,
+    "dimsMm": {
+      "w": 1800,
+      "d": 419,
+      "h": 381
+    },
+    "colorHex": "#1A1A1A",
+    "colorName": "black-brown Björköviken",
+    "materials": [
+      "wood",
+      "plastic",
+      "steel"
+    ],
+    "styleTags": [
+      "modern",
+      "minimalist",
+      "contemporary"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "KALLAX",
+    "category": "tv_storage_combination",
+    "url": "https://www.ikea.com/us/en/p/kallax-tv-storage-combination-black-brown-s49569444/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/kallax-tv-storage-combination-black-brown__1277931_pe931114_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kallax-tv-storage-combination-black-brown__1277930_pe931116_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kallax-tv-storage-combination-black-brown__1212006_pe910456_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kallax-tv-storage-combination-black-brown__1204109_pe906575_s5.jpg"
+    ],
+    "priceCents": 16999,
+    "dimsMm": {
+      "w": 1467,
+      "d": 391,
+      "h": 597
+    },
+    "colorHex": "#1A1A1A",
+    "colorName": "black-brown",
+    "materials": [
+      "wood",
+      "plastic",
+      "paint"
+    ],
+    "styleTags": [
+      "modern",
+      "casual",
+      "contemporary"
+    ],
+    "featureTags": [
+      "storage",
+      "modular"
+    ]
+  },
+  {
+    "name": "SKRUVBY",
+    "category": "tv_unit",
+    "url": "https://www.ikea.com/us/en/p/skruvby-tv-unit-black-blue-10542747/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/skruvby-tv-unit-black-blue__1128170_pe876449_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skruvby-tv-unit-black-blue__1142036_pe881132_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skruvby-tv-unit-black-blue__1142035_pe881128_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skruvby-tv-unit-black-blue__1133139_pe878450_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skruvby-tv-unit-black-blue__1144172_pe881750_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skruvby-tv-unit-black-blue__1122128_pe874516_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skruvby-tv-unit-black-blue__1442096_pe986661_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skruvby-tv-unit-black-blue__1441852_pe986544_p.jpg"
+    ],
+    "priceCents": 9999,
+    "dimsMm": {
+      "w": 1559,
+      "d": 375,
+      "h": 600
+    },
+    "colorHex": "#1A1A1A",
+    "colorName": "black-blue",
+    "materials": [
+      "wood",
+      "plastic"
+    ],
+    "styleTags": [
+      "modern",
+      "casual"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "BRIMNES",
+    "category": "tv_unit",
+    "url": "https://www.ikea.com/us/en/p/brimnes-tv-unit-black-40569486/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/brimnes-tv-unit-black__0704610_pe725291_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/brimnes-tv-unit-black__1452004_pe990826_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/brimnes-tv-unit-black__1452001_pe990827_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/brimnes-tv-unit-black__0660699_ph153211_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/brimnes-tv-unit-black__1452003_pe990829_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/brimnes-tv-unit-black__0619470_pe689104_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/brimnes-tv-unit-black__1442044_pe986650_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/brimnes-tv-unit-black__1234702_pe051287_p.jpg"
+    ],
+    "priceCents": 19999,
+    "dimsMm": {
+      "w": 1800,
+      "d": 410,
+      "h": 530
+    },
+    "colorHex": "#1A1A1A",
+    "colorName": "black",
+    "materials": [
+      "wood",
+      "plastic",
+      "glass"
+    ],
+    "styleTags": [
+      "modern",
+      "casual"
+    ],
+    "featureTags": [
+      "glass"
+    ]
+  },
+  {
+    "name": "LACK",
+    "category": "tv_unit",
+    "url": "https://www.ikea.com/us/en/p/lack-tv-unit-black-brown-60566062/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/lack-tv-unit-black-brown__0955264_pe803706_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lack-tv-unit-black-brown__1464287_pe994660_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lack-tv-unit-black-brown__1092881_pe863120_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lack-tv-unit-black-brown__1092880_pe863121_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lack-tv-unit-black-brown__0955260_pe803700_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lack-tv-unit-black-brown__1083778_pe859098_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lack-tv-unit-black-brown__1009130_pe827481_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lack-tv-unit-black-brown__1220919_pe913581_s5.jpg"
+    ],
+    "priceCents": 6499,
+    "dimsMm": {
+      "w": 1600,
+      "d": 349,
+      "h": 359
+    },
+    "colorHex": "#1A1A1A",
+    "colorName": "black-brown",
+    "materials": [
+      "wood",
+      "plastic"
+    ],
+    "styleTags": [
+      "modern",
+      "minimalist",
+      "contemporary"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "FJÄLLBO",
+    "category": "tv_unit",
+    "url": "https://www.ikea.com/us/en/p/fjaellbo-tv-unit-black-00579034/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/fjaellbo-tv-unit-black__1360141_pe954365_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/fjaellbo-tv-unit-black__1360154_pe954366_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/fjaellbo-tv-unit-black__1360155_pe954367_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/fjaellbo-tv-unit-black__0925815_ph157836_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/fjaellbo-tv-unit-black__1107159_pe868960_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/fjaellbo-tv-unit-black__1107158_pe868961_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/fjaellbo-tv-unit-black__1107157_pe868958_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/fjaellbo-tv-unit-black__0476530_pe616398_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/fjaellbo-tv-unit-black__0851649_pe616393_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/fjaellbo-tv-unit-black__1360363_pe954396_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/fjaellbo-tv-unit-black__1441233_pe986264_s5.jpg"
+    ],
+    "priceCents": 29999,
+    "dimsMm": {
+      "w": 1981,
+      "d": 451,
+      "h": 540
+    },
+    "colorHex": "#1A1A1A",
+    "colorName": "black",
+    "materials": [
+      "polyester",
+      "steel",
+      "wood",
+      "epoxy",
+      "stain"
+    ],
+    "styleTags": [
+      "industrial",
+      "modern"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "HEMNES",
+    "category": "tv_unit",
+    "url": "https://www.ikea.com/us/en/p/hemnes-tv-unit-white-stain-light-brown-10413528/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/hemnes-tv-unit-white-stain-light-brown__0583377_pe671187_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/hemnes-tv-unit-white-stain-light-brown__1460842_pe994015_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/hemnes-tv-unit-white-stain-light-brown__0803360_pe768855_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/hemnes-tv-unit-white-stain-light-brown__0164867_pe316751_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/hemnes-tv-unit-white-stain-light-brown__0978642_pe814195_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/hemnes-tv-unit-white-stain-light-brown__1441244_pe986269_s5.jpg"
+    ],
+    "priceCents": 37999,
+    "dimsMm": {
+      "w": 1480,
+      "d": 470,
+      "h": 572
+    },
+    "colorHex": "#F5F5F5",
+    "colorName": "white stain",
+    "materials": [
+      "wood",
+      "adhesive",
+      "stain"
+    ],
+    "styleTags": [
+      "traditional",
+      "casual",
+      "scandinavian"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "BRIMNES",
+    "category": "tv_unit",
+    "url": "https://www.ikea.com/us/en/p/brimnes-tv-unit-black-90569484/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/brimnes-tv-unit-black__0704609_pe725292_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/brimnes-tv-unit-black__1452002_pe990828_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/brimnes-tv-unit-black__1452001_pe990827_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/brimnes-tv-unit-black__1452000_pe990830_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/brimnes-tv-unit-black__0543864_pe654791_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/brimnes-tv-unit-black__1257753_pe926007_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/brimnes-tv-unit-black__1234702_pe051287_p.jpg"
+    ],
+    "priceCents": 9999,
+    "dimsMm": {
+      "w": 1200,
+      "d": 410,
+      "h": 530
+    },
+    "colorHex": "#1A1A1A",
+    "colorName": "black",
+    "materials": [
+      "wood",
+      "plastic",
+      "glass"
+    ],
+    "styleTags": [
+      "modern",
+      "casual"
+    ],
+    "featureTags": [
+      "glass"
+    ]
+  }
+]

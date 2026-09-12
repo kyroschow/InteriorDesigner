@@ -1,0 +1,301 @@
+[
+  {
+    "name": "KNOXHULT",
+    "category": "base_cabinet_with_doors_and_drawer",
+    "url": "https://www.ikea.com/us/en/p/knoxhult-base-cabinet-with-doors-and-drawer-white-frame-30603990/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/knoxhult-base-cabinet-with-doors-and-drawer-white-frame__1383162_pe962475_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/knoxhult-base-cabinet-with-doors-and-drawer-white-frame__1424715_pe979343_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/knoxhult-base-cabinet-with-doors-and-drawer-white-frame__1451744_pe990786_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/knoxhult-base-cabinet-with-doors-and-drawer-white-frame__1553158_pe1023534_s5.jpg"
+    ],
+    "priceCents": 46000,
+    "dimsMm": {
+      "w": 1829,
+      "d": 610,
+      "h": 914
+    },
+    "colorHex": "#F5F5F5",
+    "colorName": "white frame",
+    "materials": [
+      "wood",
+      "plastic",
+      "laminate",
+      "paper"
+    ],
+    "styleTags": [
+      "modern",
+      "casual"
+    ],
+    "featureTags": [
+      "storage"
+    ]
+  },
+  {
+    "name": "SEKTION",
+    "category": "base_cabinet_with_shelves_2_doors",
+    "url": "https://www.ikea.com/us/en/p/sektion-base-cabinet-with-shelves-2-doors-white-aspudden-matte-white-s99624117/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/sektion-base-cabinet-with-shelves-2-doors-white-aspudden-matte-white__1530118_pe1014790_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sektion-base-cabinet-with-shelves-2-doors-white-aspudden-matte-white__1534030_pe1016103_s5.jpg"
+    ],
+    "priceCents": 31700,
+    "dimsMm": {
+      "w": 762,
+      "d": 629,
+      "h": null
+    },
+    "colorHex": "#F5F5F5",
+    "colorName": "white",
+    "materials": [
+      "wood",
+      "plastic",
+      "steel",
+      "galvanized"
+    ],
+    "styleTags": [
+      "modern",
+      "minimalist"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "SEKTION",
+    "category": "wall_cabinet_with_2_doors",
+    "url": "https://www.ikea.com/us/en/p/sektion-wall-cabinet-with-2-doors-white-aspudden-matte-white-s99624179/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/sektion-wall-cabinet-with-2-doors-white-aspudden-matte-white__1530236_pe1014922_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sektion-wall-cabinet-with-2-doors-white-aspudden-matte-white__1534030_pe1016103_s5.jpg"
+    ],
+    "priceCents": 26600,
+    "dimsMm": {
+      "w": 914,
+      "d": 394,
+      "h": null
+    },
+    "colorHex": "#F5F5F5",
+    "colorName": "white",
+    "materials": [
+      "wood",
+      "plastic",
+      "steel"
+    ],
+    "styleTags": [
+      "modern",
+      "minimalist"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "SEKTION",
+    "category": "base_cabinet",
+    "url": "https://www.ikea.com/us/en/p/sektion-base-cabinet-white-90265388/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/sektion-base-cabinet-white__0268620_pe406679_s5.jpg"
+    ],
+    "priceCents": 7600,
+    "dimsMm": {
+      "w": 610,
+      "d": 610,
+      "h": 762
+    },
+    "colorHex": "#F5F5F5",
+    "colorName": "white",
+    "materials": [
+      "wood",
+      "plastic",
+      "steel",
+      "galvanized"
+    ],
+    "styleTags": [
+      "modern",
+      "minimalist"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "SEKTION / MAXIMERA",
+    "category": "base_cabinet_with_3_drawers",
+    "url": "https://www.ikea.com/us/en/p/sektion-maximera-base-cabinet-with-3-drawers-white-aspudden-matte-white-s99624075/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/sektion-maximera-base-cabinet-with-3-drawers-white-aspudden-matte-white__1530116_pe1014789_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sektion-maximera-base-cabinet-with-3-drawers-white-aspudden-matte-white__1534030_pe1016103_s5.jpg"
+    ],
+    "priceCents": 52500,
+    "dimsMm": {
+      "w": 914,
+      "d": 629,
+      "h": null
+    },
+    "colorHex": "#F5F5F5",
+    "colorName": "white",
+    "materials": [
+      "steel",
+      "wood",
+      "polyester",
+      "plastic",
+      "galvanized",
+      "epoxy",
+      "laminate"
+    ],
+    "styleTags": [
+      "modern",
+      "minimalist"
+    ],
+    "featureTags": [
+      "storage"
+    ]
+  },
+  {
+    "name": "KNOXHULT",
+    "category": "base_cabinet_with_doors_and_drawer",
+    "url": "https://www.ikea.com/us/en/p/knoxhult-base-cabinet-with-doors-and-drawer-dark-gray-50604007/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/knoxhult-base-cabinet-with-doors-and-drawer-dark-gray__1383168_pe962481_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/knoxhult-base-cabinet-with-doors-and-drawer-dark-gray__1424704_pe979340_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/knoxhult-base-cabinet-with-doors-and-drawer-dark-gray__1451745_pe990785_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/knoxhult-base-cabinet-with-doors-and-drawer-dark-gray__1553156_pe1023533_s5.jpg"
+    ],
+    "priceCents": 29000,
+    "dimsMm": {
+      "w": 1219,
+      "d": 610,
+      "h": 914
+    },
+    "colorHex": "#5F6368",
+    "colorName": "dark gray",
+    "materials": [
+      "wood",
+      "plastic",
+      "laminate",
+      "paper"
+    ],
+    "styleTags": [
+      "modern",
+      "casual"
+    ],
+    "featureTags": [
+      "storage"
+    ]
+  },
+  {
+    "name": "SEKTION / MAXIMERA",
+    "category": "base_cabinet_with_3_drawers",
+    "url": "https://www.ikea.com/us/en/p/sektion-maximera-base-cabinet-with-3-drawers-white-aspudden-matte-white-s69624029/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/sektion-maximera-base-cabinet-with-3-drawers-white-aspudden-matte-white__1530080_pe1014817_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sektion-maximera-base-cabinet-with-3-drawers-white-aspudden-matte-white__1534030_pe1016103_s5.jpg"
+    ],
+    "priceCents": 27000,
+    "dimsMm": {
+      "w": 381,
+      "d": 394,
+      "h": null
+    },
+    "colorHex": "#F5F5F5",
+    "colorName": "white",
+    "materials": [
+      "steel",
+      "wood",
+      "polyester",
+      "plastic",
+      "galvanized",
+      "epoxy",
+      "laminate"
+    ],
+    "styleTags": [
+      "modern",
+      "minimalist"
+    ],
+    "featureTags": [
+      "storage"
+    ]
+  },
+  {
+    "name": "SEKTION",
+    "category": "base_cabinet_for_sink_2_doors",
+    "url": "https://www.ikea.com/us/en/p/sektion-base-cabinet-for-sink-2-doors-white-aspudden-matte-white-s49624134/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/sektion-base-cabinet-for-sink-2-doors-white-aspudden-matte-white__1530162_pe1014886_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sektion-base-cabinet-for-sink-2-doors-white-aspudden-matte-white__1534030_pe1016103_s5.jpg"
+    ],
+    "priceCents": 30200,
+    "dimsMm": {
+      "w": 762,
+      "d": 629,
+      "h": null
+    },
+    "colorHex": "#F5F5F5",
+    "colorName": "white",
+    "materials": [
+      "wood",
+      "plastic",
+      "steel",
+      "galvanized"
+    ],
+    "styleTags": [
+      "modern",
+      "minimalist"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "SEKTION",
+    "category": "corner_base_cabinet_with_carousel",
+    "url": "https://www.ikea.com/us/en/p/sektion-corner-base-cabinet-with-carousel-white-aspudden-matte-white-s39623917/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/sektion-corner-base-cabinet-with-carousel-white-aspudden-matte-white__1530132_pe1014842_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sektion-corner-base-cabinet-with-carousel-white-aspudden-matte-white__1534030_pe1016103_s5.jpg"
+    ],
+    "priceCents": 42500,
+    "dimsMm": {
+      "w": 965,
+      "d": null,
+      "h": 876
+    },
+    "colorHex": "#F5F5F5",
+    "colorName": "white",
+    "materials": [
+      "wood",
+      "polyester",
+      "plastic",
+      "steel",
+      "epoxy",
+      "galvanized",
+      "polyamide",
+      "polyethylene"
+    ],
+    "styleTags": [
+      "modern",
+      "minimalist"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "KNOXHULT",
+    "category": "wall_cabinet_with_door",
+    "url": "https://www.ikea.com/us/en/p/knoxhult-wall-cabinet-with-door-dark-gray-30604013/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/knoxhult-wall-cabinet-with-door-dark-gray__1383164_pe962477_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/knoxhult-wall-cabinet-with-door-dark-gray__1424851_pe979377_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/knoxhult-wall-cabinet-with-door-dark-gray__1383188_pe962496_s5.jpg"
+    ],
+    "priceCents": 8500,
+    "dimsMm": {
+      "w": 610,
+      "d": 305,
+      "h": 762
+    },
+    "colorHex": "#5F6368",
+    "colorName": "dark gray",
+    "materials": [
+      "wood",
+      "plastic"
+    ],
+    "styleTags": [
+      "modern",
+      "casual"
+    ],
+    "featureTags": []
+  }
+]

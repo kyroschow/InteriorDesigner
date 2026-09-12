@@ -1,0 +1,354 @@
+[
+  {
+    "name": "HÄGERNÄS",
+    "category": "table_and_4_chairs",
+    "url": "https://www.ikea.com/us/en/p/haegernaes-table-and-4-chairs-antique-stain-pine-70575947/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/haegernaes-table-and-4-chairs-antique-stain-pine__1350925_pe951817_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/haegernaes-table-and-4-chairs-antique-stain-pine__1376866_pe960596_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/haegernaes-table-and-4-chairs-antique-stain-pine__1376865_pe960597_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/haegernaes-table-and-4-chairs-antique-stain-pine__1376693_pe960469_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/haegernaes-table-and-4-chairs-antique-stain-pine__1290239_pe934615_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/haegernaes-table-and-4-chairs-antique-stain-pine__1374234_pe960096_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/haegernaes-table-and-4-chairs-antique-stain-pine__1435961_pe984001_p.jpg"
+    ],
+    "priceCents": 25999,
+    "dimsMm": {
+      "w": null,
+      "d": null,
+      "h": 451
+    },
+    "colorHex": "#D7B98E",
+    "colorName": "antique stain pine",
+    "materials": [
+      "wood",
+      "stain",
+      "adhesive"
+    ],
+    "styleTags": [
+      "rustic",
+      "scandinavian",
+      "traditional"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "ÅLHULT / ÅLHULT",
+    "category": "table_and_4_chairs",
+    "url": "https://www.ikea.com/us/en/p/alhult-alhult-table-and-4-chairs-beige-brown-kabusa-light-beige-beige-s99611619/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-4-chairs-beige-brown-kabusa-light-beige-beige__1439004_pe985049_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-4-chairs-beige-brown-kabusa-light-beige-beige__1447073_pe988941_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-4-chairs-beige-brown-kabusa-light-beige-beige__1447106_pe988975_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-4-chairs-beige-brown-kabusa-light-beige-beige__1447120_pe988972_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-4-chairs-beige-brown-kabusa-light-beige-beige__1447107_pe988976_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-4-chairs-beige-brown-kabusa-light-beige-beige__1447108_pe988977_s5.jpg"
+    ],
+    "priceCents": 42999,
+    "dimsMm": {
+      "w": null,
+      "d": null,
+      "h": null
+    },
+    "colorHex": "#D4C4A8",
+    "colorName": "beige",
+    "materials": [
+      "wood",
+      "polyester",
+      "foam",
+      "stain",
+      "adhesive"
+    ],
+    "styleTags": [
+      "casual",
+      "modern"
+    ],
+    "featureTags": [
+      "upholstered"
+    ]
+  },
+  {
+    "name": "SANDSBERG",
+    "category": "table_and_4_chairs",
+    "url": "https://www.ikea.com/us/en/p/sandsberg-table-and-4-chairs-black-black-black-s09608386/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/sandsberg-table-and-4-chairs-black-black-black__1460475_pe993939_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sandsberg-table-and-4-chairs-black-black-black__1460474_pe993940_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sandsberg-table-and-4-chairs-black-black-black__1460473_pe993938_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sandsberg-table-and-4-chairs-black-black-black__1448189_pe989550_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sandsberg-table-and-4-chairs-black-black-black__1016429_pe830390_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sandsberg-table-and-4-chairs-black-black-black__1448185_pe989546_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sandsberg-table-and-4-chairs-black-black-black__1031911_pe836694_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sandsberg-table-and-4-chairs-black-black-black__0947776_pe798637_s5.jpg"
+    ],
+    "priceCents": 12999,
+    "dimsMm": {
+      "w": 670,
+      "d": 1099,
+      "h": 749
+    },
+    "colorHex": "#1A1A1A",
+    "colorName": "black black",
+    "materials": [
+      "wood",
+      "polyester",
+      "plastic",
+      "steel",
+      "epoxy",
+      "polypropylene"
+    ],
+    "styleTags": [
+      "industrial",
+      "modern"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "ROSENTORP",
+    "category": "ext_table_3_chairs_1_swivel_chair",
+    "url": "https://www.ikea.com/us/en/p/rosentorp-ext-table-3-chairs-1-swivel-chair-ash-veneer-white-kilanda-light-beige-white-s59634627/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/rosentorp-ext-table-3-chairs-1-swivel-chair-ash-veneer-white-kilanda-light-beige-white__1550882_pe1022787_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/rosentorp-ext-table-3-chairs-1-swivel-chair-ash-veneer-white-kilanda-light-beige-white__1550881_pe1022788_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/rosentorp-ext-table-3-chairs-1-swivel-chair-ash-veneer-white-kilanda-light-beige-white__1547057_pe1020313_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/rosentorp-ext-table-3-chairs-1-swivel-chair-ash-veneer-white-kilanda-light-beige-white__1547056_pe1020314_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/rosentorp-ext-table-3-chairs-1-swivel-chair-ash-veneer-white-kilanda-light-beige-white__1547055_pe1020315_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/rosentorp-ext-table-3-chairs-1-swivel-chair-ash-veneer-white-kilanda-light-beige-white__1476990_pe999090_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/rosentorp-ext-table-3-chairs-1-swivel-chair-ash-veneer-white-kilanda-light-beige-white__1476992_pe999092_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/rosentorp-ext-table-3-chairs-1-swivel-chair-ash-veneer-white-kilanda-light-beige-white__1489121_pe1003662_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/rosentorp-ext-table-3-chairs-1-swivel-chair-ash-veneer-white-kilanda-light-beige-white__1265793_pe927806_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/rosentorp-ext-table-3-chairs-1-swivel-chair-ash-veneer-white-kilanda-light-beige-white__1426129_pe979687_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/rosentorp-ext-table-3-chairs-1-swivel-chair-ash-veneer-white-kilanda-light-beige-white__1396678_pe967437_s5.jpg"
+    ],
+    "priceCents": 91998,
+    "dimsMm": {
+      "w": null,
+      "d": null,
+      "h": null
+    },
+    "colorHex": "#F5F5F5",
+    "colorName": "ash veneer white",
+    "materials": [
+      "wood",
+      "polyester",
+      "plastic",
+      "steel",
+      "foam",
+      "stain",
+      "adhesive",
+      "epoxy",
+      "paint"
+    ],
+    "styleTags": [
+      "modern",
+      "scandinavian"
+    ],
+    "featureTags": [
+      "upholstered"
+    ]
+  },
+  {
+    "name": "ÅLHULT / ÅLHULT",
+    "category": "table_and_6_chairs",
+    "url": "https://www.ikea.com/us/en/p/alhult-alhult-table-and-6-chairs-beige-brown-kabusa-light-beige-beige-s69611625/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-6-chairs-beige-brown-kabusa-light-beige-beige__1438996_pe985043_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-6-chairs-beige-brown-kabusa-light-beige-beige__1447065_pe988936_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-6-chairs-beige-brown-kabusa-light-beige-beige__1447106_pe988975_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-6-chairs-beige-brown-kabusa-light-beige-beige__1447120_pe988972_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-6-chairs-beige-brown-kabusa-light-beige-beige__1447107_pe988976_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-6-chairs-beige-brown-kabusa-light-beige-beige__1447108_pe988977_s5.jpg"
+    ],
+    "priceCents": 63999,
+    "dimsMm": {
+      "w": null,
+      "d": null,
+      "h": null
+    },
+    "colorHex": "#D4C4A8",
+    "colorName": "beige",
+    "materials": [
+      "wood",
+      "polyester",
+      "foam",
+      "stain",
+      "adhesive"
+    ],
+    "styleTags": [
+      "casual",
+      "modern"
+    ],
+    "featureTags": [
+      "upholstered"
+    ]
+  },
+  {
+    "name": "SKANSNÄS / GRÖNSTA",
+    "category": "table_and_4_chairs",
+    "url": "https://www.ikea.com/us/en/p/skansnaes-groensta-table-and-4-chairs-brown-beech-indoor-outdoor-gray-s69634556/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/skansnaes-groensta-table-and-4-chairs-brown-beech-indoor-outdoor-gray__1548321_pe1021089_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skansnaes-groensta-table-and-4-chairs-brown-beech-indoor-outdoor-gray__1548320_pe1021088_s5.jpg"
+    ],
+    "priceCents": 107999,
+    "dimsMm": {
+      "w": null,
+      "d": null,
+      "h": null
+    },
+    "colorHex": "#6B4F3A",
+    "colorName": "brown beech",
+    "materials": [
+      "wood",
+      "adhesive",
+      "stain",
+      "polypropylene"
+    ],
+    "styleTags": [
+      "scandinavian",
+      "casual"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "ÅLHULT / ÅLHULT",
+    "category": "table_and_4_chairs",
+    "url": "https://www.ikea.com/us/en/p/alhult-alhult-table-and-4-chairs-beige-brown-kabusa-light-beige-beige-s59611616/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-4-chairs-beige-brown-kabusa-light-beige-beige__1439021_pe985063_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-4-chairs-beige-brown-kabusa-light-beige-beige__1447089_pe988951_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-4-chairs-beige-brown-kabusa-light-beige-beige__1447111_pe988978_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-4-chairs-beige-brown-kabusa-light-beige-beige__1447105_pe988974_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-4-chairs-beige-brown-kabusa-light-beige-beige__1447106_pe988975_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-4-chairs-beige-brown-kabusa-light-beige-beige__1447112_pe988979_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-4-chairs-beige-brown-kabusa-light-beige-beige__1447107_pe988976_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-4-chairs-beige-brown-kabusa-light-beige-beige__1447108_pe988977_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-4-chairs-beige-brown-kabusa-light-beige-beige__1451072_pe990568_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-4-chairs-beige-brown-kabusa-light-beige-beige__1451081_pe990575_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-4-chairs-beige-brown-kabusa-light-beige-beige__1546448_ph206716_s5.jpg"
+    ],
+    "priceCents": 45999,
+    "dimsMm": {
+      "w": null,
+      "d": null,
+      "h": null
+    },
+    "colorHex": "#D4C4A8",
+    "colorName": "beige",
+    "materials": [
+      "wood",
+      "polyester",
+      "foam",
+      "stain",
+      "adhesive"
+    ],
+    "styleTags": [
+      "casual",
+      "modern"
+    ],
+    "featureTags": [
+      "upholstered"
+    ]
+  },
+  {
+    "name": "ÅLHULT / ÅLHULT",
+    "category": "table_and_6_chairs",
+    "url": "https://www.ikea.com/us/en/p/alhult-alhult-table-and-6-chairs-beige-brown-kabusa-light-beige-beige-s39611622/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-6-chairs-beige-brown-kabusa-light-beige-beige__1439017_pe985069_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-6-chairs-beige-brown-kabusa-light-beige-beige__1447085_pe988963_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-6-chairs-beige-brown-kabusa-light-beige-beige__1447111_pe988978_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-6-chairs-beige-brown-kabusa-light-beige-beige__1447105_pe988974_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-6-chairs-beige-brown-kabusa-light-beige-beige__1447106_pe988975_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-6-chairs-beige-brown-kabusa-light-beige-beige__1447112_pe988979_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-6-chairs-beige-brown-kabusa-light-beige-beige__1447107_pe988976_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-alhult-table-and-6-chairs-beige-brown-kabusa-light-beige-beige__1447108_pe988977_s5.jpg"
+    ],
+    "priceCents": 68999,
+    "dimsMm": {
+      "w": null,
+      "d": null,
+      "h": null
+    },
+    "colorHex": "#D4C4A8",
+    "colorName": "beige",
+    "materials": [
+      "wood",
+      "polyester",
+      "foam",
+      "stain",
+      "adhesive"
+    ],
+    "styleTags": [
+      "casual",
+      "modern"
+    ],
+    "featureTags": [
+      "upholstered"
+    ]
+  },
+  {
+    "name": "SKOGSTA / SKOGSTA",
+    "category": "table_and_6_chairs",
+    "url": "https://www.ikea.com/us/en/p/skogsta-skogsta-table-and-6-chairs-acacia-black-s19545124/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/skogsta-skogsta-table-and-6-chairs-acacia-black__1240711_pe919456_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skogsta-skogsta-table-and-6-chairs-acacia-black__1240710_pe919457_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skogsta-skogsta-table-and-6-chairs-acacia-black__1558621_pe1024913_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skogsta-skogsta-table-and-6-chairs-acacia-black__1469471_pe996529_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skogsta-skogsta-table-and-6-chairs-acacia-black__1469473_pe996531_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skogsta-skogsta-table-and-6-chairs-acacia-black__0949260_pe799598_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skogsta-skogsta-table-and-6-chairs-acacia-black__1262536_pe927108_s5.jpg"
+    ],
+    "priceCents": 106999,
+    "dimsMm": {
+      "w": null,
+      "d": null,
+      "h": null
+    },
+    "colorHex": "#C0C0C0",
+    "colorName": "acacia",
+    "materials": [
+      "steel",
+      "galvanized",
+      "stain",
+      "adhesive"
+    ],
+    "styleTags": [
+      "rustic",
+      "traditional"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "LISABO / LISABO",
+    "category": "table_and_6_chairs",
+    "url": "https://www.ikea.com/us/en/p/lisabo-lisabo-table-and-6-chairs-ash-veneer-ash-veneer-s49545085/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/lisabo-lisabo-table-and-6-chairs-ash-veneer-ash-veneer__1265111_pe927513_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-lisabo-table-and-6-chairs-ash-veneer-ash-veneer__1470765_pe996942_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-lisabo-table-and-6-chairs-ash-veneer-ash-veneer__1240957_pe919579_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-lisabo-table-and-6-chairs-ash-veneer-ash-veneer__1240943_pe919573_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-lisabo-table-and-6-chairs-ash-veneer-ash-veneer__0383698_ph124315_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-lisabo-table-and-6-chairs-ash-veneer-ash-veneer__1053171_pe846764_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-lisabo-table-and-6-chairs-ash-veneer-ash-veneer__1223555_pe914644_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-lisabo-table-and-6-chairs-ash-veneer-ash-veneer__0949242_pe799575_s5.jpg"
+    ],
+    "priceCents": 82999,
+    "dimsMm": {
+      "w": null,
+      "d": null,
+      "h": null
+    },
+    "colorHex": "#C9B8A0",
+    "colorName": "ash veneer",
+    "materials": [
+      "wood"
+    ],
+    "styleTags": [
+      "scandinavian",
+      "modern"
+    ],
+    "featureTags": []
+  }
+]

@@ -1,0 +1,320 @@
+[
+  {
+    "name": "STORKLINTA",
+    "category": "nightstand",
+    "url": "https://www.ikea.com/us/en/p/storklinta-nightstand-white-with-1-drawer-30561155/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/storklinta-nightstand-white-with-1-drawer__1283575_pe932557_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/storklinta-nightstand-white-with-1-drawer__1343995_pe949669_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/storklinta-nightstand-white-with-1-drawer__1343994_pe949672_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/storklinta-nightstand-white-with-1-drawer__1343993_pe949667_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/storklinta-nightstand-white-with-1-drawer__1289861_pe934427_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/storklinta-nightstand-white-with-1-drawer__1435961_pe984001_p.jpg"
+    ],
+    "priceCents": 5999,
+    "dimsMm": {
+      "w": 400,
+      "d": 479,
+      "h": 530
+    },
+    "colorHex": "#F5F5F5",
+    "colorName": "white",
+    "materials": [
+      "wood",
+      "plastic"
+    ],
+    "styleTags": [
+      "modern",
+      "minimalist"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "HEMNES",
+    "category": "2_drawer_chest",
+    "url": "https://www.ikea.com/us/en/p/hemnes-2-drawer-chest-white-stain-80242627/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/hemnes-2-drawer-chest-white-stain__0651108_pe706676_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/hemnes-2-drawer-chest-white-stain__0380806_pe555685_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/hemnes-2-drawer-chest-white-stain__0381485_pe556211_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/hemnes-2-drawer-chest-white-stain__0381459_pe556185_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/hemnes-2-drawer-chest-white-stain__0381332_pe556073_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/hemnes-2-drawer-chest-white-stain__1042113_pe841262_s5.jpg"
+    ],
+    "priceCents": 14999,
+    "dimsMm": {
+      "w": 540,
+      "d": 381,
+      "h": 660
+    },
+    "colorHex": "#F5F5F5",
+    "colorName": "white stain",
+    "materials": [
+      "wood",
+      "adhesive",
+      "stain"
+    ],
+    "styleTags": [
+      "traditional",
+      "casual",
+      "scandinavian"
+    ],
+    "featureTags": [
+      "storage"
+    ]
+  },
+  {
+    "name": "KNARREVIK",
+    "category": "nightstand",
+    "url": "https://www.ikea.com/us/en/p/knarrevik-nightstand-black-20569977/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/knarrevik-nightstand-black__1255278_pe924478_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/knarrevik-nightstand-black__1295966_pe935626_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/knarrevik-nightstand-black__1295967_pe935627_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/knarrevik-nightstand-black__1295968_pe935628_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/knarrevik-nightstand-black__1255285_pe924480_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/knarrevik-nightstand-black__1215806_pe912198_s5.jpg"
+    ],
+    "priceCents": 1499,
+    "dimsMm": {
+      "w": 419,
+      "d": 337,
+      "h": 521
+    },
+    "colorHex": "#1A1A1A",
+    "colorName": "black",
+    "materials": [
+      "polyester",
+      "steel",
+      "epoxy"
+    ],
+    "styleTags": [
+      "industrial",
+      "modern"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "FÅGELFJÄLLET",
+    "category": "nightstand",
+    "url": "https://www.ikea.com/us/en/p/fagelfjaellet-nightstand-off-white-60627683/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/fagelfjaellet-nightstand-off-white__1509595_pe1009767_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/fagelfjaellet-nightstand-off-white__1521497_pe1013279_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/fagelfjaellet-nightstand-off-white__1521502_pe1013282_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/fagelfjaellet-nightstand-off-white__1549413_pe1021787_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/fagelfjaellet-nightstand-off-white__1521507_pe1013285_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/fagelfjaellet-nightstand-off-white__1539805_pe1017680_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/fagelfjaellet-nightstand-off-white__1465651_pe995131_p.jpg"
+    ],
+    "priceCents": 8999,
+    "dimsMm": {
+      "w": 521,
+      "d": 460,
+      "h": 660
+    },
+    "colorHex": "#F2EDE4",
+    "colorName": "off-white",
+    "materials": [
+      "wood",
+      "plastic"
+    ],
+    "styleTags": [
+      "modern",
+      "minimalist"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "GULLABERG",
+    "category": "nightstand",
+    "url": "https://www.ikea.com/us/en/p/gullaberg-nightstand-with-1-drawer-with-shelf-white-20561740/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/gullaberg-nightstand-with-1-drawer-with-shelf-white__1283770_pe932624_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/gullaberg-nightstand-with-1-drawer-with-shelf-white__1348189_pe951167_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/gullaberg-nightstand-with-1-drawer-with-shelf-white__1348191_pe951166_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/gullaberg-nightstand-with-1-drawer-with-shelf-white__1486798_pe1002603_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/gullaberg-nightstand-with-1-drawer-with-shelf-white__1486826_pe1002622_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/gullaberg-nightstand-with-1-drawer-with-shelf-white__1240583_pe919406_s5.jpg"
+    ],
+    "priceCents": 9999,
+    "dimsMm": {
+      "w": 530,
+      "d": 429,
+      "h": 689
+    },
+    "colorHex": "#E0E0E0",
+    "colorName": "with 1 drawer with shelf",
+    "materials": [
+      "wood",
+      "plastic"
+    ],
+    "styleTags": [
+      "modern",
+      "casual"
+    ],
+    "featureTags": [
+      "storage"
+    ]
+  },
+  {
+    "name": "TONSTAD",
+    "category": "nightstand",
+    "url": "https://www.ikea.com/us/en/p/tonstad-nightstand-oak-veneer-80489322/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/tonstad-nightstand-oak-veneer__1247217_pe922597_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/tonstad-nightstand-oak-veneer__1320234_pe941173_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/tonstad-nightstand-oak-veneer__1320236_pe941175_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/tonstad-nightstand-oak-veneer__1320235_pe941174_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/tonstad-nightstand-oak-veneer__1217774_pe913016_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/tonstad-nightstand-oak-veneer__1271946_pe929638_p.jpg",
+      "https://www.ikea.com/us/en/images/products/tonstad-nightstand-oak-veneer__1435961_pe984001_p.jpg"
+    ],
+    "priceCents": 14999,
+    "dimsMm": {
+      "w": 400,
+      "d": 400,
+      "h": 591
+    },
+    "colorHex": "#C4A574",
+    "colorName": "oak veneer",
+    "materials": [
+      "wood",
+      "polyester",
+      "plastic"
+    ],
+    "styleTags": [
+      "modern",
+      "scandinavian"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "BRIMNES",
+    "category": "nightstand",
+    "url": "https://www.ikea.com/us/en/p/brimnes-nightstand-black-80340454/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/brimnes-nightstand-black__0624434_pe691841_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/brimnes-nightstand-black__1326549_pe944271_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/brimnes-nightstand-black__1326550_pe944270_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/brimnes-nightstand-black__0439570_pe592288_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/brimnes-nightstand-black__1150832_pe884683_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/brimnes-nightstand-black__1234702_pe051287_p.jpg"
+    ],
+    "priceCents": 7999,
+    "dimsMm": {
+      "w": 391,
+      "d": 410,
+      "h": 530
+    },
+    "colorHex": "#1A1A1A",
+    "colorName": "black",
+    "materials": [
+      "wood",
+      "plastic",
+      "glass"
+    ],
+    "styleTags": [
+      "modern",
+      "casual"
+    ],
+    "featureTags": [
+      "glass"
+    ]
+  },
+  {
+    "name": "KRONÖREN",
+    "category": "nightstand",
+    "url": "https://www.ikea.com/us/en/p/kronoeren-nightstand-pine-60637074/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/kronoeren-nightstand-pine__1507441_pe1009337_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kronoeren-nightstand-pine__1514021_pe1010783_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kronoeren-nightstand-pine__1514019_pe1010785_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kronoeren-nightstand-pine__1514020_pe1010784_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kronoeren-nightstand-pine__1514017_pe1010781_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kronoeren-nightstand-pine__1291246_pe934860_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kronoeren-nightstand-pine__1539978_ph209235_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kronoeren-nightstand-pine__1561143_pe1025577_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kronoeren-nightstand-pine__1290958_ph132561_p.jpg"
+    ],
+    "priceCents": 1999,
+    "dimsMm": {
+      "w": 391,
+      "d": 321,
+      "h": 549
+    },
+    "colorHex": "#D7B98E",
+    "colorName": "pine",
+    "materials": [
+      "wood",
+      "adhesive"
+    ],
+    "styleTags": [
+      "scandinavian",
+      "rustic"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "RÅDMANSÖ",
+    "category": "nightstand",
+    "url": "https://www.ikea.com/us/en/p/radmansoe-nightstand-brown-walnut-effect-80593597/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/radmansoe-nightstand-brown-walnut-effect__1384141_pe962860_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/radmansoe-nightstand-brown-walnut-effect__1416653_pe975659_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/radmansoe-nightstand-brown-walnut-effect__1416654_pe975661_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/radmansoe-nightstand-brown-walnut-effect__1416655_pe975660_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/radmansoe-nightstand-brown-walnut-effect__1539046_ph206266_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/radmansoe-nightstand-brown-walnut-effect__1539055_ph206268_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/radmansoe-nightstand-brown-walnut-effect__1450351_pe990298_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/radmansoe-nightstand-brown-walnut-effect__1238378_ph151106_p.jpg"
+    ],
+    "priceCents": 9999,
+    "dimsMm": {
+      "w": 540,
+      "d": 384,
+      "h": 581
+    },
+    "colorHex": "#5D4037",
+    "colorName": "brown walnut effect",
+    "materials": [
+      "wood",
+      "plastic",
+      "steel"
+    ],
+    "styleTags": [
+      "modern",
+      "contemporary"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "LILLBERGET",
+    "category": "nightstand",
+    "url": "https://www.ikea.com/us/en/p/lillberget-nightstand-white-10567568/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/lillberget-nightstand-white__1281809_pe931989_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lillberget-nightstand-white__1281808_pe931988_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lillberget-nightstand-white__1281806_pe931986_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lillberget-nightstand-white__1281807_pe931987_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lillberget-nightstand-white__1323430_pe942703_s5.jpg"
+    ],
+    "priceCents": 3999,
+    "dimsMm": {
+      "w": 400,
+      "d": 419,
+      "h": 489
+    },
+    "colorHex": "#F5F5F5",
+    "colorName": "white",
+    "materials": [
+      "wood",
+      "plastic"
+    ],
+    "styleTags": [
+      "modern",
+      "minimalist"
+    ],
+    "featureTags": []
+  }
+]

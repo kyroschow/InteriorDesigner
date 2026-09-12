@@ -1,0 +1,375 @@
+[
+  {
+    "name": "GLOSTAD",
+    "category": "sofa",
+    "url": "https://www.ikea.com/us/en/p/glostad-sofa-knisa-dark-gray-40595942/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/glostad-sofa-knisa-dark-gray__1234948_pe917261_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/glostad-sofa-knisa-dark-gray__1235175_pe917294_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/glostad-sofa-knisa-dark-gray__1235896_pe917385_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/glostad-sofa-knisa-dark-gray__1235914_pe917391_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/glostad-sofa-knisa-dark-gray__1235913_pe917389_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/glostad-sofa-knisa-dark-gray__1235176_pe917297_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/glostad-sofa-knisa-dark-gray__1235915_pe917390_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/glostad-sofa-knisa-dark-gray__1387199_pe964151_s5.jpg"
+    ],
+    "priceCents": 19900,
+    "dimsMm": {
+      "w": 1711,
+      "d": 781,
+      "h": 410
+    },
+    "colorHex": "#5F6368",
+    "colorName": "Knisa dark gray",
+    "materials": [
+      "polyester",
+      "wood",
+      "steel",
+      "foam",
+      "epoxy",
+      "polypropylene",
+      "galvanized"
+    ],
+    "styleTags": [
+      "modern",
+      "casual"
+    ],
+    "featureTags": [
+      "upholstered"
+    ]
+  },
+  {
+    "name": "UPPLAND",
+    "category": "sofa",
+    "url": "https://www.ikea.com/us/en/p/uppland-sofa-blekinge-white-s19384116/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/uppland-sofa-blekinge-white__1578502_pe1034145_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/uppland-sofa-blekinge-white__0818564_pe774486_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/uppland-sofa-blekinge-white__0818534_pe774464_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/uppland-sofa-blekinge-white__0261000_pe404970_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/uppland-sofa-blekinge-white__0934662_pe792483_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/uppland-sofa-blekinge-white__0937793_pe793848_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/uppland-sofa-blekinge-white__0252533_pe391799_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/uppland-sofa-blekinge-white__0948958_pe799429_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/uppland-sofa-blekinge-white__0928381_pe789853_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/uppland-sofa-blekinge-white__0739096_pe225167_s5.jpg"
+    ],
+    "priceCents": 89900,
+    "dimsMm": {
+      "w": 2242,
+      "d": 921,
+      "h": 470
+    },
+    "colorHex": "#F5F5F5",
+    "colorName": "Blekinge white",
+    "materials": [
+      "wood",
+      "polyester",
+      "cotton",
+      "steel",
+      "foam",
+      "polypropylene"
+    ],
+    "styleTags": [
+      "traditional",
+      "casual"
+    ],
+    "featureTags": [
+      "upholstered"
+    ]
+  },
+  {
+    "name": "STOCKHOLM 2025",
+    "category": "sofa",
+    "url": "https://www.ikea.com/us/en/p/stockholm-2025-sofa-sundhamn-beige-00586096/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/stockholm-2025-sofa-sundhamn-beige__1577934_pe1033680_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/stockholm-2025-sofa-sundhamn-beige__1421377_ph203023_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/stockholm-2025-sofa-sundhamn-beige__1431614_ph203253_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/stockholm-2025-sofa-sundhamn-beige__1421309_ph203159_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/stockholm-2025-sofa-sundhamn-beige__1431609_ph203024_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/stockholm-2025-sofa-sundhamn-beige__1397429_pe967563_s5.jpg"
+    ],
+    "priceCents": 199900,
+    "dimsMm": {
+      "w": 2330,
+      "d": 1029,
+      "h": 419
+    },
+    "colorHex": "#D4C4A8",
+    "colorName": "Sundhamn beige",
+    "materials": [
+      "wood",
+      "polyester",
+      "leather",
+      "cotton",
+      "steel",
+      "linen",
+      "foam",
+      "polypropylene"
+    ],
+    "styleTags": [
+      "contemporary",
+      "modern"
+    ],
+    "featureTags": [
+      "upholstered",
+      "leather"
+    ]
+  },
+  {
+    "name": "GLOSTAD",
+    "category": "sofa_with_chaise",
+    "url": "https://www.ikea.com/us/en/p/glostad-sofa-with-chaise-knisa-dark-gray-s69578602/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/glostad-sofa-with-chaise-knisa-dark-gray__1577736_pe1033483_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/glostad-sofa-with-chaise-knisa-dark-gray__1235200_pe917305_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/glostad-sofa-with-chaise-knisa-dark-gray__1235176_pe917297_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/glostad-sofa-with-chaise-knisa-dark-gray__1387199_pe964151_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/glostad-sofa-with-chaise-knisa-dark-gray__1387091_pe964080_s5.jpg"
+    ],
+    "priceCents": 24900,
+    "dimsMm": {
+      "w": 1711,
+      "d": 781,
+      "h": 679
+    },
+    "colorHex": "#5F6368",
+    "colorName": "Knisa dark gray",
+    "materials": [
+      "wood",
+      "polyester",
+      "steel",
+      "foam",
+      "epoxy",
+      "polypropylene",
+      "galvanized"
+    ],
+    "styleTags": [
+      "modern",
+      "casual"
+    ],
+    "featureTags": [
+      "upholstered"
+    ]
+  },
+  {
+    "name": "KIVIK",
+    "category": "sofa",
+    "url": "https://www.ikea.com/us/en/p/kivik-sofa-kelinge-gray-turquoise-s59443053/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/kivik-sofa-kelinge-gray-turquoise__1577275_pe1033058_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kivik-sofa-kelinge-gray-turquoise__1148204_ph184815_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kivik-sofa-kelinge-gray-turquoise__1055811_pe848114_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kivik-sofa-kelinge-gray-turquoise__1134553_pe878803_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kivik-sofa-kelinge-gray-turquoise__1300924_pe937215_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kivik-sofa-kelinge-gray-turquoise__1399650_ph191619_s5.jpg"
+    ],
+    "priceCents": 84900,
+    "dimsMm": {
+      "w": 2280,
+      "d": 949,
+      "h": 829
+    },
+    "colorHex": "#9AA0A6",
+    "colorName": "Kelinge gray-turquoise",
+    "materials": [
+      "wood",
+      "polyester",
+      "steel",
+      "foam"
+    ],
+    "styleTags": [
+      "casual",
+      "modern"
+    ],
+    "featureTags": [
+      "upholstered"
+    ]
+  },
+  {
+    "name": "KLIPPAN",
+    "category": "loveseat",
+    "url": "https://www.ikea.com/us/en/p/klippan-loveseat-vissle-gray-s09010617/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/klippan-loveseat-vissle-gray__1576907_pe1032801_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/klippan-loveseat-vissle-gray__0820948_pe709146_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/klippan-loveseat-vissle-gray__0820504_pe643241_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/klippan-loveseat-vissle-gray__0820947_pe585607_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/klippan-loveseat-vissle-gray__0719395_pe732044_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/klippan-loveseat-vissle-gray__0562987_pe663640_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/klippan-loveseat-vissle-gray__0721437_ph143338_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/klippan-loveseat-vissle-gray__0721439_ph151991_s5.jpg"
+    ],
+    "priceCents": 34900,
+    "dimsMm": {
+      "w": 1800,
+      "d": 879,
+      "h": 660
+    },
+    "colorHex": "#9AA0A6",
+    "colorName": "Vissle gray",
+    "materials": [
+      "wood",
+      "polyester",
+      "steel",
+      "foam",
+      "epoxy",
+      "polypropylene"
+    ],
+    "styleTags": [
+      "midcentury",
+      "casual"
+    ],
+    "featureTags": [
+      "upholstered"
+    ]
+  },
+  {
+    "name": "HYLTARP",
+    "category": "sofa",
+    "url": "https://www.ikea.com/us/en/p/hyltarp-sofa-hallarp-white-s39489645/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/hyltarp-sofa-hallarp-white__1577691_pe1033441_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/hyltarp-sofa-hallarp-white__1193805_pe901632_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/hyltarp-sofa-hallarp-white__1194006_pe901758_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/hyltarp-sofa-hallarp-white__1194007_pe901759_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/hyltarp-sofa-hallarp-white__1256064_pe924900_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/hyltarp-sofa-hallarp-white__1271191_ph194352_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/hyltarp-sofa-hallarp-white__1271192_ph194128_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/hyltarp-sofa-hallarp-white__1271196_ph194132_s5.jpg"
+    ],
+    "priceCents": 119900,
+    "dimsMm": {
+      "w": 2321,
+      "d": 930,
+      "h": 479
+    },
+    "colorHex": "#F5F5F5",
+    "colorName": "Hallarp white",
+    "materials": [
+      "wood",
+      "polyester",
+      "cotton",
+      "steel",
+      "foam",
+      "polypropylene"
+    ],
+    "styleTags": [
+      "casual",
+      "modern"
+    ],
+    "featureTags": [
+      "upholstered"
+    ]
+  },
+  {
+    "name": "KIVIK",
+    "category": "sectional_4_seat_with_chaise",
+    "url": "https://www.ikea.com/us/en/p/kivik-sectional-4-seat-with-chaise-tresund-light-beige-s79494391/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/kivik-sectional-4-seat-with-chaise-tresund-light-beige__1577809_pe1033546_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kivik-sectional-4-seat-with-chaise-tresund-light-beige__1125140_pe875381_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kivik-sectional-4-seat-with-chaise-tresund-light-beige__1124219_pe875083_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kivik-sectional-4-seat-with-chaise-tresund-light-beige__1124122_pe875026_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kivik-sectional-4-seat-with-chaise-tresund-light-beige__1134553_pe878803_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/kivik-sectional-4-seat-with-chaise-tresund-light-beige__1300931_pe937220_s5.jpg"
+    ],
+    "priceCents": 139900,
+    "dimsMm": {
+      "w": null,
+      "d": null,
+      "h": 829
+    },
+    "colorHex": "#F0F0F0",
+    "colorName": "4-seat with chaise",
+    "materials": [
+      "wood",
+      "polyester",
+      "cotton",
+      "steel",
+      "foam"
+    ],
+    "styleTags": [
+      "casual",
+      "modern"
+    ],
+    "featureTags": [
+      "upholstered",
+      "modular"
+    ]
+  },
+  {
+    "name": "MORABO",
+    "category": "sofa",
+    "url": "https://www.ikea.com/us/en/p/morabo-sofa-grann-bomstad-golden-brown-wood-s29317758/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/morabo-sofa-grann-bomstad-golden-brown-wood__1576948_pe1032847_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/morabo-sofa-grann-bomstad-golden-brown-wood__0815934_pe773121_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/morabo-sofa-grann-bomstad-golden-brown-wood__0825347_pe680182_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/morabo-sofa-grann-bomstad-golden-brown-wood__0825342_pe680164_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/morabo-sofa-grann-bomstad-golden-brown-wood__0825355_pe712646_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/morabo-sofa-grann-bomstad-golden-brown-wood__0712952_pe729157_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/morabo-sofa-grann-bomstad-golden-brown-wood__0815815_pe773045_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/morabo-sofa-grann-bomstad-golden-brown-wood__0813406_ph166310_s5.jpg"
+    ],
+    "priceCents": 134900,
+    "dimsMm": {
+      "w": 2061,
+      "d": 921,
+      "h": 810
+    },
+    "colorHex": "#A06040",
+    "colorName": "Grann",
+    "materials": [
+      "wood",
+      "polyester",
+      "leather",
+      "cotton",
+      "foam"
+    ],
+    "styleTags": [
+      "contemporary",
+      "casual"
+    ],
+    "featureTags": [
+      "upholstered",
+      "leather"
+    ]
+  },
+  {
+    "name": "GULLVALLA",
+    "category": "sofa",
+    "url": "https://www.ikea.com/us/en/p/gullvalla-sofa-silkeryd-gray-green-80618512/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/gullvalla-sofa-silkeryd-gray-green__1576775_pe1032702_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/gullvalla-sofa-silkeryd-gray-green__1558991_ph209553_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/gullvalla-sofa-silkeryd-gray-green__1517612_pe1012395_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/gullvalla-sofa-silkeryd-gray-green__1517613_pe1012397_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/gullvalla-sofa-silkeryd-gray-green__1517614_pe1012396_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/gullvalla-sofa-silkeryd-gray-green__1571555_pe1030239_r.jpg"
+    ],
+    "priceCents": 44900,
+    "dimsMm": {
+      "w": 1819,
+      "d": 829,
+      "h": 419
+    },
+    "colorHex": "#6B8F71",
+    "colorName": "Silkeryd gray-green",
+    "materials": [
+      "wood",
+      "polyester",
+      "steel",
+      "foam",
+      "polypropylene"
+    ],
+    "styleTags": [
+      "modern",
+      "casual"
+    ],
+    "featureTags": [
+      "upholstered"
+    ]
+  }
+]
