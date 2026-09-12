@@ -5,6 +5,7 @@ import { ProjectLayout } from '@/screens/ProjectLayout'
 import { WorkspaceScreen } from '@/screens/WorkspaceScreen'
 import { RulesScreen } from '@/screens/RulesScreen'
 import { ExportScreen } from '@/screens/ExportScreen'
+import { ShoppingListScreen } from '@/screens/ShoppingListScreen'
 
 export function App() {
   return (
@@ -16,6 +17,7 @@ export function App() {
         <Route path="rules" element={<RulesScreen />} />
       </Route>
       <Route path="/project/export" element={<ExportScreen />} />
+      <Route path="/project/shopping-list" element={<ShoppingListScreen />} />
     </Routes>
   )
 }

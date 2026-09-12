@@ -1,6 +1,6 @@
 import { useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Download, Undo2 } from 'lucide-react'
+import { Download, ShoppingCart, Undo2 } from 'lucide-react'
 import { Brand } from '@/components/Brand'
 import { FloorPlanSvg } from '@/components/FloorPlanSvg'
 import { birchTwoBed } from '@/data/floorplans/birchTwoBed'
@@ -48,14 +48,24 @@ export function ExportScreen() {
           <FloorPlanSvg ref={svgRef} plan={birchTwoBed} furniture={furniture} />
         </div>
 
-        <button
-          type="button"
-          onClick={handleExport}
-          className="mt-8 inline-flex items-center gap-2 rounded-control bg-ink px-6 py-3 text-sm font-semibold text-app transition-transform hover:-translate-y-0.5"
-        >
-          <Download size={16} />
-          Export PNG
-        </button>
+        <div className="mt-8 flex gap-3">
+          <button
+            type="button"
+            onClick={() => navigate('/project/shopping-list')}
+            className="inline-flex items-center gap-2 rounded-control px-6 py-3 text-sm font-semibold text-ink-soft transition-colors hover:bg-canvas"
+          >
+            <ShoppingCart size={16} />
+            Shopping List
+          </button>
+          <button
+            type="button"
+            onClick={handleExport}
+            className="inline-flex items-center gap-2 rounded-control bg-ink px-6 py-3 text-sm font-semibold text-app transition-transform hover:-translate-y-0.5"
+          >
+            <Download size={16} />
+            Export PNG
+          </button>
+        </div>
       </main>
     </div>
   )
