@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
+import { Brand } from '@/components/Brand'
 import { StepHeader } from '@/components/StepHeader'
 import { OptionCard } from '@/components/OptionCard'
 import { useOnboardingStore, type UnitSystem } from '@/store/onboardingStore'
@@ -35,12 +36,20 @@ export function UnitsScreen() {
 
   return (
     <div className="mx-auto flex min-h-full w-full max-w-xl flex-col justify-center px-6 py-16">
+      <div className="mb-14 flex flex-col items-center text-center">
+        <Brand size="xl" />
+        <h2 className="serif mt-8 max-w-lg text-4xl text-ink-soft/80 sm:text-5xl">
+          Turn any floor plan into a fully furnished room.
+        </h2>
+      </div>
+
       <StepHeader
         step={1}
         total={2}
         eyebrow="New project"
         title="How do you like to measure?"
         subtitle="This sets how dimensions are shown across your project. You can change it later in settings."
+        size="compact"
       />
 
       <div role="radiogroup" aria-label="Unit system" className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -60,7 +69,7 @@ export function UnitsScreen() {
       <button
         type="button"
         onClick={() => navigate('/setup')}
-        className="mt-10 inline-flex items-center justify-center gap-2 self-start rounded-control bg-ink px-6 py-3 text-sm font-semibold text-app transition-transform hover:-translate-y-0.5"
+        className="mt-8 inline-flex items-center justify-center gap-2 self-start rounded-control bg-ink px-5 py-2.5 text-sm font-semibold text-app transition-transform hover:-translate-y-0.5"
       >
         Continue
         <ArrowRight size={16} />

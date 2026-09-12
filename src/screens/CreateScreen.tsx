@@ -70,7 +70,7 @@ export function CreateScreen() {
         <div
           className={clsx(
             'panel mt-4 rounded-card border-2 border-dashed p-6 transition-colors',
-            isDragOver ? 'border-brass bg-gold' : 'border-canvas-line',
+            isDragOver ? 'border-accent bg-accent-pale' : 'border-canvas-line',
           )}
           onDragOver={(e) => {
             e.preventDefault()
@@ -117,7 +117,7 @@ export function CreateScreen() {
             >
               <FileUp size={22} className="text-ink-soft/50" />
               <span className="text-sm font-medium text-ink">
-                Drop a file here, or <span className="text-gold-ink underline">browse</span>
+                Drop a file here, or <span className="text-accent-deep underline">browse</span>
               </span>
               <span className="text-xs text-ink-soft/50">PNG, JPG or PDF</span>
             </button>

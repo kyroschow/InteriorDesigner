@@ -12,7 +12,7 @@ export function ProjectStub() {
   return (
     <div className="mx-auto flex min-h-full w-full max-w-lg flex-col items-center justify-center px-6 py-16 text-center">
       <div className="panel flex w-full flex-col items-center gap-4 rounded-panel p-10">
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gold text-gold-ink">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent-pale text-accent-deep">
           <Hammer size={24} />
         </div>
         <h1 className="serif text-2xl text-ink">Workspace coming soon</h1>
