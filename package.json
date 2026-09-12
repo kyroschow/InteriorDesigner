@@ -7,6 +7,8 @@
     "dev": "vite --host 127.0.0.1 --port 5273",
     "build": "tsc -b --noCheck && vite build",
     "typecheck": "tsc -b",
+    "test:api": "node scripts/test-api.mjs",
+    "rules:index": "node scripts/build-rule-index.mjs",
     "preview": "vite preview --host 127.0.0.1 --port 5273"
   },
   "dependencies": {

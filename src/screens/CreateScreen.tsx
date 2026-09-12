@@ -2,50 +2,81 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, FileUp, PencilRuler, Upload, X } from 'lucide-react'
 import clsx from 'clsx'
+import { api } from '@/api/client'
 import { Brand } from '@/components/Brand'
-import { StepHeader } from '@/components/StepHeader'
+import { ErrorBanner } from '@/components/ErrorBanner'
 import { OptionCard } from '@/components/OptionCard'
 import { StagedLoadingOverlay } from '@/components/StagedLoadingOverlay'
+import { StepHeader } from '@/components/StepHeader'
 import { useOnboardingStore } from '@/store/onboardingStore'
-import { useStagedLoading } from '@/lib/useStagedLoading'
+import { useRecentProjectsStore } from '@/store/recentProjectsStore'
+import { ACCEPTED_UPLOAD_TYPES, DEMO_LAYOUT_ID, MAX_UPLOAD_BYTES, type Project } from '@/types/interior'
 
-const ACCEPTED_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'application/pdf']
+const STAGES = ['Creating your project…', 'Uploading your floor plan…']
 
-const UPLOAD_STAGES = ['Reading your file…', 'Detecting rooms…', 'Building your floor plan…']
-const SCRATCH_STAGES = ['Setting up your canvas…', 'Building your floor plan…']
-
-/** Onboarding step 2: start from a blank canvas, or upload an existing floor plan. */
+/** Onboarding step 2: `POST /projects`, then multipart `POST /floor-plan` for uploads. */
 export function CreateScreen() {
   const navigate = useNavigate()
-  const mode = useOnboardingStore((s) => s.mode)
-  const setMode = useOnboardingStore((s) => s.setMode)
-  const uploadedFile = useOnboardingStore((s) => s.uploadedFile)
-  const setUploadedFile = useOnboardingStore((s) => s.setUploadedFile)
+  const { mode, setMode, uploadedFile, setUploadedFile, projectName, setProjectName, unitSystem, reset } = useOnboardingStore()
+  const remember = useRecentProjectsStore((s) => s.remember)
 
   const [isDragOver, setIsDragOver] = useState(false)
+  const [fileError, setFileError] = useState<string | null>(null)
+  const [phase, setPhase] = useState<'idle' | 'creating' | 'uploading'>('idle')
+  const [error, setError] = useState<unknown>(null)
+  /** Kept after a failed upload so a retry reuses the project instead of creating another. */
+  const [created, setCreated] = useState<Project | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const stages = mode === 'upload' ? UPLOAD_STAGES : SCRATCH_STAGES
-  const { isRunning: isCreating, stageIndex, start } = useStagedLoading(stages)
 
-  // The object URL is only ever created here, so it's this screen's job to
-  // release it — both on replacement and on unmount.
+  // This screen owns the preview URL: one per file, revoked on replacement and unmount.
   useEffect(() => {
-    return () => {
-      if (uploadedFile?.previewUrl) URL.revokeObjectURL(uploadedFile.previewUrl)
+    if (!uploadedFile?.type.startsWith('image/')) {
+      setPreviewUrl(null)
+      return
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    const url = URL.createObjectURL(uploadedFile)
+    setPreviewUrl(url)
+    return () => URL.revokeObjectURL(url)
+  }, [uploadedFile])
 
   function handleFile(file: File | null) {
-    if (!file || !ACCEPTED_TYPES.includes(file.type)) return
-    if (uploadedFile?.previewUrl) URL.revokeObjectURL(uploadedFile.previewUrl)
-    setUploadedFile({
-      name: file.name,
-      previewUrl: file.type.startsWith('image/') ? URL.createObjectURL(file) : null,
-    })
+    if (!file) return
+    if (!ACCEPTED_UPLOAD_TYPES.includes(file.type)) return setFileError('Upload a PNG, JPEG, WebP or PDF file.')
+    if (file.size > MAX_UPLOAD_BYTES) return setFileError('Floor plans are limited to 20 MB.')
+    setFileError(null)
+    setUploadedFile(file)
   }
 
-  const canCreate = mode === 'scratch' || (mode === 'upload' && uploadedFile != null)
+  function finish(project: Project) {
+    reset()
+    navigate(`/projects/${project.id}/rooms`)
+  }
+
+  async function create() {
+    setError(null)
+    try {
+      let project = created
+      if (!project) {
+        setPhase('creating')
+        project = await api.createProject({ name: projectName.trim() || 'My apartment', unitSystem, mode: mode ?? 'scratch', demoLayoutId: DEMO_LAYOUT_ID })
+        setCreated(project)
+        remember(project)
+      } else {
+        project = await api.getProject(project.id)
+      }
+      if (mode === 'upload' && uploadedFile) {
+        setPhase('uploading')
+        await api.uploadFloorPlan(project.id, project.revision, uploadedFile)
+      }
+      finish(project)
+    } catch (err) {
+      setError(err)
+      setPhase('idle')
+    }
+  }
+
+  const canCreate = (mode === 'scratch' || (mode === 'upload' && uploadedFile != null)) && phase === 'idle'
 
   return (
     <div className="animate-pane-in relative mx-auto flex min-h-full w-full max-w-2xl flex-col justify-center px-6 py-16">
@@ -53,13 +84,17 @@ export function CreateScreen() {
         <Brand size="sm" />
       </div>
 
-      <StepHeader
-        step={2}
-        total={2}
-        eyebrow="New project"
-        title="Start your floor plan"
-        subtitle="Draw a layout from scratch, or upload one you already have."
-      />
+      <StepHeader step={2} total={2} eyebrow="New project" title="Start your floor plan" subtitle="Both options start from our four-room demo layout, which you can resize and relabel." />
+
+      <label className="mb-4 block text-sm font-medium text-ink-soft">
+        Project name
+        <input
+          value={projectName}
+          maxLength={120}
+          onChange={(e) => setProjectName(e.target.value)}
+          className="mt-1 w-full rounded-control border border-canvas-line bg-app px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none"
+        />
+      </label>
 
       <div role="radiogroup" aria-label="Project starting point" className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <OptionCard
@@ -67,23 +102,20 @@ export function CreateScreen() {
           onClick={() => setMode('scratch')}
           icon={<PencilRuler size={20} />}
           title="Start from scratch"
-          description="Draw walls and rooms freehand on a blank canvas."
+          description="Begin with the demo layout — four rooms you can resize and relabel."
         />
         <OptionCard
           selected={mode === 'upload'}
           onClick={() => setMode('upload')}
           icon={<Upload size={20} />}
           title="Upload a floor plan"
-          description="Bring in an image or PDF of an existing plan."
+          description="Attach an image or PDF of your plan. It isn't analyzed yet, so you'll still start from the demo layout."
         />
       </div>
 
       {mode === 'upload' ? (
         <div
-          className={clsx(
-            'panel mt-4 rounded-card border-2 border-dashed p-6 transition-colors',
-            isDragOver ? 'border-accent bg-accent-pale' : 'border-canvas-line',
-          )}
+          className={clsx('panel mt-4 rounded-card border-2 border-dashed p-6 transition-colors', isDragOver ? 'border-accent bg-accent-pale' : 'border-canvas-line')}
           onDragOver={(e) => {
             e.preventDefault()
             setIsDragOver(true)
@@ -97,12 +129,8 @@ export function CreateScreen() {
         >
           {uploadedFile ? (
             <div className="flex items-center gap-4">
-              {uploadedFile.previewUrl ? (
-                <img
-                  src={uploadedFile.previewUrl}
-                  alt=""
-                  className="h-16 w-16 shrink-0 rounded-control object-cover"
-                />
+              {previewUrl ? (
+                <img src={previewUrl} alt="" className="h-16 w-16 shrink-0 rounded-control object-cover" />
               ) : (
                 <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-control bg-canvas text-ink-soft">
                   <FileUp size={22} />
@@ -110,7 +138,7 @@ export function CreateScreen() {
               )}
               <div className="min-w-0 flex-1">
                 <div className="truncate text-sm font-medium text-ink">{uploadedFile.name}</div>
-                <div className="text-xs text-ink-soft/60">Ready to import</div>
+                <div className="text-xs text-ink-soft/60">{(uploadedFile.size / (1024 * 1024)).toFixed(1)} MB · ready to attach</div>
               </div>
               <button
                 type="button"
@@ -122,27 +150,41 @@ export function CreateScreen() {
               </button>
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="flex w-full flex-col items-center gap-2 py-4 text-center"
-            >
+            <button type="button" onClick={() => fileInputRef.current?.click()} className="flex w-full flex-col items-center gap-2 py-4 text-center">
               <FileUp size={22} className="text-ink-soft/50" />
               <span className="text-sm font-medium text-ink">
                 Drop a file here, or <span className="text-accent-deep underline">browse</span>
               </span>
-              <span className="text-xs text-ink-soft/50">PNG, JPG or PDF</span>
+              <span className="text-xs text-ink-soft/50">PNG, JPEG, WebP or PDF, up to 20 MB</span>
             </button>
           )}
+          {fileError && <p className="mt-2 text-xs text-red-700">{fileError}</p>}
           <input
             ref={fileInputRef}
             type="file"
-            accept={ACCEPTED_TYPES.join(',')}
+            accept={ACCEPTED_UPLOAD_TYPES.join(',')}
             className="hidden"
-            onChange={(e) => handleFile(e.target.files?.[0] ?? null)}
+            onChange={(e) => {
+              handleFile(e.target.files?.[0] ?? null)
+              e.target.value = ''
+            }}
           />
         </div>
       ) : null}
+
+      {error != null && (
+        <div className="mt-4 space-y-2">
+          <ErrorBanner error={error} onDismiss={() => setError(null)} />
+          {created && (
+            <p className="text-xs text-ink-soft">
+              Your project was created, but the file didn't upload.{' '}
+              <button type="button" onClick={() => finish(created)} className="font-semibold text-accent-deep underline">
+                Continue without the file
+              </button>
+            </p>
+          )}
+        </div>
+      )}
 
       <div className="mt-10 flex items-center gap-3">
         <button
@@ -155,21 +197,19 @@ export function CreateScreen() {
         </button>
         <button
           type="button"
-          disabled={!canCreate || isCreating}
-          onClick={() => start(() => navigate('/project'))}
+          disabled={!canCreate}
+          onClick={create}
           className={clsx(
             'inline-flex items-center justify-center gap-2 rounded-control px-6 py-3 text-sm font-semibold transition-transform',
-            canCreate && !isCreating
-              ? 'bg-ink text-app hover:-translate-y-0.5'
-              : 'cursor-not-allowed bg-canvas text-ink-soft/50',
+            canCreate ? 'bg-ink text-app hover:-translate-y-0.5' : 'cursor-not-allowed bg-canvas text-ink-soft/50',
           )}
         >
-          Create Project
+          {created && error != null ? 'Retry upload' : 'Create Project'}
           <ArrowRight size={16} />
         </button>
       </div>
 
-      {isCreating && <StagedLoadingOverlay stages={stages} stageIndex={stageIndex} />}
+      {phase !== 'idle' && <StagedLoadingOverlay stages={STAGES} stageIndex={phase === 'creating' ? 0 : 1} />}
     </div>
   )
 }
