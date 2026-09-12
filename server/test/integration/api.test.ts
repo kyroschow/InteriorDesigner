@@ -254,3 +254,32 @@ describe('generation with the rules-engine loop', () => {
     expect((await t.app.inject({ method: 'GET', url: `/api/v1/projects/${project.id}` })).json().activeLayoutId).toBeNull()
   })
 })
+
+describe('concurrent requests', () => {
+  it('lets only one of two writes with the same expectedRevision succeed', async () => {
+    t = await createTestApp(null)
+    const project = await configuredProject(t.app)
+    const patch = (name: string) =>
+      t!.app.inject({ method: 'PATCH', url: `/api/v1/projects/${project.id}`, payload: { expectedRevision: project.revision, name } })
+    const results = await Promise.all([patch('A'), patch('B')])
+    expect(results.map((r) => r.statusCode).sort()).toEqual([200, 409])
+    expect((await t.app.inject({ method: 'GET', url: `/api/v1/projects/${project.id}` })).json().revision).toBe(project.revision + 1)
+  })
+
+  it('creates one generation for two simultaneous requests with the same Idempotency-Key', async () => {
+    t = await createTestApp(new FakeLlmClient(() => new Error('model offline')))
+    const project = await configuredProject(t.app)
+    const post = () =>
+      t!.app.inject({
+        method: 'POST',
+        url: `/api/v1/projects/${project.id}/generations`,
+        headers: { 'idempotency-key': 'double-click' },
+        payload: { expectedRevision: project.revision, configurationRevision: project.configuration.revision, scope: { kind: 'home' } },
+      })
+    const [a, b] = await Promise.all([post(), post()])
+    expect([a.statusCode, b.statusCode]).toEqual([202, 202])
+    expect(a.json().generationId).toBe(b.json().generationId)
+    expect(await t.store.db.collection('generations').countDocuments({ projectId: project.id })).toBe(1)
+    await t.queue.idle()
+  })
+})

@@ -1,10 +1,10 @@
+import { randomUUID } from 'node:crypto'
 import { mkdtempSync, rmSync } from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { buildApp } from '../src/app.ts'
 import { type Catalog, loadCatalog } from '../src/catalog/load.ts'
 import { loadConfig } from '../src/config.ts'
-import { Database } from '../src/db/database.ts'
 import { Store } from '../src/db/store.ts'
 import type { Room } from '../src/domain/types.ts'
 import { DEMO_ROOMS, DEMO_TRANSFORMS } from '../src/fixtures/fourRoomV1.ts'
@@ -20,12 +20,12 @@ export const catalog = () => (cachedCatalog ??= loadCatalog(INVENTORY_DIR))
 export const demoRooms = (): Room[] => buildFloor(DEMO_ROOMS, DEMO_TRANSFORMS).rooms
 export const demoRoom = (id: string): Room => demoRooms().find((r) => r.id === id)!
 
+/** An app on the local MongoDB with its own throwaway database. */
 export async function createTestApp(llm: LlmClient | null, overrides: { maxTurns?: number } = {}) {
   const dataDir = mkdtempSync(path.join(os.tmpdir(), 'interior-test-'))
-  const base = loadConfig({ DATA_DIR: dataDir, INVENTORY_DIR, LLM_PROVIDER: 'none' })
+  const base = loadConfig({ ...process.env, DATA_DIR: dataDir, INVENTORY_DIR, LLM_PROVIDER: 'none' })
   const config = { ...base, generation: { ...base.generation, maxTurns: overrides.maxTurns ?? base.generation.maxTurns } }
-  const db = new Database(path.join(dataDir, 'app.db'))
-  const store = new Store(db)
+  const store = await Store.connect({ uri: config.mongodbUri, dbName: `interior_test_${randomUUID().slice(0, 8)}` })
   const queue = new GenerationQueue({ store, catalog: catalog(), llm, config })
   const app = await buildApp({ config, store, catalog: catalog(), llm, queue })
   return {
@@ -35,8 +35,9 @@ export async function createTestApp(llm: LlmClient | null, overrides: { maxTurns
     dataDir,
     async close() {
       queue.stop()
+      await queue.idle()
       await app.close()
-      db.close()
+      await store.close({ dropDatabase: true })
       rmSync(dataDir, { recursive: true, force: true })
     },
   }

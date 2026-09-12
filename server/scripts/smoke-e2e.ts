@@ -11,15 +11,13 @@ import path from 'node:path'
 import { buildApp } from '../src/app.ts'
 import { loadCatalog } from '../src/catalog/load.ts'
 import { loadConfig } from '../src/config.ts'
-import { Database } from '../src/db/database.ts'
 import { Store } from '../src/db/store.ts'
 import { GenerationQueue } from '../src/jobs/queue.ts'
 import { createLlmClient } from '../src/llm/createLlmClient.ts'
 
 const dataDir = process.env.DATA_DIR ?? mkdtempSync(path.join(os.tmpdir(), 'interior-smoke-'))
 const config = loadConfig({ ...process.env, DATA_DIR: dataDir })
-const db = new Database(path.join(dataDir, 'app.db'))
-const store = new Store(db)
+const store = await Store.connect({ uri: config.mongodbUri, dbName: `interior_smoke_${Date.now()}` })
 const catalog = loadCatalog(config.inventoryDir)
 const llm = createLlmClient(config)
 if (!llm) throw new Error('Set LLM_PROVIDER to openclaw or ollama.')
@@ -103,5 +101,5 @@ if (generation.layoutId) {
 
 queue.stop()
 await app.close()
-db.close()
+await store.close({ dropDatabase: true })
 process.exit(generation.status === 'succeeded' ? 0 : 1)

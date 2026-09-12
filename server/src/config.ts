@@ -8,6 +8,8 @@ export interface AppConfig {
   host: string
   port: number
   dataDir: string
+  mongodbUri: string
+  mongodbDb: string
   inventoryDir: string
   llmProvider: 'openclaw' | 'ollama' | 'none'
   llmTimeoutMs: number
@@ -25,6 +27,9 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     host: env.HOST ?? '127.0.0.1',
     port: Number(env.PORT ?? 3001),
     dataDir: path.resolve(env.DATA_DIR ?? path.join(serverRoot, 'data')),
+    // Local single-node replica set from server/docker-compose.yml.
+    mongodbUri: env.MONGODB_URI ?? 'mongodb://127.0.0.1:27017/?replicaSet=rs0&directConnection=true',
+    mongodbDb: env.MONGODB_DB ?? 'interior',
     inventoryDir: path.resolve(env.INVENTORY_DIR ?? path.join(serverRoot, '..', 'inventory')),
     llmProvider: provider,
     llmTimeoutMs: Number(env.LLM_TIMEOUT_MS ?? 180_000),

@@ -29,7 +29,7 @@ export interface LoopOptions {
   timeBudgetMs: number
   llmTimeoutMs: number
   signal?: AbortSignal
-  onTurn?: (turn: TurnSummary, turnIndex: number) => void
+  onTurn?: (turn: TurnSummary, turnIndex: number) => void | Promise<void>
   /** Called right before each model call. */
   onTurnStart?: (turn: number) => void
   /** Full per-call record (model arguments and tool result), for debugging prompts. */
@@ -110,7 +110,7 @@ export async function runAgentLoop(options: LoopOptions): Promise<LoopResult> {
       consecutiveFailures++
       const note = err instanceof Error ? err.message : String(err)
       turns.push({ turn, tool: 'error', note, latencyMs: 0 })
-      options.onTurn?.(turns.at(-1)!, turn)
+      await options.onTurn?.(turns.at(-1)!, turn)
       if (successfulCalls === 0 || consecutiveFailures >= 2) {
         return { ok: false, code: 'LLM_UNAVAILABLE', message: `The layout model failed: ${note}`, lastOutcome, turns }
       }
@@ -124,7 +124,7 @@ export async function runAgentLoop(options: LoopOptions): Promise<LoopResult> {
     if (calls.length === 0) {
       messages.push({ role: 'user', content: 'Respond with a check_layout or submit_layout tool call.' })
       turns.push({ turn, tool: 'none', note: 'no tool call', latencyMs: response.latencyMs })
-      options.onTurn?.(turns.at(-1)!, turn)
+      await options.onTurn?.(turns.at(-1)!, turn)
       continue
     }
 
@@ -175,14 +175,14 @@ export async function runAgentLoop(options: LoopOptions): Promise<LoopResult> {
               latencyMs: response.latencyMs,
             })
             if (tool === 'submit_layout' && outcome.accepted) {
-              options.onTurn?.(turns.at(-1)!, turn)
+              await options.onTurn?.(turns.at(-1)!, turn)
               options.trace?.({ turn, tool: call.name, arguments: call.arguments, result: content, content: response.content })
               return { ok: true, resolved: outcome.resolved, report: outcome.report, rationale: rationale ?? '', turns }
             }
           }
         }
       }
-      options.onTurn?.(turns.at(-1)!, turn)
+      await options.onTurn?.(turns.at(-1)!, turn)
       options.trace?.({ turn, tool: call.name, arguments: call.arguments, result: content, content: response.content })
       messages.push({ role: 'tool', toolCallId: call.id, name: call.name, content })
     }

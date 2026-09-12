@@ -18,7 +18,25 @@ npm --prefix server install
 npm run dev:server
 ```
 
-The API listens on `http://127.0.0.1:3001/api/v1`; the Vite dev server proxies `/api` there. Data (SQLite `app.db`, uploads) goes to `server/data/`. Configuration is via environment variables; see [`.env.example`](.env.example).
+The API listens on `http://127.0.0.1:3001/api/v1`; the Vite dev server proxies `/api` there. Configuration is via environment variables; see [`.env.example`](.env.example).
+
+## MongoDB
+
+Projects, generations and layouts are stored in a local MongoDB running in Docker as a single-node replica set (the backend uses transactions). Uploaded floor-plan files stay on disk in `server/data/uploads/`.
+
+One-time: let your user run Docker without sudo (then log out and back in):
+
+```bash
+sudo usermod -aG docker $USER
+```
+
+Start MongoDB (data persists in the `server_interior-mongo-data` Docker volume):
+
+```bash
+npm --prefix server run db:up
+```
+
+The default connection is `MONGODB_URI=mongodb://127.0.0.1:27017/?replicaSet=rs0&directConnection=true` with database `MONGODB_DB=interior`. The server refuses to start if MongoDB is unreachable or not a replica set. Tests also need it running; each test uses a throwaway database.
 
 ## Layout model
 

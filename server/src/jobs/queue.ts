@@ -1,3 +1,4 @@
+import type { ClientSession } from 'mongodb'
 import type { Catalog } from '../catalog/load.ts'
 import type { AppConfig } from '../config.ts'
 import type { GenerationRecord, LayoutRecord, Store, TurnSummary } from '../db/store.ts'
@@ -18,7 +19,7 @@ export interface QueueDeps {
   trace?: Parameters<typeof runAgentLoop>[0]['trace']
 }
 
-/** One generation at a time (single GPU); jobs live in SQLite so a restart does not lose the queue. */
+/** One generation at a time (single GPU); jobs live in MongoDB so a restart does not lose the queue. */
 export class GenerationQueue {
   private draining: Promise<void> | null = null
   private controller = new AbortController()
@@ -41,30 +42,41 @@ export class GenerationQueue {
   }
 
   private async drain() {
-    for (let g = this.deps.store.nextQueuedGeneration(); g && !this.controller.signal.aborted; g = this.deps.store.nextQueuedGeneration()) {
+    while (!this.controller.signal.aborted) {
+      const g = await this.deps.store.claimNextQueued(now())
+      if (!g) return
       try {
         await this.run(g)
       } catch (err) {
         if (err instanceof LlmError && err.kind === 'aborted') return
+        if (this.controller.signal.aborted) return
         this.deps.log?.('generation crashed', { generationId: g.id, error: String(err) })
-        this.finish(g, 'failed', 'ENGINE_ERROR', [{ code: 'ENGINE_ERROR', message: err instanceof Error ? err.message : String(err) }])
+        await this.finish(g, 'failed', 'ENGINE_ERROR', [{ code: 'ENGINE_ERROR', message: err instanceof Error ? err.message : String(err) }])
       }
     }
   }
 
-  private save(g: GenerationRecord) {
-    this.deps.store.updateGeneration(g)
+  private save(g: GenerationRecord, session?: ClientSession) {
+    return this.deps.store.updateGeneration(g, session)
   }
 
-  private finish(g: GenerationRecord, status: GenerationRecord['status'], errorCode: string | null, issues: GenerationRecord['issues']) {
+  private applyFinish(g: GenerationRecord, status: GenerationRecord['status'], errorCode: string | null, issues: GenerationRecord['issues']) {
     g.status = status
     g.errorCode = errorCode
     g.issues = issues
     g.finishedAt = now()
-    this.save(g)
-    const seconds = g.startedAt ? ((Date.parse(g.finishedAt) - Date.parse(g.startedAt)) / 1000).toFixed(1) : '?'
-    this.log(`${g.id} ${status.toUpperCase()}${errorCode ? ` (${errorCode})` : ''} after ${seconds} s${g.layoutId ? `, layout ${g.layoutId}` : ''}`)
-    for (const issue of issues.slice(0, 5)) this.log(`  - ${issue.code}${issue.ruleId ? ` ${issue.ruleId}` : ''}: ${issue.message}`)
+  }
+
+  private async finish(g: GenerationRecord, status: GenerationRecord['status'], errorCode: string | null, issues: GenerationRecord['issues']) {
+    this.applyFinish(g, status, errorCode, issues)
+    await this.save(g)
+    this.logFinish(g)
+  }
+
+  private logFinish(g: GenerationRecord) {
+    const seconds = g.startedAt && g.finishedAt ? ((Date.parse(g.finishedAt) - Date.parse(g.startedAt)) / 1000).toFixed(1) : '?'
+    this.log(`${g.id} ${g.status.toUpperCase()}${g.errorCode ? ` (${g.errorCode})` : ''} after ${seconds} s${g.layoutId ? `, layout ${g.layoutId}` : ''}`)
+    for (const issue of g.issues.slice(0, 5)) this.log(`  - ${issue.code}${issue.ruleId ? ` ${issue.ruleId}` : ''}: ${issue.message}`)
   }
 
   private log(message: string) {
@@ -78,15 +90,12 @@ export class GenerationQueue {
     for (const detail of t.details ?? []) this.log(`    - ${detail}`)
   }
 
+  /** `g` was already claimed (status running, stage selecting). */
   private async run(g: GenerationRecord) {
     const { store, catalog, llm, config } = this.deps
-    g.status = 'running'
-    g.stage = 'selecting'
-    g.startedAt = now()
-    this.save(g)
     this.log(`${g.id} started (project ${g.projectId}, ${g.scope.kind === 'home' ? 'whole home' : `room ${g.scope.roomId}`})`)
 
-    const project = store.getProject(g.projectId)
+    const project = await store.getProject(g.projectId)
     if (!project || project.revision !== g.inputRevision || project.configuration.revision !== g.inputConfigurationRevision) {
       return this.finish(g, 'stale', null, [{ code: 'STALE', message: 'The project changed before this generation started.' }])
     }
@@ -116,7 +125,7 @@ export class GenerationQueue {
       if (!llm) return this.finish(g, 'failed', 'ENGINE_ERROR', [{ code: 'LLM_UNAVAILABLE', message: 'No layout model is configured (LLM_PROVIDER=none).' }])
       g.stage = 'placing'
       g.progress = { turn: 0, maxTurns: config.generation.maxTurns, turns: [] }
-      this.save(g)
+      await this.save(g)
       result = await runAgentLoop({
         llm,
         catalog,
@@ -129,9 +138,9 @@ export class GenerationQueue {
         signal: this.controller.signal,
         trace: this.deps.trace,
         onTurnStart: (turn) => this.log(`${g.id} turn ${turn}/${config.generation.maxTurns}: waiting for ${llm.id}...`),
-        onTurn: (turn, index) => {
+        onTurn: async (turn, index) => {
           g.progress = { turn: index, maxTurns: config.generation.maxTurns, turns: [...g.progress.turns, turn] }
-          this.save(g)
+          await this.save(g)
           this.logTurn(g.id, turn)
         },
       })
@@ -155,14 +164,17 @@ export class GenerationQueue {
     }
 
     g.stage = 'validating'
-    this.save(g)
+    await this.save(g)
     const instanceRequirement = new Map(prepared.instances.map((i) => [i.instanceId, i.requirementId]))
     const placements = [...prepared.retained, ...result.resolved.map((r) => toPlacedObject(r, instanceRequirement.get(r.instanceId)!))]
     const snapshot = g.snapshot
+    const { report, rationale } = result
 
-    store.tx(() => {
-      const current = store.getProject(g.projectId)!
-      const fresh = current.revision === g.inputRevision && current.configuration.revision === g.inputConfigurationRevision
+    // Layout insert, activation and job completion commit together; a concurrent
+    // project edit either lands first (result kept but not activated) or retries after.
+    await store.withTransaction(async (session) => {
+      const current = await store.getProject(g.projectId, session)
+      const fresh = !!current && current.revision === g.inputRevision && current.configuration.revision === g.inputConfigurationRevision
       const layout: LayoutRecord = {
         id: newId('lay'),
         projectId: g.projectId,
@@ -176,19 +188,21 @@ export class GenerationQueue {
         placements,
         totalPriceMinor: placements.reduce((sum, p) => sum + (p.priceMinor ?? 0), 0),
         currency: 'USD',
-        engineReport: result.report,
-        rationale: result.rationale,
+        engineReport: report,
+        rationale,
         planner: llm?.id ?? 'none',
         createdAt: now(),
       }
-      store.insertLayout(layout)
-      if (fresh) {
+      await store.insertLayout(layout, session)
+      if (fresh && current) {
         current.activeLayoutId = layout.id
         current.stale = null
-        store.saveProject(current)
+        await store.saveProject(current, session)
       }
       g.layoutId = layout.id
-      this.finish(g, fresh ? 'succeeded' : 'stale', null, fresh ? [] : [{ code: 'STALE', message: 'The project changed while generating; the result was kept but not activated.' }])
+      this.applyFinish(g, fresh ? 'succeeded' : 'stale', null, fresh ? [] : [{ code: 'STALE', message: 'The project changed while generating; the result was kept but not activated.' }])
+      await this.save(g, session)
     })
+    this.logFinish(g)
   }
 }

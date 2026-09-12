@@ -1,8 +1,9 @@
 import { randomUUID } from 'node:crypto'
+import type { ClientSession } from 'mongodb'
 import type { Catalog } from '../catalog/load.ts'
 import { eligibleRooms } from '../catalog/candidates.ts'
 import { validateConfiguration } from '../configuration/validateConfiguration.ts'
-import type { GenerationRecord, Store } from '../db/store.ts'
+import type { GenerationRecord, LayoutRecord, Store } from '../db/store.ts'
 import type { Configuration, ProjectRecord, RoomDefinition, RoomTransform } from '../domain/types.ts'
 import { DEMO_ROOMS, DEMO_TRANSFORMS } from '../fixtures/fourRoomV1.ts'
 import { AppError } from '../http/errors.ts'
@@ -19,8 +20,8 @@ export class ProjectService {
     private readonly catalog: Catalog,
   ) {}
 
-  require(id: string): ProjectRecord {
-    const project = this.store.getProject(id)
+  async require(id: string, session?: ClientSession): Promise<ProjectRecord> {
+    const project = await this.store.getProject(id, session)
     if (!project) throw new AppError(404, 'PROJECT_NOT_FOUND', `Project ${id} does not exist.`)
     return project
   }
@@ -33,15 +34,15 @@ export class ProjectService {
     }
   }
 
-  /** Load, check the revision and apply `mutate` inside one write transaction. */
-  mutate(id: string, expectedRevision: number, mutate: (p: ProjectRecord) => void): ProjectRecord {
-    return this.store.tx(() => {
-      const project = this.require(id)
+  /** Load, check the revision and apply `mutate` inside one transaction. */
+  mutate(id: string, expectedRevision: number, mutate: (p: ProjectRecord) => void): Promise<ProjectRecord> {
+    return this.store.withTransaction(async (session) => {
+      const project = await this.require(id, session)
       this.checkRevision(project, expectedRevision)
       mutate(project)
       project.revision += 1
       project.updatedAt = now()
-      this.store.saveProject(project)
+      await this.store.saveProject(project, session)
       return project
     })
   }
@@ -50,7 +51,7 @@ export class ProjectService {
     if (project.activeLayoutId && !project.stale) project.stale = { since: now(), reason }
   }
 
-  create(body: { name: string; unitSystem: 'metric' | 'imperial'; mode: 'upload' | 'scratch'; demoLayoutId: 'four-room-v1' }): ProjectRecord {
+  async create(body: { name: string; unitSystem: 'metric' | 'imperial'; mode: 'upload' | 'scratch'; demoLayoutId: 'four-room-v1' }): Promise<ProjectRecord> {
     const timestamp = now()
     const project: ProjectRecord = {
       id: newId('prj'),
@@ -74,18 +75,18 @@ export class ProjectService {
       createdAt: timestamp,
       updatedAt: timestamp,
     }
-    this.store.insertProject(project)
+    await this.store.insertProject(project)
     return project
   }
 
-  update(id: string, body: { expectedRevision: number; name?: string; unitSystem?: 'metric' | 'imperial' }): ProjectRecord {
+  update(id: string, body: { expectedRevision: number; name?: string; unitSystem?: 'metric' | 'imperial' }): Promise<ProjectRecord> {
     return this.mutate(id, body.expectedRevision, (p) => {
       if (body.name !== undefined) p.name = body.name
       if (body.unitSystem !== undefined) p.unitSystem = body.unitSystem
     })
   }
 
-  replaceRooms(id: string, body: { expectedRevision: number; rooms: RoomDefinition[]; roomTransforms: RoomTransform[] }): ProjectRecord {
+  replaceRooms(id: string, body: { expectedRevision: number; rooms: RoomDefinition[]; roomTransforms: RoomTransform[] }): Promise<ProjectRecord> {
     return this.mutate(id, body.expectedRevision, (p) => {
       const details = validateRooms(body.rooms, body.roomTransforms, p.rooms.map((r) => r.id))
       if (details.length) throw new AppError(422, 'INVALID_ROOMS', 'Room geometry is invalid.', details)
@@ -95,7 +96,7 @@ export class ProjectService {
     })
   }
 
-  updateNote(id: string, roomId: string, body: { expectedRevision: number; note: string }): ProjectRecord {
+  updateNote(id: string, roomId: string, body: { expectedRevision: number; note: string }): Promise<ProjectRecord> {
     return this.mutate(id, body.expectedRevision, (p) => {
       const entry = p.configuration.roomInstructions.find((ri) => ri.roomId === roomId)
       if (!entry) throw new AppError(404, 'ROOM_NOT_FOUND', `Room ${roomId} does not exist in this project.`)
@@ -105,7 +106,7 @@ export class ProjectService {
     })
   }
 
-  replaceConfiguration(id: string, body: { expectedRevision: number; configuration: Omit<Configuration, 'revision'> }): ProjectRecord {
+  replaceConfiguration(id: string, body: { expectedRevision: number; configuration: Omit<Configuration, 'revision'> }): Promise<ProjectRecord> {
     return this.mutate(id, body.expectedRevision, (p) => {
       const input = body.configuration
       const check = validateConfiguration(input, p.rooms, this.catalog)
@@ -124,8 +125,7 @@ export class ProjectService {
     })
   }
 
-  roomStatuses(project: ProjectRecord, latest: GenerationRecord | null): { roomId: string; status: RoomStatus }[] {
-    const layout = project.activeLayoutId ? this.store.getLayout(project.id, project.activeLayoutId) : null
+  roomStatuses(project: ProjectRecord, latest: GenerationRecord | null, layout: LayoutRecord | null): { roomId: string; status: RoomStatus }[] {
     return project.rooms.map((room) => {
       const inScope = latest && (latest.scope.kind === 'home' || latest.scope.roomId === room.id)
       let status: RoomStatus = 'unconfigured'
@@ -140,10 +140,12 @@ export class ProjectService {
     })
   }
 
-  present(project: ProjectRecord) {
-    const layout = project.activeLayoutId ? this.store.getLayout(project.id, project.activeLayoutId) : null
-    const latest = this.store.latestGeneration(project.id)
-    const asset = project.floorPlanAssetId ? this.store.getAsset(project.id, project.floorPlanAssetId) : null
+  async present(project: ProjectRecord) {
+    const [layout, latest, asset] = await Promise.all([
+      project.activeLayoutId ? this.store.getLayout(project.id, project.activeLayoutId) : null,
+      this.store.latestGeneration(project.id),
+      project.floorPlanAssetId ? this.store.getAsset(project.id, project.floorPlanAssetId) : null,
+    ])
     const findings = validateConfiguration(project.configuration, project.rooms, this.catalog)
     return {
       id: project.id,
@@ -166,7 +168,7 @@ export class ProjectService {
       configuration: { ...project.configuration, findings: [...findings.errors, ...findings.findings] },
       activeLayoutId: project.activeLayoutId,
       stale: project.stale,
-      roomStatuses: this.roomStatuses(project, latest),
+      roomStatuses: this.roomStatuses(project, latest, layout),
       latestGeneration: latest && { id: latest.id, status: latest.status, stage: latest.stage, scope: latest.scope },
       createdAt: project.createdAt,
       updatedAt: project.updatedAt,

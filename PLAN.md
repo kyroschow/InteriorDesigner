@@ -8,7 +8,7 @@ rooms and the whole home. A **virtual walkthrough** is a stretch goal.
 All AI inference runs locally on a **Dell Pro Max with GB10** (NVIDIA Grace Blackwell, 128 GB unified
 memory). No third-party inference APIs in the critical path.
 
-> **Update:** the backend is implemented in `server/` with Node + TypeScript and SQLite, not the FastAPI/MongoDB
+> **Update:** the backend is implemented in `server/` with Node + TypeScript and MongoDB (local Docker), not the FastAPI
 > stack below. The scope is simplified to four room types, eleven furniture types and a code safety rules
 > engine; `interior-rule-library/` is reference material only. See `docs/design/simplified-scope.md`.
 

@@ -19,35 +19,35 @@ export function projectRoutes(app: FastifyInstance, ctx: AppContext) {
 
   app.post('/projects', async (request, reply) => {
     const body = validateBody<Parameters<typeof projects.create>[0]>('CreateProjectRequest', request.body)
-    const project = projects.create(body)
-    return reply.status(201).send(projects.present(project))
+    const project = await projects.create(body)
+    return reply.status(201).send(await projects.present(project))
   })
 
-  app.get<{ Params: Params }>('/projects/:projectId', async (request) => projects.present(projects.require(request.params.projectId)))
+  app.get<{ Params: Params }>('/projects/:projectId', async (request) => projects.present(await projects.require(request.params.projectId)))
 
   app.patch<{ Params: Params }>('/projects/:projectId', async (request) => {
     const body = validateBody<{ expectedRevision: number; name?: string; unitSystem?: 'metric' | 'imperial' }>('UpdateProjectRequest', request.body)
-    return projects.present(projects.update(request.params.projectId, body))
+    return projects.present(await projects.update(request.params.projectId, body))
   })
 
   app.put<{ Params: Params }>('/projects/:projectId/rooms', async (request) => {
     const body = validateBody<{ expectedRevision: number; rooms: RoomDefinition[]; roomTransforms: RoomTransform[] }>('ReplaceRoomsRequest', request.body)
-    return projects.present(projects.replaceRooms(request.params.projectId, body))
+    return projects.present(await projects.replaceRooms(request.params.projectId, body))
   })
 
   app.patch<{ Params: Params & { roomId: string } }>('/projects/:projectId/rooms/:roomId/note', async (request) => {
     const body = validateBody<{ expectedRevision: number; note: string }>('UpdateRoomNoteRequest', request.body)
-    return projects.present(projects.updateNote(request.params.projectId, request.params.roomId, body))
+    return projects.present(await projects.updateNote(request.params.projectId, request.params.roomId, body))
   })
 
   app.put<{ Params: Params }>('/projects/:projectId/configuration', async (request) => {
     const body = validateBody<{ expectedRevision: number; configuration: Omit<Configuration, 'revision'> }>('ReplaceConfigurationRequest', request.body)
-    return projects.present(projects.replaceConfiguration(request.params.projectId, body))
+    return projects.present(await projects.replaceConfiguration(request.params.projectId, body))
   })
 
   app.post<{ Params: Params }>('/projects/:projectId/floor-plan', async (request, reply) => {
     const { projectId } = request.params
-    projects.require(projectId)
+    await projects.require(projectId)
     if (!request.isMultipart()) throw new AppError(415, 'UNSUPPORTED_MEDIA_TYPE', 'Upload the floor plan as multipart/form-data.')
 
     const tmpDir = path.join(config.dataDir, 'uploads', 'tmp')
@@ -100,8 +100,8 @@ export function projectRoutes(app: FastifyInstance, ctx: AppContext) {
       await mkdir(finalDir, { recursive: true })
       const storagePath = path.join(finalDir, assetId)
       const upload = file
-      const asset = store.tx(() => {
-        const project = projects.require(projectId)
+      const asset = await store.withTransaction(async (session) => {
+        const project = await projects.require(projectId, session)
         projects.checkRevision(project, revision as number)
         const record = {
           id: assetId,
@@ -113,11 +113,11 @@ export function projectRoutes(app: FastifyInstance, ctx: AppContext) {
           storagePath,
           createdAt: new Date().toISOString(),
         }
-        store.insertAsset(record)
+        await store.insertAsset(record, session)
         project.floorPlanAssetId = assetId
         project.revision += 1
         project.updatedAt = record.createdAt
-        store.saveProject(project)
+        await store.saveProject(project, session)
         return record
       })
       await rename(tmpPath, storagePath)
@@ -134,7 +134,7 @@ export function projectRoutes(app: FastifyInstance, ctx: AppContext) {
   })
 
   app.get<{ Params: Params & { assetId: string } }>('/projects/:projectId/assets/:assetId', async (request, reply) => {
-    const asset = store.getAsset(request.params.projectId, request.params.assetId)
+    const asset = await store.getAsset(request.params.projectId, request.params.assetId)
     if (!asset) throw new AppError(404, 'ASSET_NOT_FOUND', 'Asset not found.')
     return reply
       .header('Content-Type', asset.mimeType)

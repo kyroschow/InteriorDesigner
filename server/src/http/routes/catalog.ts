@@ -68,6 +68,7 @@ export function catalogRoutes(app: FastifyInstance, ctx: AppContext) {
     }
     return {
       ok: true,
+      db: await ctx.store.ping(),
       catalogVersion: catalog.version,
       catalogItems: catalog.items.length,
       llm: ctx.llm ? { client: ctx.llm.id, ...llmHealth!.value } : { client: null, ok: false, detail: 'LLM_PROVIDER=none' },
