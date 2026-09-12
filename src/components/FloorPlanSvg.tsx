@@ -1,4 +1,5 @@
 import { forwardRef } from 'react'
+import { Archive, Armchair, BedDouble, CookingPot, Droplets, Lamp, Package, ShowerHead, Sofa, Toilet, Tv, UtensilsCrossed, type LucideIcon } from 'lucide-react'
 import { floorPlanBounds, floorPlanWalls, ROOM_TYPE_COLOR, type Door, type FloorPlan, type PlanBox } from '@/lib/floorplan'
 import { rectCenter } from '@/lib/geometry'
 import { formatAreaBySystem } from '@/lib/units'
@@ -24,6 +25,42 @@ const NARROW_THRESHOLD_IN = 72
 const LABEL_TOP_OFFSET_IN = 18
 const PAD = 24
 const FOCUS_PAD = 30
+/** Product icon size inside a furniture block (inches); smaller blocks get no icon. */
+const ICON_MAX_IN = 22
+const ICON_MIN_IN = 7
+
+/** Placeholder icon per furniture type, for pieces with no product photo. */
+const TYPE_ICON: Record<string, LucideIcon> = {
+  bed: BedDouble,
+  dresser: Archive,
+  nightstand: Lamp,
+  tv_stand: Tv,
+  sofa: Sofa,
+  dining_table: UtensilsCrossed,
+  dining_chair: Armchair,
+  kitchen_counter: CookingPot,
+  sink: Droplets,
+  shower: ShowerHead,
+  toilet: Toilet,
+}
+/** Extra margin that holds room labels drawn outside the plan. */
+const OUTSIDE_LABEL_PAD = 20
+const OUTSIDE_LABEL_GAP = 12
+const EDGE_TOLERANCE_IN = 1
+
+/**
+ * Where a room's label goes outside the plan: beyond the shell edge the room
+ * touches (top, bottom, left, right, in that order), or just above the room
+ * when the view is cropped to it.
+ */
+function outsideLabelPosition(r: { x: number; y: number; w: number; h: number }, bounds: { w: number; h: number }, focused: boolean) {
+  const cx = r.x + r.w / 2
+  const cy = r.y + r.h / 2
+  if (focused || r.y <= EDGE_TOLERANCE_IN) return { x: cx, y: r.y - OUTSIDE_LABEL_GAP, anchor: 'middle' as const, baseline: 'auto' as const }
+  if (r.y + r.h >= bounds.h - EDGE_TOLERANCE_IN) return { x: cx, y: r.y + r.h + OUTSIDE_LABEL_GAP, anchor: 'middle' as const, baseline: 'hanging' as const }
+  if (r.x <= EDGE_TOLERANCE_IN) return { x: r.x - OUTSIDE_LABEL_GAP, y: cy, anchor: 'end' as const, baseline: 'middle' as const }
+  return { x: r.x + r.w + OUTSIDE_LABEL_GAP, y: cy, anchor: 'start' as const, baseline: 'middle' as const }
+}
 
 function frontLine(b: PlanBox) {
   const i = 2.5
@@ -41,9 +78,20 @@ function frontLine(b: PlanBox) {
 
 function Box({ box, showLabel }: { box: PlanBox; showLabel: boolean }) {
   const fontSize = box.fixed ? 7 : 8
-  const fitsInside = box.w >= box.label.length * fontSize * 0.55 + 6 && box.h >= fontSize + 6
+  const cx = box.x + box.w / 2
+  const cy = box.y + box.h / 2
+  const iconSize = box.fixed ? 0 : Math.min(ICON_MAX_IN, Math.min(box.w, box.h) - 6)
+  const hasIcon = iconSize >= ICON_MIN_IN
+  const labelShown = showLabel && box.showLabel
+  const fitsInside = box.w >= box.label.length * fontSize * 0.55 + 6 && box.h >= (hasIcon ? iconSize + fontSize + 10 : fontSize + 6)
   // Outside a small piece the full name sprawls across walls; its first word is enough there.
   const text = fitsInside ? box.label : box.label.split(/[\s(]/)[0]
+  // Icon and label stack in the middle when both fit; otherwise the icon is centered and the label sits above.
+  const stacked = hasIcon && labelShown && fitsInside
+  const iconX = cx - iconSize / 2
+  const iconY = stacked ? cy - (iconSize + fontSize + 3) / 2 : cy - iconSize / 2
+  const labelY = stacked ? iconY + iconSize + 3 + fontSize / 2 : fitsInside ? cy : box.y - 4
+  const PlaceholderIcon = (box.kind && TYPE_ICON[box.kind]) || Package
   return (
     <g>
       <title>{box.label}</title>
@@ -59,10 +107,22 @@ function Box({ box, showLabel }: { box: PlanBox; showLabel: boolean }) {
         strokeDasharray={box.fixed ? '3 2' : undefined}
       />
       {!box.fixed && <line {...frontLine(box)} stroke="var(--color-accent)" strokeWidth={2} strokeLinecap="round" />}
-      {showLabel && box.showLabel && (
+      {hasIcon &&
+        (box.imageUrl ? (
+          <g pointerEvents="none">
+            <rect x={iconX} y={iconY} width={iconSize} height={iconSize} rx={2} fill="#ffffff" stroke="var(--color-canvas-line)" strokeWidth={0.6} />
+            <image href={box.imageUrl} x={iconX + 1} y={iconY + 1} width={iconSize - 2} height={iconSize - 2} preserveAspectRatio="xMidYMid meet" />
+          </g>
+        ) : (
+          <g pointerEvents="none">
+            <rect x={iconX} y={iconY} width={iconSize} height={iconSize} rx={2} fill="var(--color-canvas)" />
+            <PlaceholderIcon x={iconX + iconSize * 0.15} y={iconY + iconSize * 0.15} size={iconSize * 0.7} color="var(--color-ink-soft)" strokeWidth={1.75} opacity={0.7} aria-hidden />
+          </g>
+        ))}
+      {labelShown && (
         <text
-          x={box.x + box.w / 2}
-          y={fitsInside ? box.y + box.h / 2 : box.y - 4}
+          x={cx}
+          y={labelY}
           textAnchor="middle"
           dominantBaseline={fitsInside ? 'middle' : 'auto'}
           fontSize={fontSize}
@@ -102,9 +162,12 @@ export const FloorPlanSvg = forwardRef<SVGSVGElement, FloorPlanSvgProps>(functio
   const bounds = floorPlanBounds(plan)
   const walls = floorPlanWalls(plan)
   const focus = focusRoomId ? plan.rooms.find((r) => r.id === focusRoomId)?.footprint : undefined
+  // With furniture drawn, room labels move outside the plan so they never cover a piece.
+  const labelsOutside = Boolean(furniture) && showLabels
+  const pad = (focus ? FOCUS_PAD : PAD) + (labelsOutside ? OUTSIDE_LABEL_PAD : 0)
   const viewBox = focus
-    ? `${focus.x - FOCUS_PAD} ${focus.y - FOCUS_PAD} ${focus.w + FOCUS_PAD * 2} ${focus.h + FOCUS_PAD * 2}`
-    : `${-PAD} ${-PAD} ${bounds.w + PAD * 2} ${bounds.h + PAD * 2}`
+    ? `${focus.x - pad} ${focus.y - pad} ${focus.w + pad * 2} ${focus.h + pad * 2}`
+    : `${-pad} ${-pad} ${bounds.w + pad * 2} ${bounds.h + pad * 2}`
   const dim = (roomId: string) => (focusRoomId && roomId !== focusRoomId ? 0.35 : 1)
 
   return (
@@ -161,13 +224,30 @@ export const FloorPlanSvg = forwardRef<SVGSVGElement, FloorPlanSvgProps>(functio
           )),
         )}
 
+      {labelsOutside &&
+        plan.rooms
+          .filter((room) => !focusRoomId || room.id === focusRoomId)
+          .map((room) => {
+            const pos = outsideLabelPosition(room.footprint, bounds, Boolean(focus))
+            return (
+              <text key={room.id} x={pos.x} y={pos.y} textAnchor={pos.anchor} dominantBaseline={pos.baseline} pointerEvents="none">
+                <tspan fontSize={14} fontWeight={600} fontFamily="var(--font-serif)" fill="var(--color-ink)">
+                  {room.name}
+                </tspan>
+                <tspan fontSize={10} fill="var(--color-ink-soft)">
+                  {` · ${formatAreaBySystem(room.footprint.w * room.footprint.h, unitSystem)}`}
+                </tspan>
+              </text>
+            )
+          })}
+
       {showLabels &&
+        !labelsOutside &&
         plan.rooms.map((room) => {
           const c = rectCenter(room.footprint)
           const narrow = Math.min(room.footprint.w, room.footprint.h) < NARROW_THRESHOLD_IN
           const rotate = narrow && room.footprint.w < room.footprint.h
-          // Furniture hugs walls, so a furnished room's label moves to the (usually clear) center.
-          const nameY = narrow ? c.y : furniture ? c.y - 7 : room.footprint.y + LABEL_TOP_OFFSET_IN
+          const nameY = narrow ? c.y : room.footprint.y + LABEL_TOP_OFFSET_IN
           const halo = { stroke: ROOM_TYPE_COLOR[room.type], strokeWidth: 4, strokeLinejoin: 'round' as const, paintOrder: 'stroke' }
           return (
             <g key={room.id} opacity={dim(room.id)} pointerEvents="none" transform={rotate ? `rotate(-90 ${c.x} ${c.y})` : undefined}>

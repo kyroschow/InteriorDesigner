@@ -37,6 +37,10 @@ export interface PlanBox {
   fixed: boolean
   /** False for repeats of the same product in a room — repeated labels crowd each other. */
   showLabel: boolean
+  /** Product photo; null draws a placeholder icon (e.g. standard-size stand-ins). */
+  imageUrl?: string | null
+  /** Furniture type (e.g. `bed`), which picks the placeholder icon. */
+  kind?: string
 }
 
 export interface FloorPlan {

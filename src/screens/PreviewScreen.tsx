@@ -5,6 +5,7 @@ import { api, isAbort } from '@/api/client'
 import { Brand } from '@/components/Brand'
 import { ErrorBanner } from '@/components/ErrorBanner'
 import { FloorPlanSvg } from '@/components/FloorPlanSvg'
+import { ZoomPanView } from '@/components/ZoomPanView'
 import { exportPlan, type ExportFormat } from '@/lib/exportSvg'
 import { sceneFurniture, sceneToPlan, shortName } from '@/lib/sceneCoordinates'
 import { formatUsd } from '@/lib/units'
@@ -20,6 +21,7 @@ export function PreviewScreen() {
   const [params, setParams] = useSearchParams()
   const svgRef = useRef<SVGSVGElement>(null)
   const [project, setProject] = useState<Project | null>(null)
+  const [images, setImages] = useState<Map<string, string | null>>(new Map())
   const [layout, setLayout] = useState<Layout | null>(null)
   const [error, setError] = useState<unknown>(null)
   const [showFurniture, setShowFurniture] = useState(true)
@@ -43,9 +45,19 @@ export function PreviewScreen() {
     return () => controller.abort()
   }, [projectId, layoutParam])
 
+  // Product photos for the furniture icons; the plan still renders (with placeholders) if this fails.
+  useEffect(() => {
+    const controller = new AbortController()
+    api
+      .getFurniture({}, controller.signal)
+      .then((catalog) => setImages(new Map(catalog.items.map((i) => [i.id, i.imageUrl]))))
+      .catch(() => {})
+    return () => controller.abort()
+  }, [])
+
   const scene = useMemo(() => (project ? (layout ? { floor: layout.scene, roomTransforms: project.roomTransforms } : project) : null), [project, layout])
   const plan = useMemo(() => (scene && project ? sceneToPlan(scene, project.name) : null), [scene, project])
-  const furniture = useMemo(() => (layout && scene ? sceneFurniture(scene) : undefined), [layout, scene])
+  const furniture = useMemo(() => (layout && scene ? sceneFurniture(scene, (itemId) => images.get(itemId) ?? null) : undefined), [layout, scene, images])
 
   const setRoom = (id: string) => {
     const next = new URLSearchParams(params)
@@ -126,9 +138,11 @@ export function PreviewScreen() {
       </header>
 
       <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
-        <main className="flex min-h-0 flex-1 items-center justify-center overflow-auto p-6">
-          <div className="w-full max-w-4xl">
-            <FloorPlanSvg
+        <main className="flex min-h-[60vh] flex-1 overflow-hidden p-4">
+          <ZoomPanView resetKey={roomId} className="min-h-0 flex-1">
+            <div className="flex h-full w-full items-center justify-center p-2">
+              <div className="w-full max-w-4xl">
+                <FloorPlanSvg
               ref={svgRef}
               plan={plan}
               unitSystem={project.unitSystem}
@@ -137,7 +151,9 @@ export function PreviewScreen() {
               focusRoomId={focusRoom?.id ?? null}
               onSelectRoom={(id) => setRoom(id === roomId ? '' : id)}
             />
-          </div>
+              </div>
+            </div>
+          </ZoomPanView>
         </main>
         <aside className="shrink-0 space-y-2 border-canvas-line p-4 text-xs text-ink-soft lg:w-72 lg:border-l">
           {!layout && <p>Configured — awaiting generation. Showing rooms only.</p>}

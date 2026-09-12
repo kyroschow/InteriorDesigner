@@ -55,10 +55,10 @@ export function floorRectToPlan(xM: number, yM: number, wM: number, dM: number, 
 
 const FRONT: Record<number, PlanBox['front']> = { 0: 'top', 90: 'right', 180: 'bottom', 270: 'left' }
 
-function objectBox(obj: PlacedObject, origin: Point, depthM: number, showLabel: boolean): PlanBox {
+function objectBox(obj: PlacedObject, origin: Point, depthM: number, showLabel: boolean, imageUrl: string | null): PlanBox {
   const ext = obj.pose.rot % 180 === 0 ? { w: obj.footprint.w, d: obj.footprint.d } : { w: obj.footprint.d, d: obj.footprint.w }
   const rect = floorRectToPlan(origin.x + obj.pose.x - ext.w / 2, origin.y + obj.pose.y - ext.d / 2, ext.w, ext.d, depthM)
-  return { id: obj.id, label: shortName(obj.name), ...rect, front: FRONT[obj.pose.rot] ?? 'top', fixed: false, showLabel }
+  return { id: obj.id, label: shortName(obj.name), ...rect, front: FRONT[obj.pose.rot] ?? 'top', fixed: false, showLabel, imageUrl, kind: obj.type }
 }
 
 export function sceneToPlan(scene: Scene, name: string): FloorPlan {
@@ -100,8 +100,8 @@ export function sceneToPlan(scene: Scene, name: string): FloorPlan {
   return { id: 'scene', name, rooms, doors: [...doors.values()] }
 }
 
-/** Placed furniture per room, labelled once per distinct product. */
-export function sceneFurniture(scene: Scene): Record<string, PlanBox[]> {
+/** Placed furniture per room, labelled once per distinct product; `imageFor` looks up a product photo by catalog item id. */
+export function sceneFurniture(scene: Scene, imageFor: (itemId: string) => string | null = () => null): Record<string, PlanBox[]> {
   const depth = scene.floor.depth_m
   const out: Record<string, PlanBox[]> = {}
   for (const room of scene.floor.rooms) {
@@ -109,7 +109,7 @@ export function sceneFurniture(scene: Scene): Record<string, PlanBox[]> {
     out[room.id] = room.objects.map((obj) => {
       const first = !seen.has(obj.itemId)
       seen.add(obj.itemId)
-      return objectBox(obj, originOf(scene, room.id), depth, first)
+      return objectBox(obj, originOf(scene, room.id), depth, first, imageFor(obj.itemId))
     })
   }
   return out

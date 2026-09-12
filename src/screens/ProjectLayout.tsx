@@ -6,6 +6,7 @@ import { ApiError, api, apiHref } from '@/api/client'
 import { Brand } from '@/components/Brand'
 import { ErrorBanner } from '@/components/ErrorBanner'
 import { FloorPlanSvg } from '@/components/FloorPlanSvg'
+import { ZoomPanView } from '@/components/ZoomPanView'
 import { useGenerationPolling } from '@/hooks/useGeneration'
 import { useProjectData } from '@/hooks/useProject'
 import { exportPlan, type ExportFormat } from '@/lib/exportSvg'
@@ -221,7 +222,11 @@ function ProjectWorkspace({ project, catalog, rules, activeLayout, applyProject,
   // Layouts carry only the scene; the demo shell's walls are fixed, so room positions never change.
   const layoutScene = useMemo(() => (activeLayout ? { floor: activeLayout.scene, roomTransforms: project.roomTransforms } : null), [activeLayout, project.roomTransforms])
   const layoutPlan = useMemo(() => (layoutScene ? sceneToPlan(layoutScene, project.name) : null), [layoutScene, project.name])
-  const furniture = useMemo(() => (layoutScene ? sceneFurniture(layoutScene) : undefined), [layoutScene])
+  const imageFor = useMemo(() => {
+    const images = new Map(catalog.items.map((i) => [i.id, i.imageUrl]))
+    return (itemId: string) => images.get(itemId) ?? null
+  }, [catalog])
+  const furniture = useMemo(() => (layoutScene ? sceneFurniture(layoutScene, imageFor) : undefined), [layoutScene, imageFor])
   const showLayout = onResults && layoutPlan !== null
   const plan = showLayout && layoutPlan ? layoutPlan : savedPlan
 
@@ -330,9 +335,11 @@ function ProjectWorkspace({ project, catalog, rules, activeLayout, applyProject,
           </div>
         </aside>
 
-        <main className="flex min-h-[40vh] flex-1 flex-col items-center justify-center gap-3 overflow-auto p-6 md:p-8">
-          <div className="w-full max-w-2xl">
-            <FloorPlanSvg
+        <main className="flex min-h-[50vh] flex-1 flex-col gap-2 overflow-hidden p-4 md:p-6">
+          <ZoomPanView resetKey={location.pathname} className="min-h-0 flex-1">
+            <div className="flex h-full w-full items-center justify-center p-2 md:p-4">
+              <div className="w-full max-w-2xl">
+                <FloorPlanSvg
               ref={svgRef}
               plan={plan}
               unitSystem={project.unitSystem}
@@ -340,7 +347,9 @@ function ProjectWorkspace({ project, catalog, rules, activeLayout, applyProject,
               selectedRoomId={selectedRoomId}
               onSelectRoom={(id) => setSelectedRoomId((current) => (current === id ? null : id))}
             />
-          </div>
+              </div>
+            </div>
+          </ZoomPanView>
           <p className="text-center text-[11px] text-ink-soft/50">
             {formatLengthM(project.floor.width_m, project.unitSystem)} × {formatLengthM(project.floor.depth_m, project.unitSystem)} floor · ceilings{' '}
             {formatLengthM(project.floor.height_m, project.unitSystem)} (fixed)
