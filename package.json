@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 5273",
+    "dev:server": "npm --prefix server run dev",
     "build": "tsc -b --noCheck && vite build",
     "typecheck": "tsc -b",
     "preview": "vite preview --host 127.0.0.1 --port 5273"

@@ -1,5 +1,7 @@
 # Request schemas, inventory selection and room notes
 
+> **Superseded in part** by [simplified scope](simplified-scope.md): room notes are soft AI preferences (no structured interpretation), object types are a flat list of eleven, and rule selection fields were removed from the schemas.
+
 Draft contract; no backend handlers or frontend components are implemented here. This document extends [the workspace draft](interior-workspace-draft.md). The existing `inventory/*.json` files replace the fictional catalog proposed in that first draft.
 
 ## Request body schemas

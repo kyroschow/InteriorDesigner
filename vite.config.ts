@@ -8,5 +8,10 @@ export default defineConfig({
   resolve: {
     alias: { '@': path.resolve(__dirname, 'src') },
   },
-  server: { host: '127.0.0.1', port: 5273, strictPort: false },
+  server: {
+    host: '127.0.0.1',
+    port: 5273,
+    strictPort: false,
+    proxy: { '/api': 'http://127.0.0.1:3001' },
+  },
 })

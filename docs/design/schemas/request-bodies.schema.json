@@ -46,9 +46,24 @@
     "RoomType": {
       "enum": [
         "living_room",
-        "bedroom_primary",
+        "bedroom",
         "kitchen",
-        "bathroom_full"
+        "bathroom"
+      ]
+    },
+    "ObjectType": {
+      "enum": [
+        "bed",
+        "dresser",
+        "nightstand",
+        "tv_stand",
+        "sofa",
+        "dining_table",
+        "dining_chair",
+        "kitchen_counter",
+        "sink",
+        "shower",
+        "toilet"
       ]
     },
     "CreateProjectRequest": {
@@ -246,8 +261,7 @@
           "maxLength": 120
         },
         "objectType": {
-          "type": "string",
-          "pattern": "^[a-z_]+(?:\\.[a-z_]+)+$"
+          "$ref": "#/$defs/ObjectType"
         },
         "quantity": {
           "type": "integer",
@@ -283,8 +297,7 @@
         "id",
         "objectType",
         "quantity",
-        "roomId",
-        "allowedColors"
+        "roomId"
       ],
       "additionalProperties": false
     },
@@ -315,7 +328,14 @@
           "maxLength": 4000
         },
         "budget": {
-          "$ref": "#/$defs/Budget"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Budget"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "requirements": {
           "type": "array",
@@ -323,24 +343,6 @@
             "$ref": "#/$defs/Requirement"
           },
           "maxItems": 100
-        },
-        "selectedRuleIds": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 120
-          },
-          "uniqueItems": true
-        },
-        "enabledBeliefSystems": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 120
-          },
-          "uniqueItems": true
         },
         "roomInstructions": {
           "type": "array",
@@ -353,10 +355,7 @@
       },
       "required": [
         "prompt",
-        "budget",
         "requirements",
-        "selectedRuleIds",
-        "enabledBeliefSystems",
         "roomInstructions"
       ],
       "additionalProperties": false
