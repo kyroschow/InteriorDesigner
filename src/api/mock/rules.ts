@@ -22,11 +22,15 @@ const MISSING_INPUTS: Record<string, string[]> = {
 }
 
 const BELIEF_LABELS: Record<string, string> = { feng_shui: 'Feng shui', vastu: 'Vastu' }
+/** Some gated rules are filed under non-tradition systems (e.g. FS-CURE-005 is `product.ux`); their id prefix names the tradition. */
+const BELIEF_BY_ID_PREFIX: Record<string, string> = { FS: 'feng_shui', VS: 'vastu' }
 
 const byId = new Map(RAW.map((r) => [r.id, r]))
 
 function beliefSystemOf(rule: IndexedRule): string | null {
-  return rule.beliefGated ? rule.system.split('.')[0] : null
+  if (!rule.beliefGated) return null
+  const root = rule.system.split('.')[0]
+  return BELIEF_LABELS[root] ? root : (BELIEF_BY_ID_PREFIX[rule.id.split('-')[0]] ?? root)
 }
 
 const availabilityCache = new Map<string, Pick<Rule, 'availability' | 'reason' | 'requiredInputs'>>()

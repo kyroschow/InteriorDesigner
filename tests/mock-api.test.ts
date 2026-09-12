@@ -308,6 +308,11 @@ test('rules come from the library with honest availability', async () => {
   assert.equal(data.items.find((r) => r.id === 'FS-CMD-026')?.availability, 'supported')
   assert.equal(data.items.find((r) => r.id === 'RM-BEDP-001')?.availability, 'missing_inputs')
   assert.equal(data.items.find((r) => r.id === 'RM-BEDP-002')?.availability, 'unsupported')
+  assert.deepEqual(
+    data.beliefSystems.map((b) => b.id),
+    ['feng_shui', 'vastu'],
+  )
+  assert.equal(data.items.find((r) => r.id === 'FS-CURE-005')?.beliefSystem, 'feng_shui')
   const project = await createProject()
   const unsupported = await saveConfig(project, { selectedRuleIds: ['RM-KIT-001'] })
   assert.equal(unsupported.data.error?.details?.[0].code, 'RULE_UNAVAILABLE')

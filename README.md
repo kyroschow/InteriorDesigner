@@ -38,6 +38,16 @@ API keys. State persists to `localStorage`.
 npm run build
 ```
 
+The UI talks to `/api/v1` only through `src/api/client.ts`. By default that is an in-browser mock of
+the endpoints specified in [`docs/design/`](docs/design/), persisted in `localStorage`. To use a real
+backend, copy `.env.example` to `.env.local` and set `VITE_API_MODE=live` and `VITE_API_BASE_URL`.
+See [`docs/design/frontend-api-integration.md`](docs/design/frontend-api-integration.md).
+
+```bash
+npm run test:api     # contract tests for the mock API
+npm run rules:index  # rebuild the rule index after editing interior-rule-library/
+```
+
 ## What it does
 
 The product is a three-step wizard, mirroring the original:
