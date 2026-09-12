@@ -47,7 +47,7 @@ export function CreateScreen() {
   const canCreate = mode === 'scratch' || (mode === 'upload' && uploadedFile != null)
 
   return (
-    <div className="relative mx-auto flex min-h-full w-full max-w-2xl flex-col justify-center px-6 py-16">
+    <div className="animate-pane-in relative mx-auto flex min-h-full w-full max-w-2xl flex-col justify-center px-6 py-16">
       <StepHeader
         step={2}
         total={2}

@@ -14,13 +14,13 @@ export interface ProjectOutletContext {
   downloadPng: () => void
 }
 
-const FURNISHED_PATHS = ['/project/export', '/project/shopping-list']
+const FURNISHED_PATHS = ['/project/export']
 
 /**
  * Shared chrome for every workspace step (/project, /project/rules,
- * /project/export, /project/shopping-list): header + floor plan stay mounted
- * across all of them — only the left pane (the <Outlet/>) swaps — so the plan
- * never re-renders or jumps when moving between steps.
+ * /project/export): header + floor plan stay mounted across all of them —
+ * only the left pane (the <Outlet/>) swaps — so the plan never re-renders or
+ * jumps when moving between steps.
  */
 export function ProjectLayout() {
   const navigate = useNavigate()
@@ -44,23 +44,26 @@ export function ProjectLayout() {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex shrink-0 items-center justify-between border-b border-canvas-line px-6 py-3">
-        <div className="flex items-center gap-4">
+      <header className="flex shrink-0 items-center justify-between gap-4 border-b border-canvas-line px-6 py-3">
+        <div className="flex min-w-0 items-center gap-4">
           <Brand size="sm" />
-          <span className="text-sm text-ink-soft/60">
+          <span className="shrink-0 text-sm text-ink-soft/60">
             {birchTwoBed.name}
             {showFurniture ? ' — furnished' : ''}
           </span>
           {mode === 'upload' && uploadedFile ? (
-            <span className="rounded-control bg-accent-pale px-2 py-1 text-xs font-medium text-accent-deep">
-              Imported: {uploadedFile.name} (using sample plan for now)
+            <span
+              title={`Imported: ${uploadedFile.name} — using the Birch Two-Bed sample plan for now, not this file`}
+              className="min-w-0 truncate rounded-control bg-accent-pale px-2 py-1 text-xs font-medium text-accent-deep"
+            >
+              Imported: {uploadedFile.name}
             </span>
           ) : null}
         </div>
         <button
           type="button"
           onClick={() => navigate('/')}
-          className="inline-flex items-center gap-2 rounded-control px-3 py-2 text-sm font-semibold text-ink-soft hover:bg-canvas"
+          className="inline-flex shrink-0 items-center gap-2 rounded-control px-3 py-2 text-sm font-semibold text-ink-soft hover:bg-canvas"
         >
           <ArrowLeft size={16} />
           Start over

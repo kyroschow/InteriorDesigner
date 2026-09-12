@@ -1,4 +1,5 @@
 import { Compass } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import clsx from 'clsx'
 
 interface BrandProps {
@@ -10,10 +11,16 @@ const ICON_SIZE = { sm: 16, lg: 20, xl: 40 }
 const WORDMARK_SIZE = { sm: 'text-lg', lg: 'text-2xl', xl: 'text-6xl' }
 const GAP_SIZE = { sm: 'gap-2', lg: 'gap-3', xl: 'gap-4' }
 
-/** Product wordmark — a compass, because that's what a plan gets drawn with. */
+/** Product wordmark — a compass, because that's what a plan gets drawn with. Clicking it always goes home. */
 export function Brand({ size = 'sm' }: BrandProps) {
+  const navigate = useNavigate()
   return (
-    <div className={clsx('flex items-center', GAP_SIZE[size])}>
+    <button
+      type="button"
+      onClick={() => navigate('/')}
+      aria-label="Go to home screen"
+      className={clsx('flex items-center rounded-control', GAP_SIZE[size])}
+    >
       <div
         className={clsx(
           'flex shrink-0 items-center justify-center rounded-control bg-accent text-app',
@@ -23,6 +30,6 @@ export function Brand({ size = 'sm' }: BrandProps) {
         <Compass size={ICON_SIZE[size]} />
       </div>
       <span className={clsx('serif font-semibold text-ink', WORDMARK_SIZE[size])}>Plotter</span>
-    </div>
+    </button>
   )
 }

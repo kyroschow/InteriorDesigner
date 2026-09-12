@@ -122,4 +122,19 @@
   .animate-pane-in {
     animation: pane-in 220ms ease-out;
   }
+  /* Swapping a matched product in the shopping list — a quick settle instead
+     of the content just snapping to the new value. */
+  @keyframes item-swap {
+    from {
+      opacity: 0.35;
+      transform: scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  .animate-item-swap {
+    animation: item-swap 150ms ease-out;
+  }
 }
