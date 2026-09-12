@@ -12,7 +12,7 @@ Status: implemented in `server/`. This document supersedes the rule-library, bel
 
 | Room | Allowed types |
 | --- | --- |
-| bedroom | bed, dresser, nightstand, tv_stand |
+| bedroom | bed, dresser, nightstand, tv_stand, dining_table, dining_chair |
 | living_room | sofa, tv_stand, dining_table, dining_chair |
 | kitchen | kitchen_counter, sink, dining_table, dining_chair |
 | bathroom | sink, shower, toilet |
@@ -21,7 +21,7 @@ A requirement with `roomId: null` lets the AI choose among eligible rooms.
 
 ## Catalog
 
-`server/src/catalog/types.json` defines each type: allowed rooms, whether it stands against a wall, its access space, and its inventory source. Items come from `inventory/*.json` where every dimension is known (records with missing dimensions are skipped, never guessed). Types or rooms with no usable product get one standard-size generic item with `source: "default"` and no price: dining table, dining chair, kitchen sink, shower and toilet. Kitchen counters come from base cabinets; bathroom sinks from vanities.
+`server/src/catalog/types.json` defines each type: allowed rooms, whether it stands against a wall, its access space, and its inventory source. Items come from `inventory/*.json` where every dimension is known (records with missing dimensions are skipped, never guessed). Types or rooms with no usable product get one standard-size generic item with `source: "default"` and no price: kitchen sink, shower and toilet. Dining tables come from `table.json` and dining chairs from `chairs.json`; kitchen counters from base cabinets; bathroom sinks from vanities.
 
 ## Safety rules (`GET /api/v1/rules`)
 

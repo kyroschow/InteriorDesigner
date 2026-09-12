@@ -13,7 +13,18 @@ const store = new Store(db)
 const interrupted = store.failInterruptedGenerations(new Date().toISOString())
 const catalog = loadCatalog(config.inventoryDir)
 const llm = createLlmClient(config)
-const queue = new GenerationQueue({ store, catalog, llm, config })
+const queue = new GenerationQueue({
+  store,
+  catalog,
+  llm,
+  config,
+  // Human-readable generation progress in the server terminal.
+  log: (message, extra) => {
+    const line = `[${new Date().toLocaleTimeString()}] [generation] ${message}`
+    if (extra) console.log(line, extra)
+    else console.log(line)
+  },
+})
 
 const app = await buildApp({ config, store, catalog, llm, queue }, { logger: true })
 queue.kick()

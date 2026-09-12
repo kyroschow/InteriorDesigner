@@ -12,14 +12,27 @@ describe('catalog', () => {
     const c = catalog()
     const slattum = c.items.find((i) => i.id === 'ikea-70571256')!
     expect(slattum).toMatchObject({ objectType: 'bed', priceMinor: 14900, footprint: { w: 1.559, d: 2.08, h: 0.851 }, colorFamilies: ['gray'] })
-    expect(c.items.some((i) => i.name.startsWith('VIHALS'))).toBe(false)
+    expect(c.items.some((i) => i.objectType === 'bed' && i.name.startsWith('VIHALS'))).toBe(false)
     expect(c.skipped.some((s) => s.name === 'VIHALS' && s.reason === 'missing dimensions')).toBe(true)
   })
 
   it('adds standard-size items only where no real product exists', () => {
     const ids = catalog().items.filter((i) => i.source === 'default').map((i) => i.id).sort()
-    expect(ids).toEqual(['default-dining_chair', 'default-dining_table', 'default-shower', 'default-sink-kitchen', 'default-toilet'])
+    expect(ids).toEqual(['default-shower', 'default-sink-kitchen', 'default-toilet'])
     expect(catalog().items.filter((i) => i.objectType === 'sink' && i.source === 'inventory').every((i) => i.roomTypes.join() === 'bathroom')).toBe(true)
+  })
+
+  it('loads tables and chairs for every room except the bathroom, skipping incomplete records', () => {
+    const c = catalog()
+    const tables = c.items.filter((i) => i.objectType === 'dining_table')
+    const chairs = c.items.filter((i) => i.objectType === 'dining_chair')
+    expect(tables).toHaveLength(6)
+    expect(chairs).toHaveLength(10)
+    for (const item of [...tables, ...chairs]) {
+      expect(item.source).toBe('inventory')
+      expect([...item.roomTypes].sort()).toEqual(['bedroom', 'kitchen', 'living_room'])
+    }
+    expect(c.skipped.filter((s) => s.file === 'table.json').map((s) => s.name).sort()).toEqual(['DOCKSTA', 'LISABO', 'ROSENTORP', 'ÅLHULT'])
   })
 
   it('keeps kitchen counters to base cabinets with full dimensions', () => {

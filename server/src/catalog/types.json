@@ -43,19 +43,19 @@
     },
     "dining_table": {
       "label": "Dining table",
-      "roomTypes": ["living_room", "kitchen"],
+      "roomTypes": ["living_room", "kitchen", "bedroom"],
       "wallRule": "free",
       "access": [],
-      "inventory": [],
-      "defaults": [{ "name": "Dining table (standard size)", "sizeM": { "w": 1.5, "d": 0.9, "h": 0.75 }, "roomTypes": ["living_room", "kitchen"] }]
+      "inventory": [{ "file": "table.json" }],
+      "defaults": [{ "name": "Dining table (standard size)", "sizeM": { "w": 1.5, "d": 0.9, "h": 0.75 }, "roomTypes": ["living_room", "kitchen", "bedroom"] }]
     },
     "dining_chair": {
       "label": "Dining chair",
-      "roomTypes": ["living_room", "kitchen"],
+      "roomTypes": ["living_room", "kitchen", "bedroom"],
       "wallRule": "free",
       "access": [{ "sides": ["back"], "rule": "all", "depthM": 0.6 }],
-      "inventory": [],
-      "defaults": [{ "name": "Dining chair (standard size)", "sizeM": { "w": 0.45, "d": 0.5, "h": 0.9 }, "roomTypes": ["living_room", "kitchen"] }]
+      "inventory": [{ "file": "chairs.json" }],
+      "defaults": [{ "name": "Dining chair (standard size)", "sizeM": { "w": 0.45, "d": 0.5, "h": 0.9 }, "roomTypes": ["living_room", "kitchen", "bedroom"] }]
     },
     "kitchen_counter": {
       "label": "Kitchen counter",

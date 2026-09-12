@@ -30,6 +30,8 @@ export interface LoopOptions {
   llmTimeoutMs: number
   signal?: AbortSignal
   onTurn?: (turn: TurnSummary, turnIndex: number) => void
+  /** Called right before each model call. */
+  onTurnStart?: (turn: number) => void
   /** Full per-call record (model arguments and tool result), for debugging prompts. */
   trace?: (entry: { turn: number; tool: string; arguments: string; result: string; content: string }) => void
 }
@@ -90,6 +92,7 @@ export async function runAgentLoop(options: LoopOptions): Promise<LoopResult> {
     if (Date.now() - started > options.timeBudgetMs) break
     if (options.signal?.aborted) throw new LlmError('aborted', 'Generation was cancelled.')
 
+    options.onTurnStart?.(turn)
     let response
     try {
       response = await llm.chat({

@@ -1,6 +1,6 @@
 import type { Catalog } from '../catalog/load.ts'
 import type { AppConfig } from '../config.ts'
-import type { GenerationRecord, LayoutRecord, Store } from '../db/store.ts'
+import type { GenerationRecord, LayoutRecord, Store, TurnSummary } from '../db/store.ts'
 import { type LoopResult, runAgentLoop } from '../generation/agentLoop.ts'
 import { prepareGeneration, toPlacedObject } from '../generation/prepare.ts'
 import { LlmError, type LlmClient } from '../llm/types.ts'
@@ -62,6 +62,20 @@ export class GenerationQueue {
     g.issues = issues
     g.finishedAt = now()
     this.save(g)
+    const seconds = g.startedAt ? ((Date.parse(g.finishedAt) - Date.parse(g.startedAt)) / 1000).toFixed(1) : '?'
+    this.log(`${g.id} ${status.toUpperCase()}${errorCode ? ` (${errorCode})` : ''} after ${seconds} s${g.layoutId ? `, layout ${g.layoutId}` : ''}`)
+    for (const issue of issues.slice(0, 5)) this.log(`  - ${issue.code}${issue.ruleId ? ` ${issue.ruleId}` : ''}: ${issue.message}`)
+  }
+
+  private log(message: string) {
+    this.deps.log?.(message)
+  }
+
+  private logTurn(id: string, t: TurnSummary) {
+    const verdict = t.pass === undefined ? '' : t.pass ? ' PASS' : ' FAIL'
+    const counts = t.violations !== undefined ? `, ${t.violations} violations, score ${t.score}` : ''
+    this.log(`${id} turn ${t.turn}: ${t.tool}${verdict}${counts}${t.note ? ` (${t.note})` : ''} in ${(t.latencyMs / 1000).toFixed(1)} s`)
+    for (const detail of t.details ?? []) this.log(`    - ${detail}`)
   }
 
   private async run(g: GenerationRecord) {
@@ -70,6 +84,7 @@ export class GenerationQueue {
     g.stage = 'selecting'
     g.startedAt = now()
     this.save(g)
+    this.log(`${g.id} started (project ${g.projectId}, ${g.scope.kind === 'home' ? 'whole home' : `room ${g.scope.roomId}`})`)
 
     const project = store.getProject(g.projectId)
     if (!project || project.revision !== g.inputRevision || project.configuration.revision !== g.inputConfigurationRevision) {
@@ -85,6 +100,14 @@ export class GenerationQueue {
       return this.finish(g, 'failed', code, preparation.issues)
     }
     const { prepared } = preparation
+    const counts = new Map<string, { n: number; candidates: number }>()
+    for (const inst of prepared.instances) {
+      const entry = counts.get(inst.requirementId) ?? { n: 0, candidates: new Set(Object.values(inst.candidates).flat().map((c) => c.id)).size }
+      counts.set(inst.requirementId, { ...entry, n: entry.n + 1 })
+    }
+    this.log(
+      `${g.id} placing ${prepared.instances.length} items: ${[...counts].map(([req, c]) => `${req} x${c.n} (${c.candidates} candidates)`).join(', ') || 'none'}`,
+    )
 
     let result: LoopResult
     if (prepared.instances.length === 0) {
@@ -105,9 +128,11 @@ export class GenerationQueue {
         llmTimeoutMs: config.llmTimeoutMs,
         signal: this.controller.signal,
         trace: this.deps.trace,
+        onTurnStart: (turn) => this.log(`${g.id} turn ${turn}/${config.generation.maxTurns}: waiting for ${llm.id}...`),
         onTurn: (turn, index) => {
           g.progress = { turn: index, maxTurns: config.generation.maxTurns, turns: [...g.progress.turns, turn] }
           this.save(g)
+          this.logTurn(g.id, turn)
         },
       })
     }
