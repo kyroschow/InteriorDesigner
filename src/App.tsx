@@ -15,9 +15,9 @@ export function App() {
       <Route path="/project" element={<ProjectLayout />}>
         <Route index element={<WorkspaceScreen />} />
         <Route path="rules" element={<RulesScreen />} />
+        <Route path="export" element={<ExportScreen />} />
+        <Route path="shopping-list" element={<ShoppingListScreen />} />
       </Route>
-      <Route path="/project/export" element={<ExportScreen />} />
-      <Route path="/project/shopping-list" element={<ShoppingListScreen />} />
     </Routes>
   )
 }
