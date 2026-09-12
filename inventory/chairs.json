@@ -1,0 +1,344 @@
+[
+  {
+    "name": "SANDSBERG",
+    "category": "chair",
+    "url": "https://www.ikea.com/us/en/p/sandsberg-chair-white-10605424/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/sandsberg-chair-white__1390727_pe965548_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sandsberg-chair-white__1460497_pe993946_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sandsberg-chair-white__1460496_pe993944_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sandsberg-chair-white__1482534_pe1001077_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sandsberg-chair-white__1448188_pe989547_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sandsberg-chair-white__1448184_pe989543_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sandsberg-chair-white__0947776_pe798637_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sandsberg-chair-white__1442093_pe986660_p.jpg"
+    ],
+    "priceCents": 1500,
+    "dimsMm": {
+      "w": 391,
+      "d": 470,
+      "h": 772
+    },
+    "colorHex": "#F5F5F5",
+    "colorName": "white",
+    "materials": [
+      "polyester",
+      "plastic",
+      "steel",
+      "epoxy"
+    ],
+    "styleTags": [
+      "industrial",
+      "modern"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "PINNTORP",
+    "category": "chair",
+    "url": "https://www.ikea.com/us/en/p/pinntorp-chair-white-stained-pine-90635177/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/pinntorp-chair-white-stained-pine__1508780_pe1009581_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/pinntorp-chair-white-stained-pine__1582053_pe1035456_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/pinntorp-chair-white-stained-pine__1517221_pe1012188_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/pinntorp-chair-white-stained-pine__1515840_pe1011637_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/pinntorp-chair-white-stained-pine__1515839_pe1011638_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/pinntorp-chair-white-stained-pine__1531659_pe1015706_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/pinntorp-chair-white-stained-pine__1040183_pe840596_s5.jpg"
+    ],
+    "priceCents": 4000,
+    "dimsMm": {
+      "w": 419,
+      "d": 489,
+      "h": 899
+    },
+    "colorHex": "#F5F5F5",
+    "colorName": "white stained",
+    "materials": [
+      "wood",
+      "stain"
+    ],
+    "styleTags": [
+      "scandinavian",
+      "traditional"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "NÄSINGE",
+    "category": "chair",
+    "url": "https://www.ikea.com/us/en/p/naesinge-chair-dark-brown-stained-kilanda-light-beige-00587581/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/naesinge-chair-dark-brown-stained-kilanda-light-beige__1444950_pe987836_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/naesinge-chair-dark-brown-stained-kilanda-light-beige__1445402_pe988160_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/naesinge-chair-dark-brown-stained-kilanda-light-beige__1445365_pe988170_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/naesinge-chair-dark-brown-stained-kilanda-light-beige__1469734_pe996647_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/naesinge-chair-dark-brown-stained-kilanda-light-beige__1445401_pe988195_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/naesinge-chair-dark-brown-stained-kilanda-light-beige__1445400_pe988194_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/naesinge-chair-dark-brown-stained-kilanda-light-beige__1458224_ph204998_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/naesinge-chair-dark-brown-stained-kilanda-light-beige__1415340_pe975249_s5.jpg"
+    ],
+    "priceCents": 6500,
+    "dimsMm": {
+      "w": 419,
+      "d": 540,
+      "h": 899
+    },
+    "colorHex": "#6B4F3A",
+    "colorName": "dark-brown stained",
+    "materials": [
+      "wood",
+      "polyester",
+      "foam",
+      "stain"
+    ],
+    "styleTags": [
+      "modern",
+      "casual"
+    ],
+    "featureTags": [
+      "upholstered"
+    ]
+  },
+  {
+    "name": "SKOGSTA",
+    "category": "chair",
+    "url": "https://www.ikea.com/us/en/p/skogsta-chair-black-50544867/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/skogsta-chair-black__1243349_pe920580_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skogsta-chair-black__1469324_pe996483_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skogsta-chair-black__1558621_pe1024913_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skogsta-chair-black__1469473_pe996531_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skogsta-chair-black__1262536_pe927108_s5.jpg"
+    ],
+    "priceCents": 7000,
+    "dimsMm": {
+      "w": 460,
+      "d": 549,
+      "h": 940
+    },
+    "colorHex": "#1A1A1A",
+    "colorName": "black",
+    "materials": [
+      "stain",
+      "adhesive"
+    ],
+    "styleTags": [
+      "rustic",
+      "traditional"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "VIHALS",
+    "category": "chair",
+    "url": "https://www.ikea.com/us/en/p/vihals-chair-white-tibbleby-beige-grey-40595126/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/vihals-chair-white-tibbleby-beige-grey__1370476_pe958749_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/vihals-chair-white-tibbleby-beige-grey__1414865_pe974917_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/vihals-chair-white-tibbleby-beige-grey__1414839_pe974946_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/vihals-chair-white-tibbleby-beige-grey__1414844_pe974926_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/vihals-chair-white-tibbleby-beige-grey__1414883_pe974969_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/vihals-chair-white-tibbleby-beige-grey__1414881_pe974967_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/vihals-chair-white-tibbleby-beige-grey__1414882_pe974968_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/vihals-chair-white-tibbleby-beige-grey__1414880_pe974966_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/vihals-chair-white-tibbleby-beige-grey__1391722_pe965842_s5.jpg"
+    ],
+    "priceCents": 5000,
+    "dimsMm": {
+      "w": 489,
+      "d": 549,
+      "h": 810
+    },
+    "colorHex": "#F5F5F5",
+    "colorName": "white",
+    "materials": [
+      "polyester",
+      "plastic",
+      "steel",
+      "foam",
+      "epoxy"
+    ],
+    "styleTags": [
+      "modern",
+      "minimalist"
+    ],
+    "featureTags": [
+      "upholstered"
+    ]
+  },
+  {
+    "name": "TONSTAD",
+    "category": "chair",
+    "url": "https://www.ikea.com/us/en/p/tonstad-chair-brown-oak-effect-fridtuna-light-beige-30594028/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/tonstad-chair-brown-oak-effect-fridtuna-light-beige__1393518_pe966274_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/tonstad-chair-brown-oak-effect-fridtuna-light-beige__1444217_pe987457_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/tonstad-chair-brown-oak-effect-fridtuna-light-beige__1487420_pe1002812_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/tonstad-chair-brown-oak-effect-fridtuna-light-beige__1444216_pe987456_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/tonstad-chair-brown-oak-effect-fridtuna-light-beige__1415265_pe975217_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/tonstad-chair-brown-oak-effect-fridtuna-light-beige__1435961_pe984001_p.jpg"
+    ],
+    "priceCents": 7500,
+    "dimsMm": {
+      "w": 419,
+      "d": 479,
+      "h": 879
+    },
+    "colorHex": "#6B4F3A",
+    "colorName": "brown oak effect",
+    "materials": [
+      "wood",
+      "polyester",
+      "cotton",
+      "foam",
+      "adhesive"
+    ],
+    "styleTags": [
+      "modern",
+      "scandinavian"
+    ],
+    "featureTags": [
+      "upholstered"
+    ]
+  },
+  {
+    "name": "LISABO",
+    "category": "chair",
+    "url": "https://www.ikea.com/us/en/p/lisabo-chair-ash-00457235/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/lisabo-chair-ash__0786549_pe763015_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-chair-ash__0946416_ph171423_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-chair-ash__1053174_pe846767_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-chair-ash__1053175_pe846725_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-chair-ash__0810268_pe771255_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-chair-ash__1053173_pe846766_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-chair-ash__1053171_pe846764_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-chair-ash__1053172_pe846765_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-chair-ash__0949242_pe799575_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-chair-ash__1234702_pe051287_p.jpg"
+    ],
+    "priceCents": 8000,
+    "dimsMm": {
+      "w": 460,
+      "d": 511,
+      "h": 800
+    },
+    "colorHex": "#C9B8A0",
+    "colorName": "ash",
+    "materials": [
+      "wood"
+    ],
+    "styleTags": [
+      "scandinavian",
+      "modern"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "NORDVIKEN",
+    "category": "chair",
+    "url": "https://www.ikea.com/us/en/p/nordviken-chair-black-40369109/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/nordviken-chair-black__0714202_pe729964_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/nordviken-chair-black__0955681_ph174047_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/nordviken-chair-black__0797433_ph163608_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/nordviken-chair-black__0744800_pe743411_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/nordviken-chair-black__0744797_pe743408_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/nordviken-chair-black__0928967_ph167490_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/nordviken-chair-black__1053090_pe846686_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/nordviken-chair-black__1053091_pe846687_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/nordviken-chair-black__0797392_pe766852_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/nordviken-chair-black__1053087_pe846683_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/nordviken-chair-black__1053088_pe846684_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/nordviken-chair-black__1053089_pe846685_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/nordviken-chair-black__0947700_pe798621_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/nordviken-chair-black__1238378_ph151106_p.jpg"
+    ],
+    "priceCents": 6500,
+    "dimsMm": {
+      "w": 441,
+      "d": 540,
+      "h": 972
+    },
+    "colorHex": "#1A1A1A",
+    "colorName": "black",
+    "materials": [
+      "wood",
+      "stain"
+    ],
+    "styleTags": [
+      "modern",
+      "casual"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "KRYLBO",
+    "category": "chair",
+    "url": "https://www.ikea.com/us/en/p/krylbo-chair-tonerud-dark-beige-20566752/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/krylbo-chair-tonerud-dark-beige__1208495_pe908606_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/krylbo-chair-tonerud-dark-beige__1339180_pe948414_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/krylbo-chair-tonerud-dark-beige__1208493_pe908599_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/krylbo-chair-tonerud-dark-beige__1208491_pe908597_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/krylbo-chair-tonerud-dark-beige__1259007_ph194892_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/krylbo-chair-tonerud-dark-beige__1208492_pe908598_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/krylbo-chair-tonerud-dark-beige__1208494_pe908600_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/krylbo-chair-tonerud-dark-beige__1233556_pe916891_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/krylbo-chair-tonerud-dark-beige__1535529_pe1016586_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/krylbo-chair-tonerud-dark-beige__1375151_ph148633_p.jpg"
+    ],
+    "priceCents": 10500,
+    "dimsMm": {
+      "w": 549,
+      "d": 511,
+      "h": 749
+    },
+    "colorHex": "#D4C4A8",
+    "colorName": "Tonerud dark beige",
+    "materials": [
+      "polyester",
+      "wood",
+      "steel",
+      "foam",
+      "epoxy",
+      "polyethylene"
+    ],
+    "styleTags": [
+      "modern",
+      "casual"
+    ],
+    "featureTags": [
+      "upholstered"
+    ]
+  },
+  {
+    "name": "ROSENTORP",
+    "category": "chair",
+    "url": "https://www.ikea.com/us/en/p/rosentorp-chair-black-00570000/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/rosentorp-chair-black__1434531_pe983577_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/rosentorp-chair-black__1448054_pe989463_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/rosentorp-chair-black__1448106_pe989490_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/rosentorp-chair-black__1448105_pe989491_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/rosentorp-chair-black__1265871_pe927826_s5.jpg"
+    ],
+    "priceCents": 7500,
+    "dimsMm": {
+      "w": 441,
+      "d": 530,
+      "h": 911
+    },
+    "colorHex": "#1A1A1A",
+    "colorName": "black",
+    "materials": [
+      "wood"
+    ],
+    "styleTags": [
+      "modern",
+      "scandinavian"
+    ],
+    "featureTags": []
+  }
+]
