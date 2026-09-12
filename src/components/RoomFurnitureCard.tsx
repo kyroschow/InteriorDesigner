@@ -22,17 +22,21 @@ export function RoomFurnitureCard({ room }: RoomFurnitureCardProps) {
           {formatArea(sqInToSqFt(room.footprint.w * room.footprint.h))}
         </span>
       </div>
-      <div className="divide-y divide-canvas-line">
-        {items.map((item) => (
-          <QuantityStepper
-            key={item.id}
-            label={item.label}
-            max={item.max}
-            value={quantities[`${room.id}:${item.id}`] ?? 0}
-            onChange={(value) => setQuantity(room.id, item.id, value, item.max)}
-          />
-        ))}
-      </div>
+      {items.length > 0 ? (
+        <div className="divide-y divide-canvas-line">
+          {items.map((item) => (
+            <QuantityStepper
+              key={item.id}
+              label={item.label}
+              max={item.max}
+              value={quantities[`${room.id}:${item.id}`] ?? 0}
+              onChange={(value) => setQuantity(room.id, item.id, value, item.max)}
+            />
+          ))}
+        </div>
+      ) : (
+        <p className="py-1 text-xs text-ink-soft/50">No furniture catalog for this room yet.</p>
+      )}
     </div>
   )
 }

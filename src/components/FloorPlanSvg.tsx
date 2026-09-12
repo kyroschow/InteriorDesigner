@@ -1,23 +1,33 @@
+import { forwardRef } from 'react'
 import { floorPlanBounds, floorPlanWalls, ROOM_TYPE_COLOR, type FloorPlan } from '@/lib/floorplan'
 import { rectCenter } from '@/lib/geometry'
 import { formatArea, sqInToSqFt } from '@/lib/units'
+import type { PlacedItem } from '@/lib/furniturePlacement'
 
 interface FloorPlanSvgProps {
   plan: FloorPlan
+  /** Furniture boxes to draw on top, keyed by room id — omit to show the bare plan. */
+  furniture?: Record<string, PlacedItem[]>
 }
 
 const WALL_COLOR = 'var(--color-wall)'
 const WALL_WIDTH = 3.5
 /** Rooms narrower than this (inches) get a compact, name-only label. */
 const NARROW_THRESHOLD_IN = 72
+/** Non-narrow room labels sit near the top so they never collide with furniture boxes below. */
+const LABEL_TOP_OFFSET_IN = 18
 
-export function FloorPlanSvg({ plan }: FloorPlanSvgProps) {
+export const FloorPlanSvg = forwardRef<SVGSVGElement, FloorPlanSvgProps>(function FloorPlanSvg(
+  { plan, furniture },
+  ref,
+) {
   const bounds = floorPlanBounds(plan)
   const walls = floorPlanWalls(plan)
   const pad = 24
 
   return (
     <svg
+      ref={ref}
       viewBox={`${-pad} ${-pad} ${bounds.w + pad * 2} ${bounds.h + pad * 2}`}
       className="h-auto w-full"
       role="img"
@@ -74,18 +84,49 @@ export function FloorPlanSvg({ plan }: FloorPlanSvgProps) {
         strokeWidth={WALL_WIDTH + 1.5}
       />
 
+      {furniture &&
+        plan.rooms.flatMap((room) =>
+          (furniture[room.id] ?? []).map((item) => {
+            const showLabel = item.w >= 34 && item.h >= 18
+            return (
+              <g key={`${room.id}-${item.id}`}>
+                <rect
+                  x={item.x}
+                  y={item.y}
+                  width={item.w}
+                  height={item.h}
+                  rx={3}
+                  fill="var(--color-card)"
+                  stroke={WALL_COLOR}
+                  strokeWidth={1.25}
+                />
+                {showLabel && (
+                  <text
+                    x={item.x + item.w / 2}
+                    y={item.y + item.h / 2}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fontSize={9}
+                    fill="var(--color-ink-soft)"
+                  >
+                    {item.label}
+                  </text>
+                )}
+              </g>
+            )
+          }),
+        )}
+
       {plan.rooms.map((room) => {
         const c = rectCenter(room.footprint)
         const narrow = Math.min(room.footprint.w, room.footprint.h) < NARROW_THRESHOLD_IN
         const rotate = narrow && room.footprint.w < room.footprint.h
+        const nameY = narrow ? c.y : room.footprint.y + LABEL_TOP_OFFSET_IN
         return (
-          <g
-            key={room.id}
-            transform={rotate ? `rotate(-90 ${c.x} ${c.y})` : undefined}
-          >
+          <g key={room.id} transform={rotate ? `rotate(-90 ${c.x} ${c.y})` : undefined}>
             <text
               x={c.x}
-              y={narrow ? c.y : c.y - 6}
+              y={nameY}
               textAnchor="middle"
               dominantBaseline="middle"
               fontSize={narrow ? 11 : 15}
@@ -98,7 +139,7 @@ export function FloorPlanSvg({ plan }: FloorPlanSvgProps) {
             {!narrow && (
               <text
                 x={c.x}
-                y={c.y + 12}
+                y={nameY + 14}
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fontSize={10}
@@ -112,4 +153,4 @@ export function FloorPlanSvg({ plan }: FloorPlanSvgProps) {
       })}
     </svg>
   )
-}
+})
