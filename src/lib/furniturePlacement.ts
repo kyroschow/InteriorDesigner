@@ -18,6 +18,8 @@ import type { FurnitureOption } from '@/data/furnitureCatalog'
 
 export interface PlacedItem {
   id: string
+  /** The catalog item id (e.g. "couch"), stable across instances — for looking up a matched real product. */
+  itemId: string
   label: string
   /** False for the 2nd+ instance of the same item in a room — repeated labels crowd into each other. */
   showLabel: boolean
@@ -47,6 +49,7 @@ export interface FurnitureSelection {
 
 interface FlatItem {
   id: string
+  itemId: string
   label: string
   showLabel: boolean
   size: { w: number; h: number }
@@ -56,7 +59,7 @@ function flatten(selections: FurnitureSelection[]): FlatItem[] {
   const out: FlatItem[] = []
   for (const { option, quantity } of selections) {
     for (let i = 0; i < quantity; i++) {
-      out.push({ id: `${option.id}-${i}`, label: option.label, showLabel: i === 0, size: option.size })
+      out.push({ id: `${option.id}-${i}`, itemId: option.id, label: option.label, showLabel: i === 0, size: option.size })
     }
   }
   return out
@@ -127,7 +130,19 @@ function layoutWalls(items: FlatItem[], b: Bounds, scale: number) {
 
     const w = wall === 'bottom' ? alongPx : depthPx
     const h = wall === 'bottom' ? depthPx : alongPx
-    placements.push({ id: item.id, label: item.label, showLabel: item.showLabel, x, y, w, h, labelX, labelY, labelAnchor })
+    placements.push({
+      id: item.id,
+      itemId: item.itemId,
+      label: item.label,
+      showLabel: item.showLabel,
+      x,
+      y,
+      w,
+      h,
+      labelX,
+      labelY,
+      labelAnchor,
+    })
     cursor[wall] += alongPx + gap
   })
 
@@ -167,6 +182,7 @@ function layoutBottomRows(items: FlatItem[], b: Bounds, scale: number) {
       const y = b.innerBottom - yFromBottom - depthPx
       placements.push({
         id: item.id,
+        itemId: item.itemId,
         label: item.label,
         showLabel: item.showLabel,
         x,

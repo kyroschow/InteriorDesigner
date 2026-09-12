@@ -29,7 +29,7 @@ export const birchTwoBed: FloorPlan = {
     },
     {
       id: 'bedroom-1',
-      name: 'Bedroom 1',
+      name: 'Primary Bedroom',
       type: 'bedroom',
       footprint: rect(ft(0), ft(14), ft(14), ft(14)),
     },

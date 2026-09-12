@@ -6,6 +6,7 @@ import { FloorPlanSvg } from '@/components/FloorPlanSvg'
 import { birchTwoBed } from '@/data/floorplans/birchTwoBed'
 import { FURNITURE_BY_ROOM_TYPE } from '@/data/furnitureCatalog'
 import { placeAllFurniture } from '@/lib/furniturePlacement'
+import { withProductLabels } from '@/lib/furnitureLabels'
 import { downloadSvgAsPng } from '@/lib/exportSvg'
 import { useOnboardingStore } from '@/store/onboardingStore'
 import { useFurnitureStore } from '@/store/furnitureStore'
@@ -29,13 +30,15 @@ export function ProjectLayout() {
   const uploadedFile = useOnboardingStore((s) => s.uploadedFile)
   const getQuantity = useFurnitureStore((s) => s.getQuantity)
   const quantities = useFurnitureStore((s) => s.quantities)
+  const getProductChoice = useFurnitureStore((s) => s.getProductChoice)
+  const productChoices = useFurnitureStore((s) => s.productChoices)
   const svgRef = useRef<SVGSVGElement>(null)
 
   const showFurniture = FURNISHED_PATHS.includes(location.pathname)
   const furniture = useMemo(
-    () => placeAllFurniture(birchTwoBed.rooms, FURNITURE_BY_ROOM_TYPE, getQuantity),
+    () => withProductLabels(placeAllFurniture(birchTwoBed.rooms, FURNITURE_BY_ROOM_TYPE, getQuantity), getProductChoice),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [quantities],
+    [quantities, productChoices],
   )
 
   function downloadPng() {
