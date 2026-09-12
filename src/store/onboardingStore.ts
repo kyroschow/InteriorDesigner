@@ -1,43 +1,47 @@
 /**
- * Onboarding state.
+ * Onboarding draft state.
  *
  * Carries the choices made in the units + create-project screens across
- * navigation. `unitSystem` is a real, sticky user preference (persisted to
- * localStorage); `mode`, `uploadedFile`, and `doorFacing` are draft state for
- * the project being created right now and are not persisted.
+ * navigation, until `POST /projects` turns them into a server project.
+ * `unitSystem` is a sticky preference (persisted to localStorage); the rest is
+ * transient. The raw `File` is kept in memory only — never persisted, and never
+ * a stand-in for a backend asset id.
  */
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import type { CompassDirection } from '@/lib/floorplan'
+import type { ProjectMode, UnitSystem } from '@/types/interior'
 
-export type UnitSystem = 'imperial' | 'metric'
-export type ProjectMode = 'scratch' | 'upload'
-export type CompassDirection = 'N' | 'E' | 'S' | 'W'
+export type { CompassDirection, ProjectMode, UnitSystem }
 
-export interface UploadedFile {
-  name: string
-  previewUrl: string | null
-}
+export const DEFAULT_PROJECT_NAME = 'My apartment'
 
 interface OnboardingState {
   unitSystem: UnitSystem
+  projectName: string
   mode: ProjectMode | null
-  uploadedFile: UploadedFile | null
-  /** Which way the front door faces — asked on upload, since we can't see the uploaded plan to work it out. */
+  uploadedFile: File | null
+  /** Which way the front door faces — asked on upload, since the uploaded plan isn't analyzed. */
   doorFacing: CompassDirection | null
   setUnitSystem: (unitSystem: UnitSystem) => void
+  setProjectName: (name: string) => void
   setMode: (mode: ProjectMode) => void
-  setUploadedFile: (file: UploadedFile | null) => void
+  setUploadedFile: (file: File | null) => void
   setDoorFacing: (direction: CompassDirection) => void
+  /** Clears the draft once the project exists. */
+  reset: () => void
 }
 
 export const useOnboardingStore = create<OnboardingState>()(
   persist(
     (set) => ({
       unitSystem: 'imperial',
+      projectName: DEFAULT_PROJECT_NAME,
       mode: null,
       uploadedFile: null,
       doorFacing: null,
       setUnitSystem: (unitSystem) => set({ unitSystem }),
+      setProjectName: (projectName) => set({ projectName }),
       setMode: (mode) =>
         set((state) => ({
           mode,
@@ -46,6 +50,7 @@ export const useOnboardingStore = create<OnboardingState>()(
         })),
       setUploadedFile: (uploadedFile) => set({ uploadedFile }),
       setDoorFacing: (doorFacing) => set({ doorFacing }),
+      reset: () => set({ projectName: DEFAULT_PROJECT_NAME, mode: null, uploadedFile: null, doorFacing: null }),
     }),
     {
       name: 'onboarding',

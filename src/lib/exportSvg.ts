@@ -69,8 +69,10 @@ export function downloadSvgAsSvgFile(svg: SVGSVGElement, filename: string): void
 /** Opens a print-ready tab with just the plan — "Save as PDF" is the browser's own print destination. */
 export function printSvgAsPdf(svg: SVGSVGElement, docTitle: string): void {
   const { svgString } = serializeSvg(svg)
-  const win = window.open('', '_blank', 'noopener,noreferrer')
+  // No `noopener` here: with it, window.open returns null and there is no document to write into.
+  const win = window.open('', '_blank')
   if (!win) return
+  win.opener = null
   win.document.write(`<!doctype html>
 <html>
 <head>
@@ -87,4 +89,12 @@ export function printSvgAsPdf(svg: SVGSVGElement, docTitle: string): void {
   win.focus()
   // Some browsers paint the injected document a beat after `document.close()`.
   setTimeout(() => win.print(), 300)
+}
+
+export type ExportFormat = 'png' | 'svg' | 'pdf'
+
+export function exportPlan(svg: SVGSVGElement, format: ExportFormat, baseName: string, title: string): void {
+  if (format === 'png') downloadSvgAsPng(svg, `${baseName}.png`)
+  else if (format === 'svg') downloadSvgAsSvgFile(svg, `${baseName}.svg`)
+  else printSvgAsPdf(svg, title)
 }

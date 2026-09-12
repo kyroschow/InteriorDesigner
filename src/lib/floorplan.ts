@@ -1,11 +1,13 @@
 /**
- * Hardcoded floor plan model — the "real" schema (PointMm/Polygon/RoomSpec per
- * PLAN.md) doesn't exist yet, so this is a minimal stand-in: rectangular rooms
- * in integer inches, plus which room-pairs share no wall (open-plan).
+ * Renderer-facing plan model: rectangular rooms in inches, plan space (+y
+ * down). Built from the API scene by lib/sceneCoordinates.ts — never stored.
  */
 import { type Rect, rectBottom, rectRight } from './geometry'
 
 export type RoomType = 'living' | 'kitchen' | 'bedroom' | 'bathroom' | 'hall'
+
+/** Compass directions / plan sides (N is up in an unrotated drawing). */
+export type CompassDirection = 'N' | 'E' | 'S' | 'W'
 
 export interface RoomSpec {
   id: string
@@ -17,13 +19,28 @@ export interface RoomSpec {
   openTo?: string[]
 }
 
-/** A doorway gap cut into a wall — a straight segment, no swing arc. */
+/** A gap cut into a wall — a straight segment, no swing arc. */
 export interface Door {
   x: number
   y: number
   /** Length of the gap in inches, running along the wall. */
   length: number
   orientation: 'h' | 'v'
+  kind?: 'door' | 'doorway' | 'window'
+}
+
+/** An axis-aligned footprint (furniture or fixed fixture) with its front edge marked. */
+export interface PlanBox {
+  id: string
+  label: string
+  x: number
+  y: number
+  w: number
+  h: number
+  front: 'top' | 'bottom' | 'left' | 'right'
+  fixed: boolean
+  /** False for repeats of the same product in a room — repeated labels crowd each other. */
+  showLabel: boolean
 }
 
 export interface FloorPlan {
@@ -31,12 +48,15 @@ export interface FloorPlan {
   name: string
   rooms: RoomSpec[]
   doors?: Door[]
+  fixtures?: PlanBox[]
+  /** Side of the drawing the exterior front door is on, for compass rotation. */
+  entrySide?: CompassDirection
 }
 
-/** Existing CSS room-fill tokens, keyed by room type (kitchen shares living's — same open space). */
+/** Existing CSS room-fill tokens, keyed by room type. */
 export const ROOM_TYPE_COLOR: Record<RoomType, string> = {
   living: 'var(--color-room-living)',
-  kitchen: 'var(--color-room-living)',
+  kitchen: 'var(--color-room-utility)',
   bedroom: 'var(--color-room-sleep)',
   bathroom: 'var(--color-room-bath)',
   hall: 'var(--color-room-circulation)',
@@ -95,11 +115,8 @@ function subtractIntervals(s: number, e: number, cuts: Array<[number, number]>):
 
 /**
  * Wall lines to draw: every room edge, minus whichever portions are shared
- * with a room it's marked open to. An edge can be open along only *part* of
- * its length (e.g. Hall is open to Living Room, but Living Room's bottom edge
- * also borders the closed-off Bedroom 1) — hence interval subtraction rather
- * than an all-or-nothing skip. Shared non-open edges get drawn once per room
- * (harmless — same line twice) rather than deduped, to keep this simple.
+ * with a room it's marked open to. Shared non-open edges get drawn once per
+ * room (harmless — same line twice) rather than deduped, to keep this simple.
  */
 export function floorPlanWalls(plan: FloorPlan): WallSegment[] {
   const openSkips: WallSegment[] = []

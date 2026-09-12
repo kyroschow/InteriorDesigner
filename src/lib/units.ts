@@ -78,6 +78,40 @@ export function formatAreaBySystem(sqIn: number, system: UnitSystem): string {
   return system === 'metric' ? formatAreaMetric(sqInToSqM(sqIn)) : formatArea(sqInToSqFt(sqIn))
 }
 
+// ------------------------------------------------ API geometry (meters)
+
+const M_PER_FT = 0.3048
+const M2_PER_FT2 = M_PER_FT * M_PER_FT
+
+/** 3.2 -> "3.20 m" or "10 ft 6 in", per the project's unit system. */
+export function formatLengthM(meters: number, system: UnitSystem): string {
+  return formatLength(meters / M_PER_INCH, system)
+}
+
+/** 24 -> "24.0 m²" or "258 ft²". */
+export function formatAreaM2(squareMeters: number, system: UnitSystem): string {
+  return system === 'metric' ? formatAreaMetric(squareMeters) : formatArea(squareMeters / M2_PER_FT2)
+}
+
+/** Numeric inputs use meters for metric and decimal feet for imperial. */
+export const lengthInputUnit = (system: UnitSystem) => (system === 'metric' ? 'm' : 'ft')
+
+export function metersToInput(meters: number, system: UnitSystem): number {
+  const value = system === 'metric' ? meters : meters / M_PER_FT
+  return Math.round(value * 100) / 100
+}
+
+/** Rounds to millimeters, the API's precision. */
+export function inputToMeters(value: number, system: UnitSystem): number {
+  const meters = system === 'metric' ? value : value * M_PER_FT
+  return Math.round(meters * 1000) / 1000
+}
+
+/** 14900 -> "$149.00" */
+export function formatUsd(minor: number): string {
+  return (minor / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+}
+
 /** 2494 -> "2,494" */
 export function formatNumber(n: number): string {
   return Math.round(n).toLocaleString('en-US')
