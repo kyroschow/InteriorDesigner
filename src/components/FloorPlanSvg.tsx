@@ -3,7 +3,7 @@ import { floorPlanBounds, floorPlanWalls, ROOM_TYPE_COLOR, type FloorPlan } from
 import { rectCenter } from '@/lib/geometry'
 import { formatAreaBySystem } from '@/lib/units'
 import type { PlacedItem } from '@/lib/furniturePlacement'
-import { useOnboardingStore } from '@/store/onboardingStore'
+import { useOnboardingStore, type CompassDirection } from '@/store/onboardingStore'
 
 interface FloorPlanSvgProps {
   plan: FloorPlan
@@ -18,14 +18,35 @@ const NARROW_THRESHOLD_IN = 72
 /** Non-narrow room labels sit near the top so they never collide with furniture boxes below. */
 const LABEL_TOP_OFFSET_IN = 18
 
+const COMPASS_ORDER: CompassDirection[] = ['N', 'E', 'S', 'W']
+
+/**
+ * The plan's front door is fixed on its left/west wall (see birchTwoBed.ts).
+ * When the client told us which way the real door faces, rotate the compass
+ * so that wall matches — otherwise fall back to the standard map convention
+ * (north at the top).
+ */
+function compassSides(doorFacing: CompassDirection | null) {
+  if (!doorFacing) return { top: 'N', right: 'E', bottom: 'S', left: 'W' } as const
+  const i = COMPASS_ORDER.indexOf(doorFacing)
+  return {
+    left: doorFacing,
+    top: COMPASS_ORDER[(i + 1) % 4],
+    right: COMPASS_ORDER[(i + 2) % 4],
+    bottom: COMPASS_ORDER[(i + 3) % 4],
+  }
+}
+
 export const FloorPlanSvg = forwardRef<SVGSVGElement, FloorPlanSvgProps>(function FloorPlanSvg(
   { plan, furniture },
   ref,
 ) {
   const unitSystem = useOnboardingStore((s) => s.unitSystem)
+  const doorFacing = useOnboardingStore((s) => s.doorFacing)
   const bounds = floorPlanBounds(plan)
   const walls = floorPlanWalls(plan)
-  const pad = 24
+  const pad = 30
+  const compass = compassSides(doorFacing)
 
   return (
     <svg
@@ -85,6 +106,22 @@ export const FloorPlanSvg = forwardRef<SVGSVGElement, FloorPlanSvgProps>(functio
         stroke={WALL_COLOR}
         strokeWidth={WALL_WIDTH + 1.5}
       />
+
+      {/* Compass — rotated so the actual front door (fixed on the left wall) matches what the client told us. */}
+      <g fontSize={11} fontWeight={700} fill="var(--color-accent-deep)" textAnchor="middle">
+        <text x={bounds.w / 2} y={-pad / 2} dominantBaseline="middle">
+          {compass.top}
+        </text>
+        <text x={bounds.w / 2} y={bounds.h + pad / 2} dominantBaseline="middle">
+          {compass.bottom}
+        </text>
+        <text x={-pad / 2} y={bounds.h / 2} dominantBaseline="middle">
+          {compass.left}
+        </text>
+        <text x={bounds.w + pad / 2} y={bounds.h / 2} dominantBaseline="middle">
+          {compass.right}
+        </text>
+      </g>
 
       {furniture &&
         plan.rooms.flatMap((room) =>

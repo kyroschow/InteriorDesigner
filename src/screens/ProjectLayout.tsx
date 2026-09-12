@@ -7,12 +7,14 @@ import { birchTwoBed } from '@/data/floorplans/birchTwoBed'
 import { FURNITURE_BY_ROOM_TYPE } from '@/data/furnitureCatalog'
 import { placeAllFurniture } from '@/lib/furniturePlacement'
 import { withProductLabels } from '@/lib/furnitureLabels'
-import { downloadSvgAsPng } from '@/lib/exportSvg'
+import { downloadSvgAsPng, downloadSvgAsSvgFile, printSvgAsPdf } from '@/lib/exportSvg'
 import { useOnboardingStore } from '@/store/onboardingStore'
 import { useFurnitureStore } from '@/store/furnitureStore'
 
+export type ExportFormat = 'png' | 'svg' | 'pdf'
+
 export interface ProjectOutletContext {
-  downloadPng: () => void
+  exportPlan: (format: ExportFormat) => void
 }
 
 const FURNISHED_PATHS = ['/project/export']
@@ -41,8 +43,12 @@ export function ProjectLayout() {
     [quantities, productChoices],
   )
 
-  function downloadPng() {
-    if (svgRef.current) downloadSvgAsPng(svgRef.current, `${birchTwoBed.id}-floor-plan.png`)
+  function exportPlan(format: ExportFormat) {
+    const svg = svgRef.current
+    if (!svg) return
+    if (format === 'png') downloadSvgAsPng(svg, `${birchTwoBed.id}-floor-plan.png`)
+    else if (format === 'svg') downloadSvgAsSvgFile(svg, `${birchTwoBed.id}-floor-plan.svg`)
+    else printSvgAsPdf(svg, `${birchTwoBed.name} — floor plan`)
   }
 
   return (
@@ -76,7 +82,7 @@ export function ProjectLayout() {
       <div className="flex min-h-0 flex-1">
         <aside className="w-80 shrink-0 overflow-hidden border-r border-canvas-line">
           <div key={location.pathname} className="animate-pane-in flex h-full flex-col">
-            <Outlet context={{ downloadPng } satisfies ProjectOutletContext} />
+            <Outlet context={{ exportPlan } satisfies ProjectOutletContext} />
           </div>
         </aside>
 

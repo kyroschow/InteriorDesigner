@@ -54,6 +54,7 @@ export const birchTwoBed: FloorPlan = {
     },
   ],
   doors: [
+    { x: ft(0), y: ft(3), length: ft(3), orientation: 'v' }, // front door — exterior wall into the living room
     { x: ft(14), y: ft(15.5), length: ft(2.5), orientation: 'v' }, // hall <-> bedroom 1
     { x: ft(18), y: ft(15.5), length: ft(2.5), orientation: 'v' }, // hall <-> bedroom 2
     { x: ft(18), y: ft(24.5), length: ft(2.5), orientation: 'v' }, // hall <-> bathroom

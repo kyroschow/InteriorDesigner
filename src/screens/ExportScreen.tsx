@@ -1,11 +1,18 @@
 import { useMemo, useState } from 'react'
 import { useNavigate, useOutletContext } from 'react-router-dom'
 import { ArrowLeft, ChevronLeft, ChevronRight, Download, ExternalLink, ImageOff } from 'lucide-react'
-import type { ProjectOutletContext } from '@/screens/ProjectLayout'
+import clsx from 'clsx'
+import type { ExportFormat, ProjectOutletContext } from '@/screens/ProjectLayout'
 import { birchTwoBed } from '@/data/floorplans/birchTwoBed'
 import { formatPriceCents } from '@/data/inventory'
 import { buildShoppingList } from '@/lib/shoppingList'
 import { useFurnitureStore } from '@/store/furnitureStore'
+
+const FORMATS: Array<{ id: ExportFormat; label: string }> = [
+  { id: 'png', label: 'PNG' },
+  { id: 'svg', label: 'SVG' },
+  { id: 'pdf', label: 'PDF' },
+]
 
 function Thumb({ url, alt }: { url?: string; alt: string }) {
   const [failed, setFailed] = useState(false)
@@ -33,7 +40,8 @@ function Thumb({ url, alt }: { url?: string; alt: string }) {
  */
 export function ExportScreen() {
   const navigate = useNavigate()
-  const { downloadPng } = useOutletContext<ProjectOutletContext>()
+  const { exportPlan } = useOutletContext<ProjectOutletContext>()
+  const [format, setFormat] = useState<ExportFormat>('png')
   const getQuantity = useFurnitureStore((s) => s.getQuantity)
   const quantities = useFurnitureStore((s) => s.quantities)
   const getProductChoice = useFurnitureStore((s) => s.getProductChoice)
@@ -129,23 +137,40 @@ export function ExportScreen() {
         ))}
       </div>
 
-      <div className="flex shrink-0 items-center gap-2 border-t border-canvas-line p-4">
-        <button
-          type="button"
-          onClick={() => navigate('/project')}
-          className="inline-flex items-center gap-2 rounded-control px-3 py-2.5 text-sm font-semibold text-ink-soft hover:bg-canvas"
-        >
-          <ArrowLeft size={16} />
-          Back
-        </button>
-        <button
-          type="button"
-          onClick={downloadPng}
-          className="inline-flex flex-1 items-center justify-center gap-2 rounded-control bg-ink px-4 py-2.5 text-sm font-semibold text-app transition-transform hover:-translate-y-0.5"
-        >
-          <Download size={16} />
-          Export PNG
-        </button>
+      <div className="shrink-0 border-t border-canvas-line p-4">
+        <div className="mb-3 flex gap-1.5 rounded-control bg-canvas p-1">
+          {FORMATS.map((f) => (
+            <button
+              key={f.id}
+              type="button"
+              onClick={() => setFormat(f.id)}
+              className={clsx(
+                'flex-1 rounded-control py-1.5 text-xs font-semibold transition-colors',
+                format === f.id ? 'panel text-ink' : 'text-ink-soft/60 hover:text-ink',
+              )}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => navigate('/project')}
+            className="inline-flex items-center gap-2 rounded-control px-3 py-2.5 text-sm font-semibold text-ink-soft hover:bg-canvas"
+          >
+            <ArrowLeft size={16} />
+            Back
+          </button>
+          <button
+            type="button"
+            onClick={() => exportPlan(format)}
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-control bg-ink px-4 py-2.5 text-sm font-semibold text-app transition-transform hover:-translate-y-0.5"
+          >
+            <Download size={16} />
+            Export {format.toUpperCase()}
+          </button>
+        </div>
       </div>
     </>
   )

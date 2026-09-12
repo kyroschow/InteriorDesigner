@@ -18,7 +18,7 @@ export interface FurnitureOption {
  */
 export const FURNITURE_BY_ROOM_TYPE: Record<RoomType, FurnitureOption[]> = {
   living: [
-    { id: 'couch', label: 'Couch', max: 2, size: { w: 80, h: 35 } },
+    { id: 'couch', label: 'Couch', max: 3, size: { w: 80, h: 35 } },
     { id: 'tv-stand', label: 'TV Stand', max: 1, size: { w: 64, h: 16 } },
   ],
   kitchen: [
