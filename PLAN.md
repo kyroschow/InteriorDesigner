@@ -61,8 +61,9 @@ memory). No third-party inference APIs in the critical path.
   GPU with a resident model set, not for horizontal scale.
 - **Deterministic fallbacks everywhere.** Every AI step has a rule-based baseline that produces a
   usable (if boring) result. Demos must not depend on a model being in a good mood.
-- **Geometry is code, aesthetics are the model.** Spatial correctness comes from a constraint solver;
-  the model contributes taste and variety. Never trust an LLM with collision detection.
+- **Geometry is code, aesthetics are the model.** Spatial correctness comes from a deterministic
+  validator; the model contributes taste, variety, and search. Never trust an LLM with collision
+  detection.
 
 ---
 
@@ -90,7 +91,7 @@ memory). No third-party inference APIs in the critical path.
         │                         │           │
 ┌───────▼────────┐   ┌────────────▼──────┐  ┌─▼──────────────────┐
 │ layout-worker  │   │  render-worker    │  │ catalog-worker     │
-│ LLM + solver   │   │  ComfyUI client   │  │ scrape + embed     │
+│ agent loop     │   │  ComfyUI client   │  │ scrape + embed     │
 └───────┬────────┘   └────────┬──────────┘  └─────────┬──────────┘
         │                     │                       │
 ┌───────▼─────────────────────▼───────────────────────▼──────────┐
@@ -189,7 +190,8 @@ variants and undo is free.
 ```jsonc
 {
   _id, projectId, roomId, variantIndex: 0,
-  generator: { model: "qwen3-30b-a3b", promptVersion: "v4", seed: 88123, solverVersion: "1.2" },
+  generator: { model: "qwen3-30b-a3b", promptVersion: "v4", seed: 88123,
+               validatorVersion: "1.2", iterations: 2 },
   items: [{
     id: "it_1",
     slotId: "sofa_primary",          // semantic role, stable across regenerations
@@ -203,7 +205,7 @@ variants and undo is free.
     color: "#8C8073",
     productMatchId: ObjectId | null   // filled by the shopping step
   }],
-  metrics: {                          // from the solver, surfaced in the UI
+  metrics: {                          // from the validator, surfaced in the UI
     overlapCount: 0, circulationScore: 0.91, wallAlignmentScore: 0.87,
     blockedOpenings: 0, totalScore: 0.89
   },
@@ -285,28 +287,38 @@ widths (810–910 mm), window sills (900 mm), counter depths (600 mm).
 ## 5. Layout generation pipeline
 
 This is the heart of the project and the part most likely to be judged. The design principle:
-**the model proposes, the solver disposes.**
+**the agent proposes, the validator disposes.** The model searches the space of layouts; a
+deterministic geometry engine decides what is legal. The model is never asked whether a layout is
+valid, and the validator is never asked what would look good.
 
 ```
-Room geometry + type + style + budget
+Room geometry + type + style + budget + user requirements
         │
         ▼
-[1] Program synthesis      → what furniture should be in this room, and why
-        │   (LLM, JSON-constrained)
+[1] Program synthesis      → what furniture belongs here, and why
+        │   (LLM skill, JSON-constrained)
         ▼
-[2] Asset binding          → each program slot → a concrete 3D asset with real dimensions
+[2] Asset binding          → each slot → a concrete asset with real dimensions
         │   (catalog query + embedding rerank)
         ▼
-[3] Coarse placement       → anchors and relations, not exact coordinates
-        │   (LLM: "bed against wall w2, centred; nightstands flank")
-        ▼
-[4] Constraint solve       → exact mm positions that satisfy hard constraints
-        │   (deterministic: rule expansion + simulated annealing)
-        ▼
-[5] Validation & repair    → hard-fail check; retry from [3] with feedback, max 3 attempts
-        ▼
-  layouts document (+ metrics)
+╔══ AGENT LOOP ═══════════════════════════════════════════════╗
+║                                                             ║
+║  [3] Placement proposal   agent: place_furniture(room, …)   ║
+║           │                                          ▲      ║
+║           ▼                                          │      ║
+║  [4] Validation           validate_layout()          │      ║
+║           │                                          │      ║
+║           ├── invalid ──▶ violations[] + hints ──────┘      ║
+║           │               (max 4 iterations,                ║
+║           │                then template fallback)          ║
+╚═══════════╪═════════════════════════════════════════════════╝
+            │ valid
+            ▼
+[5] Commit                 commit_layout() → layouts doc + metrics
 ```
+
+Steps [3] and [4] form the **agent loop** — the core of the ReAct cycle and the thing that makes this
+an agent rather than a pipeline. Everything else is a tool it calls.
 
 ### [1] Program synthesis
 
@@ -328,19 +340,19 @@ server's `guided_json`), so parse failures are structurally impossible. Category
 from a closed enum — a model that invents `"pouffe_ottoman_thing"` breaks asset binding.
 
 A **template baseline** exists per room type (`services/layout/templates/bedroom.yaml`) listing the
-canonical slot set. Build this first; it makes the rest of the pipeline testable in week 2 and is the
-fallback when the LLM fails validation three times.
+canonical slot set. Build this first; it makes the rest of the pipeline testable early and is the
+fallback when the loop fails to converge.
 
 ### [2] Asset binding
 
 For each slot: query `assets` by category, filter by "fits in room" (footprint vs. free area), rank by
 style-embedding similarity to the project style, sample from the top-k with the layout seed. Binding
-before placement matters — the solver needs **real dimensions**, not the model's guess at what a sofa
-measures.
+before placement matters — the validator needs **real dimensions**, not the model's guess at what a
+sofa measures.
 
-### [3] Coarse placement
+### [3] Placement proposal — the agent turn
 
-Second LLM call, given the bound assets and their real footprints. Output is *relational*, not metric:
+The agent calls `place_furniture(roomId, items[])`. Placements are **relational, not metric**:
 
 ```jsonc
 { "placements": [
@@ -354,40 +366,104 @@ Second LLM call, given the bound assets and their real footprints. Output is *re
 ```
 
 Asking for relations rather than coordinates plays to the model's strength (spatial *semantics*) and
-avoids its weakness (arithmetic). Relations are also directly explainable in the UI: *"Bed centred on
-the long wall, away from the door."*
+avoids its weakness (arithmetic). A deterministic **relation expander** — not an optimizer — resolves
+anchors to exact millimetre coordinates. Relations are also directly explainable in the UI:
+*"Bed centred on the long wall, away from the door."*
 
-### [4] Constraint solver (`services/layout/solver/`)
+### [4] Validator (`services/layout/validator/`)
 
-Expands relations to coordinates, then optimizes. **Hard constraints** (violation = invalid layout):
+**No optimizer.** The validator only answers "is this layout legal, and if not, why." The agent
+performs the search; this component performs the verification. That split removes the simulated
+annealer, its scoring weights, and its tuning burden from the critical path — what remains is
+geometry predicates over `shapely`, which are fast, deterministic, and genuinely unit-testable.
+
+**Hard constraints** (any violation = invalid):
 
 - No item–item footprint overlap; no item–fixture overlap; all items inside the room polygon.
 - Door swing arcs clear; a 900 mm clear path from every door to every other door in the room.
 - No item blocking a window below sill height, except explicitly `low_profile` categories.
+- Fire egress routes kept clear at full required width.
 - Category-specific clearances: 700 mm at least one side of a bed, 900 mm in front of a wardrobe,
   600 mm in front of a toilet and 530 mm side-to-side, 1000 mm between kitchen counter runs,
   450 mm between sofa and coffee table.
 
-**Soft objectives** (weighted score, 0–1):
+**Soft objectives** — scored 0–1 and *returned to the agent as advice*, never enforced:
 
 - Wall alignment for wall-seeking categories; orthogonality to the dominant room axis.
-- Circulation: rasterize the room at 100 mm, flood-fill from doors, score reachable free area and
-  minimum corridor width.
+- Circulation: straight-line corridor width between every door pair. (A 100 mm raster flood-fill is
+  more rigorous and is the upgrade path, but the corridor test is a fraction of the work and
+  sufficient to catch the failures that matter.)
 - Focal orientation: seating faces the focal point (window/TV/fireplace); bed headboard not under a
   window.
 - Balance: centroid of furniture mass near the room centroid; avoid one empty half.
 - Kitchen work triangle (sink–stove–fridge legs each 1.2–2.7 m, perimeter < 8 m) when applicable.
 
-**Optimizer:** expand relations → initial placement → simulated annealing over (position, rotation)
-with discrete moves (snap-to-wall, slide along wall, rotate 90°, swap two same-category items),
-10 random restarts, ~2000 iterations. Target: **< 3 s per room** on CPU. This is a well-behaved,
-low-dimensional problem — don't reach for anything fancier until it demonstrably fails.
+#### Violations must be actionable
 
-### [5] Validation and repair
+This is the highest-leverage detail in the whole loop. A violation that merely names the problem
+forces a blind retry; one that names the remedy produces a directed one. Budget real time on the
+message formatter — it is worth more than any model upgrade.
 
-Hard-constraint violations are fed back to step [3] as text (*"wardrobe on w4 overlaps the door swing
-of d1; choose another wall"*). Three attempts, then fall back to the template layout. Every attempt is
-logged to `jobs.stages` so failures are debuggable after the demo.
+```jsonc
+{ "valid": false, "violations": [
+  { "severity": "hard", "rule": "door_swing_blocked",
+    "items": ["wardrobe"],
+    "detail": "wardrobe (1200×600) at (3400,2100) overlaps the swing arc of door d1",
+    "hint": "wall w4 has a 2800 mm clear span starting at (400,3000)" }
+]}
+```
+
+Rules for the response envelope:
+
+- **Sort by severity, cap at 5.** An uncapped list lets the agent fix trivia while ignoring the
+  blocker, and burns context.
+- **Always include a `hint`** naming free space, an alternative wall, or the minimum displacement
+  that would clear the violation.
+- **Report soft scores alongside**, so a valid-but-poor layout can still be improved if iterations
+  remain.
+
+### [5] The loop — convergence and guards
+
+The agent iterates `place → validate → adjust` until valid, then calls `commit_layout()`.
+
+- **Cap at 4 iterations.** On exhaustion, fall back to the template layout for that room. The demo
+  must never produce nothing.
+- **Pass full attempt history** into each turn. Without it the agent oscillates — moving the wardrobe
+  to clear violation A, creating violation B, then moving it back. Seeing what it already tried is
+  the cheapest fix for this.
+- **Log every attempt** to `jobs.stages`: proposal, violations, and the agent's stated reasoning.
+  This is both the debugging record and the demo material — the iteration trace rendered over the
+  floor plan (3 violations → 1 → clean) is far more legible to an audience than a chat transcript.
+- **Watch latency.** Each iteration is an LLM call, and the GB10 is bandwidth-bound; four iterations
+  on a dense large model is a dead demo. This is the argument for the MoE choice in §11.
+
+### User requirements
+
+Users state placement requirements in natural language; the agent parses them into structured
+constraints that join the validator's rule set for that room.
+
+```
+"the desk should face the window"  →  { type: "faces", item: "desk", target: "win1" }
+"keep 1.5 m clear by the door"     →  { type: "clearance", target: "d1", minMm: 1500 }
+"seat 12 people"                   →  { type: "capacity", category: "desk", minCount: 12 }
+```
+
+Constraints are tiered:
+
+| Tier | Source | Behaviour |
+|------|--------|-----------|
+| `hard` | Physics, building code, fire egress | Non-negotiable; never relaxed |
+| `user_hard` | User said "must" | Enforced; conflict is reported, not silently dropped |
+| `soft` | Preferences, style, aesthetics | Scored, not enforced |
+
+**Conflict reporting is the feature.** When `user_hard` constraints cannot be satisfied against
+`hard` ones, the agent must surface the trade-off rather than quietly discarding one:
+
+> *"A 6-person meeting table and a desk facing the window don't both fit in 12 m² with code
+> clearances. Drop to 4 seats, or move the desk to the side wall?"*
+
+This is what distinguishes an agent reasoning about a problem from a generator producing an artifact,
+and it is the behaviour to build the demo around.
 
 ### Evaluation
 
@@ -524,7 +600,8 @@ score = 0.40 · dimension_fit      # penalize > ±15% on any axis; hard-reject >
 ```
 
 Return the best match plus 4 alternatives per item, so the UI can offer a swap. A swap that changes
-dimensions re-runs the solver for *that room only*, which must stay under 3 s to feel interactive.
+dimensions re-enters the layout loop for *that room only*, seeded with the existing placement so it
+converges in one iteration rather than starting over.
 
 ### Budget reconciliation
 
@@ -700,7 +777,7 @@ advantage of this box; use it by keeping *all* services warm rather than by runn
 
 ### Fine-tuning (optional, only if the baseline underperforms)
 
-If prompting plus the solver produces weak *programs* (wrong furniture for a room), a LoRA on the
+If prompting plus the validator produces weak *programs* (wrong furniture for a room), a LoRA on the
 layout LLM is the targeted fix. Training data: **3D-FRONT** — ~19 k professionally designed indoor
 scenes furnished with **3D-FUTURE** models — converted into (room geometry → furniture program)
 pairs. 3D-FRONT/3D-FUTURE is also the recommended source for the `assets` collection; note its
@@ -748,8 +825,9 @@ InteriorDesigner/
 │   ├── layout/
 │   │   ├── program.py             # step [1]
 │   │   ├── binding.py             # step [2]
-│   │   ├── placement.py           # step [3]
-│   │   ├── solver/                # step [4]: constraints, scoring, annealing
+│   │   ├── placement.py           # step [3]: relation expander (no optimizer)
+│   │   ├── validator/             # step [4]: predicates, scoring, violation formatter
+│   │   ├── loop.py                # step [5]: iteration, history, convergence guards
 │   │   ├── templates/             # per-room-type baselines
 │   │   └── prompts/               # versioned
 │   ├── render/
@@ -764,12 +842,13 @@ InteriorDesigner/
 │   └── worker/                    # ARQ entrypoints, one queue per model
 ├── scripts/                       # seed.py, download_models.sh, export_assets.py
 ├── eval/                          # harness, fixture cases, report generator
-└── tests/                         # unit (solver!), integration, e2e (Playwright)
+└── tests/                         # unit (validator!), integration, e2e (Playwright)
 ```
 
-**Test emphasis:** the constraint solver gets real unit tests with hand-computed expected geometry —
-it's deterministic, it's the correctness core, and it's the one component where a bug is invisible in
-a screenshot. Aim for meaningful coverage there and smoke tests elsewhere.
+**Test emphasis:** the validator gets real unit tests with hand-computed expected geometry — it's
+deterministic, it's the correctness core, and it's the one component where a bug is invisible in a
+screenshot. A validator that wrongly reports *valid* is the worst failure in the system: the loop
+terminates happily on a broken layout. Aim for meaningful coverage there and smoke tests elsewhere.
 
 ---
 
@@ -784,8 +863,9 @@ geometry in the browser.
 **Done when:** you can click a plan on the home page and see its rooms drawn to scale.
 
 ### Phase 1 — Deterministic layouts (weeks 2–3)
-Template layouts per room type; the full constraint solver with hard constraints, scoring, and
-annealing; 2D editor with drag/rotate/snap and live collision feedback; layouts persisted as variants.
+Template layouts per room type; the full validator with hard constraints, soft scoring, and the
+actionable violation formatter; relation expander; 2D editor with drag/rotate/snap and live collision
+feedback; layouts persisted as variants.
 **Done when:** every room in all three plans gets a valid, violation-free furnished layout with zero
 AI involved. *This is the project's safety net — nothing later is allowed to regress it.*
 
@@ -828,7 +908,8 @@ panorama tour vs. the WASD fallback vs. cutting F9 entirely.
 |------|--------|-----------|------------|
 | **ARM64 toolchain gaps** (no wheel, no arm64 image, headless GL) | High | High | Day-1 validation checklist; prefer NGC containers; client-side depth capture removes the headless-GL dependency for the MVP |
 | Headless offscreen rendering won't work on the box | Medium | Medium | Client-side capture for single renders; if server-side never works, batch jobs drive a headless Chromium instead |
-| LLM emits spatially nonsensical placements | Medium | High | Relational (not metric) output; solver is authoritative; validation/repair loop; template fallback |
+| LLM emits spatially nonsensical placements | Medium | High | Relational (not metric) output; validator is authoritative; agent loop re-proposes against actionable violations; template fallback |
+| Agent loop oscillates or fails to converge | Medium | Medium | Full attempt history in context; 4-iteration cap; template fallback; violation `hint` field makes retries directed rather than blind |
 | Renders don't match the layout | High | Medium | Depth + segmentation conditioning, not text-only; ControlNet strength tuned per room type; visual regression fixtures |
 | IKEA data access breaks or is disallowed | Medium | High | Committed seed catalog is the demo path; live providers are strictly enrichment; review terms before scraping |
 | Too few quality 3D assets | Medium | Medium | 3D-FUTURE as the primary source; parametric box proxies with correct dimensions as a floor — a correct grey box beats a beautiful wrong-sized chair |
