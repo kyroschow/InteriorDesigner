@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
 import clsx from 'clsx'
 import { StagedLoadingOverlay } from '@/components/StagedLoadingOverlay'
+import { birchTwoBed } from '@/data/floorplans/birchTwoBed'
 import { RULE_PACKS } from '@/data/ruleLibrary'
 import { useStagedLoading } from '@/lib/useStagedLoading'
 import { useFurnitureStore } from '@/store/furnitureStore'
 
 const STAGES = ['Reading your rooms…', 'Thinking about placement…', 'Applying design rules…', 'Finishing touches…']
+const ROOM_NAME_BY_ID = Object.fromEntries(birchTwoBed.rooms.map((r) => [r.id, r.name]))
 
 /** Step 2's left pane (rendered inside ProjectLayout's <Outlet/>): which design guidance to follow, then generate. */
 export function RulesScreen() {
@@ -15,7 +17,9 @@ export function RulesScreen() {
   const [selected, setSelected] = useState<string[]>([])
   const { isRunning: isGenerating, stageIndex, start } = useStagedLoading(STAGES)
   const notesByRoom = useFurnitureStore((s) => s.notes)
-  const allNotes = Object.values(notesByRoom).flat().map((n) => n.text)
+  const allNotes = Object.entries(notesByRoom).flatMap(([roomId, notes]) =>
+    notes.map((n) => ({ room: ROOM_NAME_BY_ID[roomId] ?? roomId, text: n.text })),
+  )
 
   function toggle(id: string) {
     setSelected((prev) => (prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]))
