@@ -110,12 +110,10 @@ function Box({ box, showLabel }: { box: PlanBox; showLabel: boolean }) {
       {hasIcon &&
         (box.imageUrl ? (
           <g pointerEvents="none">
-            <rect x={iconX} y={iconY} width={iconSize} height={iconSize} rx={2} fill="#ffffff" stroke="var(--color-canvas-line)" strokeWidth={0.6} />
-            <image href={box.imageUrl} x={iconX + 1} y={iconY + 1} width={iconSize - 2} height={iconSize - 2} preserveAspectRatio="xMidYMid meet" />
+            <image href={box.imageUrl} x={iconX} y={iconY} width={iconSize} height={iconSize} preserveAspectRatio="xMidYMid meet" />
           </g>
         ) : (
           <g pointerEvents="none">
-            <rect x={iconX} y={iconY} width={iconSize} height={iconSize} rx={2} fill="var(--color-canvas)" />
             <PlaceholderIcon x={iconX + iconSize * 0.15} y={iconY + iconSize * 0.15} size={iconSize * 0.7} color="var(--color-ink-soft)" strokeWidth={1.75} opacity={0.7} aria-hidden />
           </g>
         ))}
