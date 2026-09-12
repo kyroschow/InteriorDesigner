@@ -69,10 +69,10 @@ export function RoomNotesEditor({ project, roomId, onSaved, reload, write }: Roo
           setText(e.target.value)
           setJustSaved(false)
         }}
-        placeholder={'e.g. "Prefer light wood" or "Keep the window side open"'}
+        placeholder={'e.g. "Light wood or white, nothing dark. Bed no wider than 1.6 m. Keep the window side open."'}
         className="w-full resize-y rounded-control border border-canvas-line bg-app px-2.5 py-1.5 text-xs text-ink placeholder:text-ink-soft/40 focus:border-accent focus:outline-none"
       />
-      <p className="text-[10px] text-ink-soft/50">A preference for the AI planner. Safety rules and quantities always win.</p>
+      <p className="text-[10px] text-ink-soft/50">Colors, sizes and style for this room, as preferences for the AI planner. Safety rules and quantities always win.</p>
       <div className="mt-1.5 flex items-center justify-end gap-2">
         {justSaved && !dirty && <span className="mr-auto text-[11px] text-emerald-700">Saved</span>}
         {dirty && <span className="mr-auto text-[11px] text-ink-soft/50">Unsaved</span>}

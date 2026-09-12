@@ -8,7 +8,6 @@ import { FloorPlanSvg } from '@/components/FloorPlanSvg'
 import { exportPlan, type ExportFormat } from '@/lib/exportSvg'
 import { sceneFurniture, sceneToPlan, shortName } from '@/lib/sceneCoordinates'
 import { formatUsd } from '@/lib/units'
-import { useProjectPrefsStore } from '@/store/projectPrefsStore'
 import type { Layout, Project } from '@/types/interior'
 
 /**
@@ -26,7 +25,6 @@ export function PreviewScreen() {
   const [showFurniture, setShowFurniture] = useState(true)
   const [showLabels, setShowLabels] = useState(true)
   const [format, setFormat] = useState<ExportFormat>('png')
-  const doorFacing = useProjectPrefsStore((s) => s.doorFacing[projectId] ?? null)
 
   const layoutParam = params.get('layoutId')
   const roomId = params.get('roomId')
@@ -137,7 +135,6 @@ export function PreviewScreen() {
               furniture={showFurniture ? furniture : undefined}
               showLabels={showLabels}
               focusRoomId={focusRoom?.id ?? null}
-              doorFacing={doorFacing}
               onSelectRoom={(id) => setRoom(id === roomId ? '' : id)}
             />
           </div>

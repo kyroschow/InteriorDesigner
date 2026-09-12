@@ -36,8 +36,8 @@ interface Line {
 /**
  * Results: the active, immutable layout — what was placed, the safety check,
  * what it costs, and real alternatives to browse. Alternatives are read-only:
- * the planner owns product choice, so a different pick means changing
- * constraints and applying again.
+ * the planner owns product choice, so a different pick means updating the
+ * room notes and applying again.
  */
 export function ExportScreen() {
   const { project, catalog, activeLayout, generation, generationActive, exportPlan } = useProjectContext()
@@ -251,7 +251,7 @@ function ShoppingLine({ line, alternatives, unitSystem }: { line: Line; alternat
                   )}
                 </div>
               ))}
-              <p className="text-[10px] text-ink-soft/50">For browsing only. To get a different product, adjust colors, size limits or budget and apply again.</p>
+              <p className="text-[10px] text-ink-soft/50">For browsing only. To get a different product, describe what you want in the room notes and apply again.</p>
             </div>
           )}
         </div>

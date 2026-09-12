@@ -9,9 +9,8 @@ import { FloorPlanSvg } from '@/components/FloorPlanSvg'
 import { useGenerationPolling } from '@/hooks/useGeneration'
 import { useProjectData } from '@/hooks/useProject'
 import { exportPlan, type ExportFormat } from '@/lib/exportSvg'
-import { draftPlan, sceneFurniture, sceneToPlan, type DraftRoomRect } from '@/lib/sceneCoordinates'
+import { sceneFurniture, sceneToPlan } from '@/lib/sceneCoordinates'
 import { formatLengthM } from '@/lib/units'
-import { useProjectPrefsStore } from '@/store/projectPrefsStore'
 import type { ApiErrorDetail, Budget, FurnitureResponse, Generation, Layout, Project, Requirement, RulesResponse, UnitSystem } from '@/types/interior'
 
 export type { ExportFormat }
@@ -49,19 +48,24 @@ export interface ProjectOutletContext {
   configErrors: ApiErrorDetail[]
   selectedRoomId: string | null
   setSelectedRoomId: (roomId: string | null) => void
-  /** Unsaved room edits to preview on the canvas; null shows the saved rooms. */
-  setRoomsPreview: (rects: DraftRoomRect[] | null) => void
   exportPlan: (format: ExportFormat) => void
 }
 
 export const useProjectContext = () => useOutletContext<ProjectOutletContext>()
 
+/** Colors and size limits are left to room notes, so the draft (and every save) drops them from requirements. */
 const draftOf = (project: Project): ConfigDraft =>
-  structuredClone({ prompt: project.configuration.prompt, budget: project.configuration.budget, requirements: project.configuration.requirements })
-const sameDraft = (a: ConfigDraft, b: ConfigDraft) => JSON.stringify(a) === JSON.stringify(b)
+  structuredClone({
+    prompt: project.configuration.prompt,
+    budget: project.configuration.budget,
+    requirements: project.configuration.requirements.map(({ id, objectType, quantity, roomId }) => ({ id, objectType, quantity, roomId })),
+  })
+/** Compares by value, not key order: requirements built in the UI and ones read back from the server list fields differently. */
+const draftKey = (d: ConfigDraft) =>
+  JSON.stringify([d.prompt, d.budget && [d.budget.amountMinor, d.budget.currency], d.requirements.map((r) => [r.id, r.objectType, r.roomId, r.quantity])])
+const sameDraft = (a: ConfigDraft, b: ConfigDraft) => draftKey(a) === draftKey(b)
 
 const STEPS = [
-  { to: 'rooms', label: 'Rooms', end: false },
   { to: '', label: 'Furnish', end: true },
   { to: 'rules', label: 'Brief & apply', end: false },
   { to: 'export', label: 'Results', end: false },
@@ -132,9 +136,7 @@ function ProjectWorkspace({ project, catalog, rules, activeLayout, applyProject,
   const svgRef = useRef<SVGSVGElement>(null)
   const [headerError, setHeaderError] = useState<unknown>(null)
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null)
-  const [roomsPreview, setRoomsPreview] = useState<DraftRoomRect[] | null>(null)
   const [configErrors, setConfigErrors] = useState<ApiErrorDetail[]>([])
-  const doorFacing = useProjectPrefsStore((s) => s.doorFacing[project.id] ?? null)
 
   // Configuration draft. Adopts server changes unless the user has unsaved edits.
   const serverDraft = useMemo(() => draftOf(project), [project])
@@ -193,9 +195,13 @@ function ProjectWorkspace({ project, catalog, rules, activeLayout, applyProject,
     [write, applyLatest],
   )
 
-  const { generation, active: generationActive } = useGenerationPolling(project.id, project.latestGeneration?.id ?? null, (_settled, wasRunning) => {
+  const polling = useGenerationPolling(project.id, project.latestGeneration?.id ?? null, (_settled, wasRunning) => {
     if (wasRunning) reload().catch(setHeaderError)
   })
+  const generation = polling.generation
+  // Until the first poll returns, trust the project's own status so a finished run doesn't flash "Generating…".
+  const latestStatus = project.latestGeneration?.status
+  const generationActive = polling.active && (generation !== null || latestStatus === 'queued' || latestStatus === 'running')
 
   async function patchProject(fields: { name?: string; unitSystem?: UnitSystem }) {
     setHeaderError(null)
@@ -212,12 +218,12 @@ function ProjectWorkspace({ project, catalog, rules, activeLayout, applyProject,
 
   const onResults = location.pathname.endsWith('/export')
   const savedPlan = useMemo(() => sceneToPlan(project, project.name), [project])
-  // Layouts carry only the scene; the demo shell's fixed openings keep room positions from changing.
+  // Layouts carry only the scene; the demo shell's walls are fixed, so room positions never change.
   const layoutScene = useMemo(() => (activeLayout ? { floor: activeLayout.scene, roomTransforms: project.roomTransforms } : null), [activeLayout, project.roomTransforms])
   const layoutPlan = useMemo(() => (layoutScene ? sceneToPlan(layoutScene, project.name) : null), [layoutScene, project.name])
   const furniture = useMemo(() => (layoutScene ? sceneFurniture(layoutScene) : undefined), [layoutScene])
   const showLayout = onResults && layoutPlan !== null
-  const plan = showLayout ? (layoutPlan ?? savedPlan) : roomsPreview ? draftPlan(savedPlan, roomsPreview, project.floor.depth_m) : savedPlan
+  const plan = showLayout && layoutPlan ? layoutPlan : savedPlan
 
   const context: ProjectOutletContext = {
     project,
@@ -236,7 +242,6 @@ function ProjectWorkspace({ project, catalog, rules, activeLayout, applyProject,
     configErrors,
     selectedRoomId,
     setSelectedRoomId,
-    setRoomsPreview,
     exportPlan: (format) => {
       if (svgRef.current) exportPlan(svgRef.current, format, project.name.replace(/[^\w-]+/g, '-').toLowerCase() || 'floor-plan', `${project.name} — floor plan`)
     },
@@ -305,7 +310,7 @@ function ProjectWorkspace({ project, catalog, rules, activeLayout, applyProject,
       )}
 
       <div className="flex min-h-0 flex-1 flex-col md:flex-row">
-        <aside className="flex min-h-0 w-full shrink-0 flex-col border-canvas-line md:w-[26rem] md:border-r">
+        <aside className="relative z-10 flex min-h-0 w-full shrink-0 flex-col border-canvas-line bg-app md:w-[26rem] md:border-r">
           <nav aria-label="Project steps" className="no-scrollbar flex shrink-0 gap-1 overflow-x-auto border-b border-canvas-line px-3 py-2">
             {STEPS.map((step) => (
               <NavLink
@@ -333,14 +338,13 @@ function ProjectWorkspace({ project, catalog, rules, activeLayout, applyProject,
               unitSystem={project.unitSystem}
               furniture={showLayout ? furniture : undefined}
               selectedRoomId={selectedRoomId}
-              doorFacing={doorFacing}
               onSelectRoom={(id) => setSelectedRoomId((current) => (current === id ? null : id))}
             />
           </div>
           <p className="text-center text-[11px] text-ink-soft/50">
             {formatLengthM(project.floor.width_m, project.unitSystem)} × {formatLengthM(project.floor.depth_m, project.unitSystem)} floor · ceilings{' '}
             {formatLengthM(project.floor.height_m, project.unitSystem)} (fixed)
-            {showLayout ? ' · blue edge marks each piece’s front' : roomsPreview ? ' · previewing unsaved room edits' : ''}
+            {showLayout ? ' · blue edge marks each piece’s front' : ''}
           </p>
         </main>
       </div>
