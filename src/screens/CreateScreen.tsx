@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, FileUp, PencilRuler, Upload, X } from 'lucide-react'
 import clsx from 'clsx'
+import { Brand } from '@/components/Brand'
 import { StepHeader } from '@/components/StepHeader'
 import { OptionCard } from '@/components/OptionCard'
 import { StagedLoadingOverlay } from '@/components/StagedLoadingOverlay'
@@ -48,6 +49,10 @@ export function CreateScreen() {
 
   return (
     <div className="animate-pane-in relative mx-auto flex min-h-full w-full max-w-2xl flex-col justify-center px-6 py-16">
+      <div className="mb-8">
+        <Brand size="sm" />
+      </div>
+
       <StepHeader
         step={2}
         total={2}
@@ -142,7 +147,7 @@ export function CreateScreen() {
       <div className="mt-10 flex items-center gap-3">
         <button
           type="button"
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/new')}
           className="inline-flex items-center gap-2 rounded-control px-4 py-3 text-sm font-semibold text-ink-soft hover:bg-canvas"
         >
           <ArrowLeft size={16} />

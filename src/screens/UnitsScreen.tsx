@@ -36,13 +36,8 @@ export function UnitsScreen() {
 
   return (
     <div className="animate-pane-in mx-auto flex min-h-full w-full max-w-2xl flex-col justify-center px-6 py-16">
-      <div className="mb-14 flex flex-col items-center text-center">
-        <Brand size="xl" />
-        <h2 className="serif mt-8 text-3xl text-ink-soft/80 sm:text-4xl">
-          Turn any floor plan
-          <br />
-          into a fully furnished room.
-        </h2>
+      <div className="mb-8">
+        <Brand size="sm" />
       </div>
 
       <StepHeader
@@ -51,7 +46,6 @@ export function UnitsScreen() {
         eyebrow="New project"
         title="How do you like to measure?"
         subtitle="This sets how dimensions are shown across your project. You can change it later in settings."
-        size="compact"
       />
 
       <div role="radiogroup" aria-label="Unit system" className="grid grid-cols-1 gap-4 sm:grid-cols-2">
