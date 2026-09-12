@@ -1,0 +1,336 @@
+[
+  {
+    "name": "SANDSBERG",
+    "category": "table",
+    "url": "https://www.ikea.com/us/en/p/sandsberg-table-black-s29420393/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/sandsberg-table-black__1074348_pe856162_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sandsberg-table-black__1592087_pe1039853_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sandsberg-table-black__1540631_pe1017812_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sandsberg-table-black__1540634_pe1017813_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sandsberg-table-black__1540633_pe1017814_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sandsberg-table-black__1540632_pe1017815_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sandsberg-table-black__1464036_pe994561_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sandsberg-table-black__1031911_pe836694_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/sandsberg-table-black__1540612_ph205167_s5.jpg"
+    ],
+    "priceCents": 6999,
+    "dimsMm": {
+      "w": 670,
+      "d": 1099,
+      "h": 749
+    },
+    "colorHex": "#1A1A1A",
+    "colorName": "black",
+    "materials": [
+      "wood",
+      "polyester",
+      "plastic",
+      "steel",
+      "epoxy",
+      "polypropylene"
+    ],
+    "styleTags": [
+      "industrial",
+      "modern"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "MÖRBYLÅNGA",
+    "category": "table",
+    "url": "https://www.ikea.com/us/en/p/moerbylanga-table-oak-veneer-brown-stained-20293766/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/moerbylanga-table-oak-veneer-brown-stained__0737110_pe740888_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/moerbylanga-table-oak-veneer-brown-stained__1360001_pe954330_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/moerbylanga-table-oak-veneer-brown-stained__1143384_pe881487_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/moerbylanga-table-oak-veneer-brown-stained__0719765_pe732180_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/moerbylanga-table-oak-veneer-brown-stained__0719381_pe732029_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/moerbylanga-table-oak-veneer-brown-stained__0871205_pe594901_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/moerbylanga-table-oak-veneer-brown-stained__0364529_pe548336_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/moerbylanga-table-oak-veneer-brown-stained__1327703_pe944549_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/moerbylanga-table-oak-veneer-brown-stained__1016079_ph174029_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/moerbylanga-table-oak-veneer-brown-stained__0719764_pe732179_s5.jpg"
+    ],
+    "priceCents": 89999,
+    "dimsMm": {
+      "w": 1000,
+      "d": 2200,
+      "h": 740
+    },
+    "colorHex": "#6B4F3A",
+    "colorName": "oak veneer brown stained",
+    "materials": [
+      "wood",
+      "stain"
+    ],
+    "styleTags": [
+      "scandinavian",
+      "modern"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "DOCKSTA",
+    "category": "table",
+    "url": "https://www.ikea.com/us/en/p/docksta-table-white-white-s19324995/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/docksta-table-white-white__0803262_pe768820_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/docksta-table-white-white__1431647_pe982526_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/docksta-table-white-white__1431646_pe982527_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/docksta-table-white-white__1339180_pe948414_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/docksta-table-white-white__1099612_pe865813_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/docksta-table-white-white__1111486_pe870782_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/docksta-table-white-white__1431645_pe982525_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/docksta-table-white-white__0803264_pe768821_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/docksta-table-white-white__0981151_pe815274_s5.jpg"
+    ],
+    "priceCents": 27999,
+    "dimsMm": {
+      "w": null,
+      "d": null,
+      "h": 749
+    },
+    "colorHex": "#F5F5F5",
+    "colorName": "white",
+    "materials": [
+      "wood",
+      "polyester",
+      "plastic",
+      "steel",
+      "epoxy",
+      "laminate"
+    ],
+    "styleTags": [
+      "modern",
+      "casual"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "ÅLHULT",
+    "category": "extendable_table",
+    "url": "https://www.ikea.com/us/en/p/alhult-extendable-table-black-brown-20600789/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/alhult-extendable-table-black-brown__1403275_pe969282_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-extendable-table-black-brown__1447078_pe988944_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-extendable-table-black-brown__1447116_pe988982_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-extendable-table-black-brown__1447115_pe988981_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-extendable-table-black-brown__1451072_pe990568_s5.jpg"
+    ],
+    "priceCents": 19999,
+    "dimsMm": {
+      "w": 800,
+      "d": null,
+      "h": 749
+    },
+    "colorHex": "#1A1A1A",
+    "colorName": "black",
+    "materials": [
+      "wood",
+      "stain",
+      "adhesive"
+    ],
+    "styleTags": [
+      "casual",
+      "modern"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "SKOGSTA",
+    "category": "dining_table",
+    "url": "https://www.ikea.com/us/en/p/skogsta-dining-table-acacia-black-70419264/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/skogsta-dining-table-acacia-black__1499941_pe1006841_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skogsta-dining-table-acacia-black__1342684_pe949087_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skogsta-dining-table-acacia-black__1349434_pe951368_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skogsta-dining-table-acacia-black__1097281_pe864868_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skogsta-dining-table-acacia-black__0809033_ph149979_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skogsta-dining-table-acacia-black__0949260_pe799598_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skogsta-dining-table-acacia-black__1518082_ph205788_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skogsta-dining-table-acacia-black__1539285_ph205793_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skogsta-dining-table-acacia-black__1518074_ph206529_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/skogsta-dining-table-acacia-black__1442093_pe986660_p.jpg"
+    ],
+    "priceCents": 64999,
+    "dimsMm": {
+      "w": 1000,
+      "d": 2350,
+      "h": 740
+    },
+    "colorHex": "#C0A070",
+    "colorName": "acacia",
+    "materials": [
+      "steel",
+      "galvanized"
+    ],
+    "styleTags": [
+      "rustic",
+      "traditional"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "BERGSHYTTAN",
+    "category": "table",
+    "url": "https://www.ikea.com/us/en/p/bergshyttan-table-tinted-effect-birch-veneer-50601650/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/bergshyttan-table-tinted-effect-birch-veneer__1411085_pe973074_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/bergshyttan-table-tinted-effect-birch-veneer__1547416_pe1020477_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/bergshyttan-table-tinted-effect-birch-veneer__1538966_pe1017817_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/bergshyttan-table-tinted-effect-birch-veneer__1498005_pe1006140_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/bergshyttan-table-tinted-effect-birch-veneer__1443500_pe987191_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/bergshyttan-table-tinted-effect-birch-veneer__1489369_ph206659_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/bergshyttan-table-tinted-effect-birch-veneer__1489367_ph206661_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/bergshyttan-table-tinted-effect-birch-veneer__1435961_pe984001_p.jpg"
+    ],
+    "priceCents": 49999,
+    "dimsMm": {
+      "w": 930,
+      "d": 2400,
+      "h": 749
+    },
+    "colorHex": "#E8D5B7",
+    "colorName": "tinted effect birch veneer",
+    "materials": [
+      "wood",
+      "plastic"
+    ],
+    "styleTags": [
+      "scandinavian",
+      "modern"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "VIHALS",
+    "category": "table",
+    "url": "https://www.ikea.com/us/en/p/vihals-table-white-white-s39578509/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/vihals-table-white-white__1388805_pe964975_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/vihals-table-white-white__1414838_pe974922_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/vihals-table-white-white__1414845_pe974948_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/vihals-table-white-white__1414901_pe974988_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/vihals-table-white-white__1389218_pe965142_s5.jpg"
+    ],
+    "priceCents": 12999,
+    "dimsMm": {
+      "w": 740,
+      "d": 1251,
+      "h": 749
+    },
+    "colorHex": "#F5F5F5",
+    "colorName": "white",
+    "materials": [
+      "wood",
+      "polyester",
+      "plastic",
+      "steel",
+      "epoxy"
+    ],
+    "styleTags": [
+      "modern",
+      "minimalist"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "ÅLHULT",
+    "category": "table",
+    "url": "https://www.ikea.com/us/en/p/alhult-table-beige-brown-00597919/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/alhult-table-beige-brown__1403289_pe969280_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-table-beige-brown__1447073_pe988941_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-table-beige-brown__1447120_pe988972_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/alhult-table-beige-brown__1451074_pe990570_s5.jpg"
+    ],
+    "priceCents": 16999,
+    "dimsMm": {
+      "w": 800,
+      "d": 1200,
+      "h": 749
+    },
+    "colorHex": "#D4C4A8",
+    "colorName": "beige",
+    "materials": [
+      "wood",
+      "stain",
+      "adhesive"
+    ],
+    "styleTags": [
+      "casual",
+      "modern"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "LISABO",
+    "category": "table",
+    "url": "https://www.ikea.com/us/en/p/lisabo-table-ash-veneer-40416498/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/lisabo-table-ash-veneer__0631745_pe695175_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-table-ash-veneer__1470757_pe996934_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-table-ash-veneer__1255292_pe924486_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-table-ash-veneer__1255298_pe924492_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-table-ash-veneer__0870924_pe695203_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-table-ash-veneer__0870929_pe695207_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-table-ash-veneer__1332767_pe946330_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-table-ash-veneer__1505406_pe1008512_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-table-ash-veneer__1505407_pe1008510_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/lisabo-table-ash-veneer__1234702_pe051287_p.jpg"
+    ],
+    "priceCents": 29999,
+    "dimsMm": {
+      "w": null,
+      "d": null,
+      "h": 740
+    },
+    "colorHex": "#C9B8A0",
+    "colorName": "ash veneer",
+    "materials": [
+      "wood"
+    ],
+    "styleTags": [
+      "scandinavian",
+      "modern"
+    ],
+    "featureTags": []
+  },
+  {
+    "name": "ROSENTORP",
+    "category": "extendable_table",
+    "url": "https://www.ikea.com/us/en/p/rosentorp-extendable-table-white-80568239/",
+    "imageUrls": [
+      "https://www.ikea.com/us/en/images/products/rosentorp-extendable-table-white__1434528_pe983580_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/rosentorp-extendable-table-white__1450993_pe990539_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/rosentorp-extendable-table-white__1448077_pe989470_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/rosentorp-extendable-table-white__1497095_pe1005775_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/rosentorp-extendable-table-white__1448057_pe989465_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/rosentorp-extendable-table-white__1448059_pe989466_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/rosentorp-extendable-table-white__1265793_pe927806_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/rosentorp-extendable-table-white__1489864_ph206649_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/rosentorp-extendable-table-white__1489865_ph206647_s5.jpg",
+      "https://www.ikea.com/us/en/images/products/rosentorp-extendable-table-white__1238378_ph151106_p.jpg"
+    ],
+    "priceCents": 39999,
+    "dimsMm": {
+      "w": null,
+      "d": null,
+      "h": 749
+    },
+    "colorHex": "#F5F5F5",
+    "colorName": "white",
+    "materials": [
+      "wood",
+      "plastic",
+      "paint",
+      "adhesive"
+    ],
+    "styleTags": [
+      "modern",
+      "scandinavian"
+    ],
+    "featureTags": []
+  }
+]
